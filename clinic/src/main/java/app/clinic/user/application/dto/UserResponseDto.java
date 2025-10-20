@@ -1,5 +1,11 @@
 package app.clinic.user.application.dto;
 
+import java.time.LocalDate;
+
+/**
+ * DTO para respuestas de usuario.
+ * Incluye todos los campos del modelo de dominio para respuestas completas.
+ */
 public record UserResponseDto(
     Long id,
     String username,
@@ -7,6 +13,7 @@ public record UserResponseDto(
     String cedula,
     String email,
     String phone,
+    LocalDate birthDate,
     String address,
     String role
 ) {}

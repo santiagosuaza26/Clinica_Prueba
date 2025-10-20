@@ -1,7 +1,5 @@
 package app.clinic.user.application.usecase;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
 import app.clinic.shared.domain.exception.AuthenticationException;
 import app.clinic.shared.domain.exception.BusinessException;
 import app.clinic.shared.domain.exception.NotFoundException;
@@ -9,14 +7,16 @@ import app.clinic.shared.domain.validator.GlobalValidator;
 import app.clinic.user.domain.model.Role;
 import app.clinic.user.domain.model.User;
 import app.clinic.user.domain.repository.UserRepository;
+import app.clinic.user.infrastructure.service.PasswordEncoderService;
 
 public class ChangePasswordUseCase {
 
     private final UserRepository repository;
-    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+    private final PasswordEncoderService passwordEncoder;
 
-    public ChangePasswordUseCase(UserRepository repository) {
+    public ChangePasswordUseCase(UserRepository repository, PasswordEncoderService passwordEncoder) {
         this.repository = repository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public void execute(String username, String oldPassword, String newPassword, Role requesterRole) {
@@ -30,7 +30,7 @@ public class ChangePasswordUseCase {
 
         // Si no es RRHH, validar la contraseña anterior
         if (requesterRole != Role.RECURSOS_HUMANOS &&
-            !encoder.matches(oldPassword, user.getPassword())) {
+            !passwordEncoder.matches(oldPassword, user.getPassword())) {
             throw new AuthenticationException("La contraseña actual no es correcta.");
         }
 
@@ -38,7 +38,7 @@ public class ChangePasswordUseCase {
         GlobalValidator.validatePassword(newPassword);
 
         // Guardar nueva contraseña encriptada
-        user.setPassword(encoder.encode(newPassword));
+        user.setPassword(passwordEncoder.encode(newPassword));
         repository.save(user);
     }
 }

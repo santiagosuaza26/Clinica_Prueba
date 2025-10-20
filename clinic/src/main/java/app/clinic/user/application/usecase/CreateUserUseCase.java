@@ -1,22 +1,22 @@
 package app.clinic.user.application.usecase;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
 import app.clinic.shared.domain.exception.BusinessException;
 import app.clinic.user.domain.model.Role;
 import app.clinic.user.domain.model.User;
 import app.clinic.user.domain.repository.UserRepository;
 import app.clinic.user.domain.service.UserValidatorService;
+import app.clinic.user.infrastructure.service.PasswordEncoderService;
 
 public class CreateUserUseCase {
 
     private final UserRepository repository;
     private final UserValidatorService validator;
-    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+    private final PasswordEncoderService passwordEncoder;
 
-    public CreateUserUseCase(UserRepository repository, UserValidatorService validator) {
+    public CreateUserUseCase(UserRepository repository, UserValidatorService validator, PasswordEncoderService passwordEncoder) {
         this.repository = repository;
         this.validator = validator;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public User execute(User user, Role creatorRole) {
@@ -35,7 +35,7 @@ public class CreateUserUseCase {
 
         // Validar datos
         validator.validate(user);
-        user.setPassword(encoder.encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         // Guardar
         return repository.save(user);

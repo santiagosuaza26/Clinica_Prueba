@@ -1,17 +1,18 @@
 package app.clinic.user.application.usecase;
 
+import app.clinic.shared.domain.exception.AuthenticationException;
 import app.clinic.user.domain.model.User;
 import app.clinic.user.domain.repository.UserRepository;
-import app.clinic.shared.domain.exception.*;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import app.clinic.user.infrastructure.service.PasswordEncoderService;
 
 public class AuthenticateUserUseCase {
 
     private final UserRepository repository;
-    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+    private final PasswordEncoderService passwordEncoder;
 
-    public AuthenticateUserUseCase(UserRepository repository) {
+    public AuthenticateUserUseCase(UserRepository repository, PasswordEncoderService passwordEncoder) {
         this.repository = repository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public User execute(String username, String rawPassword) {
@@ -20,7 +21,7 @@ public class AuthenticateUserUseCase {
                 .orElseThrow(() -> new AuthenticationException("Usuario o contraseña incorrectos."));
 
         // Validar contraseña
-        if (!encoder.matches(rawPassword, user.getPassword())) {
+        if (!passwordEncoder.matches(rawPassword, user.getPassword())) {
             throw new AuthenticationException("Usuario o contraseña incorrectos.");
         }
 
