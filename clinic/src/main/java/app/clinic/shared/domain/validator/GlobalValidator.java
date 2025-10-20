@@ -24,6 +24,12 @@ public class GlobalValidator {
         }
     }
 
+    public static void validatePhoneExactly(String phone) {
+        if (phone == null || !phone.matches("\\d{10}")) {
+            throw new ValidationException("El número de teléfono debe tener exactamente 10 dígitos numéricos.");
+        }
+    }
+
     public static void validateCedula(String cedula) {
         if (cedula == null || !cedula.matches("\\d{6,10}")) {
             throw new ValidationException("La cédula debe tener entre 6 y 10 dígitos numéricos.");
