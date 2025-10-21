@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 
 import app.clinic.order.domain.model.DiagnosticAid;
 import app.clinic.order.domain.repository.DiagnosticAidRepository;
-import app.clinic.order.infrastructure.entity.DiagnosticAidEntity;
-import app.clinic.order.infrastructure.repository.JpaDiagnosticAidRepository;
+import app.clinic.order.infrastructure.entity.OrderDiagnosticAidEntity;
+import app.clinic.order.infrastructure.repository.JpaOrderDiagnosticAidRepository;
 
 /**
  * Adaptador que implementa el contrato de dominio DiagnosticAidRepository
@@ -18,9 +18,9 @@ import app.clinic.order.infrastructure.repository.JpaDiagnosticAidRepository;
 @Component
 public class DiagnosticAidRepositoryAdapter implements DiagnosticAidRepository {
 
-    private final JpaDiagnosticAidRepository jpaDiagnosticAidRepository;
+    private final JpaOrderDiagnosticAidRepository jpaDiagnosticAidRepository;
 
-    public DiagnosticAidRepositoryAdapter(JpaDiagnosticAidRepository jpaDiagnosticAidRepository) {
+    public DiagnosticAidRepositoryAdapter(JpaOrderDiagnosticAidRepository jpaDiagnosticAidRepository) {
         this.jpaDiagnosticAidRepository = jpaDiagnosticAidRepository;
     }
 
@@ -40,8 +40,8 @@ public class DiagnosticAidRepositoryAdapter implements DiagnosticAidRepository {
 
     @Override
     public DiagnosticAid save(DiagnosticAid diagnosticAid) {
-        DiagnosticAidEntity entity = toEntity(diagnosticAid);
-        DiagnosticAidEntity savedEntity = jpaDiagnosticAidRepository.save(entity);
+        OrderDiagnosticAidEntity entity = toEntity(diagnosticAid);
+        OrderDiagnosticAidEntity savedEntity = jpaDiagnosticAidRepository.save(entity);
         return toDomain(savedEntity);
     }
 
@@ -53,7 +53,7 @@ public class DiagnosticAidRepositoryAdapter implements DiagnosticAidRepository {
     /**
      * Convierte una entidad JPA a una entidad de dominio.
      */
-    private DiagnosticAid toDomain(DiagnosticAidEntity entity) {
+    private DiagnosticAid toDomain(OrderDiagnosticAidEntity entity) {
         return new DiagnosticAid(
                 entity.getId(),
                 entity.getName(),
@@ -67,8 +67,8 @@ public class DiagnosticAidRepositoryAdapter implements DiagnosticAidRepository {
     /**
      * Convierte una entidad de dominio a una entidad JPA.
      */
-    private DiagnosticAidEntity toEntity(DiagnosticAid diagnosticAid) {
-        return new DiagnosticAidEntity(
+    private OrderDiagnosticAidEntity toEntity(DiagnosticAid diagnosticAid) {
+        return new OrderDiagnosticAidEntity(
                 diagnosticAid.getId(),
                 diagnosticAid.getName(),
                 diagnosticAid.getQuantity(),

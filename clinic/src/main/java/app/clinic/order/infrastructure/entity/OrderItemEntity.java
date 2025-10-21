@@ -56,15 +56,15 @@ public class OrderItemEntity {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "medication_id")
-    private MedicationEntity medication;
+    private OrderMedicationEntity medication;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "procedure_id")
-    private ProcedureEntity procedure;
+    private OrderProcedureEntity procedure;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "diagnostic_aid_id")
-    private DiagnosticAidEntity diagnosticAid;
+    private OrderDiagnosticAidEntity diagnosticAid;
 
     // Constructor vacío requerido por JPA
     public OrderItemEntity() {
@@ -157,27 +157,27 @@ public class OrderItemEntity {
         this.order = order;
     }
 
-    public MedicationEntity getMedication() {
+    public OrderMedicationEntity getMedication() {
         return medication;
     }
 
-    public void setMedication(MedicationEntity medication) {
+    public void setMedication(OrderMedicationEntity medication) {
         this.medication = medication;
     }
 
-    public ProcedureEntity getProcedure() {
+    public OrderProcedureEntity getProcedure() {
         return procedure;
     }
 
-    public void setProcedure(ProcedureEntity procedure) {
+    public void setProcedure(OrderProcedureEntity procedure) {
         this.procedure = procedure;
     }
 
-    public DiagnosticAidEntity getDiagnosticAid() {
+    public OrderDiagnosticAidEntity getDiagnosticAid() {
         return diagnosticAid;
     }
 
-    public void setDiagnosticAid(DiagnosticAidEntity diagnosticAid) {
+    public void setDiagnosticAid(OrderDiagnosticAidEntity diagnosticAid) {
         this.diagnosticAid = diagnosticAid;
     }
 

@@ -5,18 +5,18 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import app.clinic.order.infrastructure.entity.MedicationEntity;
+import app.clinic.order.infrastructure.entity.OrderMedicationEntity;
 
 /**
  * Repositorio JPA para la gestión de medicamentos en la base de datos.
  */
 @Repository
-public interface JpaMedicationRepository extends JpaRepository<MedicationEntity, String> {
+public interface JpaOrderMedicationRepository extends JpaRepository<OrderMedicationEntity, String> {
 
     /**
      * Busca medicamentos por nombre (búsqueda parcial, case-insensitive).
      */
-    List<MedicationEntity> findByNameContainingIgnoreCase(String name);
+    List<OrderMedicationEntity> findByNameContainingIgnoreCase(String name);
 
     /**
      * Verifica si existe un medicamento con el nombre especificado.
@@ -26,5 +26,5 @@ public interface JpaMedicationRepository extends JpaRepository<MedicationEntity,
     /**
      * Busca medicamentos por rango de costo.
      */
-    List<MedicationEntity> findByCostBetween(java.math.BigDecimal minCost, java.math.BigDecimal maxCost);
+    List<OrderMedicationEntity> findByCostBetween(java.math.BigDecimal minCost, java.math.BigDecimal maxCost);
 }

@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 
 import app.clinic.order.domain.model.Procedure;
 import app.clinic.order.domain.repository.ProcedureRepository;
-import app.clinic.order.infrastructure.entity.ProcedureEntity;
-import app.clinic.order.infrastructure.repository.JpaProcedureRepository;
+import app.clinic.order.infrastructure.entity.OrderProcedureEntity;
+import app.clinic.order.infrastructure.repository.JpaOrderProcedureRepository;
 
 /**
  * Adaptador que implementa el contrato de dominio ProcedureRepository
@@ -18,9 +18,9 @@ import app.clinic.order.infrastructure.repository.JpaProcedureRepository;
 @Component
 public class ProcedureRepositoryAdapter implements ProcedureRepository {
 
-    private final JpaProcedureRepository jpaProcedureRepository;
+    private final JpaOrderProcedureRepository jpaProcedureRepository;
 
-    public ProcedureRepositoryAdapter(JpaProcedureRepository jpaProcedureRepository) {
+    public ProcedureRepositoryAdapter(JpaOrderProcedureRepository jpaProcedureRepository) {
         this.jpaProcedureRepository = jpaProcedureRepository;
     }
 
@@ -40,8 +40,8 @@ public class ProcedureRepositoryAdapter implements ProcedureRepository {
 
     @Override
     public Procedure save(Procedure procedure) {
-        ProcedureEntity entity = toEntity(procedure);
-        ProcedureEntity savedEntity = jpaProcedureRepository.save(entity);
+        OrderProcedureEntity entity = toEntity(procedure);
+        OrderProcedureEntity savedEntity = jpaProcedureRepository.save(entity);
         return toDomain(savedEntity);
     }
 
@@ -53,7 +53,7 @@ public class ProcedureRepositoryAdapter implements ProcedureRepository {
     /**
      * Convierte una entidad JPA a una entidad de dominio.
      */
-    private Procedure toDomain(ProcedureEntity entity) {
+    private Procedure toDomain(OrderProcedureEntity entity) {
         return new Procedure(
                 entity.getId(),
                 entity.getName(),
@@ -68,8 +68,8 @@ public class ProcedureRepositoryAdapter implements ProcedureRepository {
     /**
      * Convierte una entidad de dominio a una entidad JPA.
      */
-    private ProcedureEntity toEntity(Procedure procedure) {
-        return new ProcedureEntity(
+    private OrderProcedureEntity toEntity(Procedure procedure) {
+        return new OrderProcedureEntity(
                 procedure.getId(),
                 procedure.getName(),
                 procedure.getRepetitions(),

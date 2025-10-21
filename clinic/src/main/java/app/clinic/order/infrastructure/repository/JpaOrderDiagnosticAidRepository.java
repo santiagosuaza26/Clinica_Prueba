@@ -7,48 +7,48 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import app.clinic.order.domain.model.SpecialistType;
-import app.clinic.order.infrastructure.entity.DiagnosticAidEntity;
+import app.clinic.order.infrastructure.entity.OrderDiagnosticAidEntity;
 
 /**
  * Repositorio JPA para la gestión de ayudas diagnósticas en la base de datos.
  */
 @Repository
-public interface JpaDiagnosticAidRepository extends JpaRepository<DiagnosticAidEntity, String> {
+public interface JpaOrderDiagnosticAidRepository extends JpaRepository<OrderDiagnosticAidEntity, String> {
 
     /**
      * Busca ayudas diagnósticas por nombre (búsqueda parcial, case-insensitive).
      */
-    List<DiagnosticAidEntity> findByNameContainingIgnoreCase(String name);
+    List<OrderDiagnosticAidEntity> findByNameContainingIgnoreCase(String name);
 
     /**
      * Busca ayudas diagnósticas que requieren especialista.
      */
-    List<DiagnosticAidEntity> findByRequiresSpecialistTrue();
+    List<OrderDiagnosticAidEntity> findByRequiresSpecialistTrue();
 
     /**
      * Busca ayudas diagnósticas por tipo de especialista.
      */
-    List<DiagnosticAidEntity> findBySpecialistType(SpecialistType specialistType);
+    List<OrderDiagnosticAidEntity> findBySpecialistType(SpecialistType specialistType);
 
     /**
      * Busca ayudas diagnósticas por rango de costo.
      */
-    List<DiagnosticAidEntity> findByCostBetween(BigDecimal minCost, BigDecimal maxCost);
+    List<OrderDiagnosticAidEntity> findByCostBetween(BigDecimal minCost, BigDecimal maxCost);
 
     /**
      * Busca ayudas diagnósticas que requieren especialista de un tipo específico.
      */
-    List<DiagnosticAidEntity> findByRequiresSpecialistTrueAndSpecialistType(SpecialistType specialistType);
+    List<OrderDiagnosticAidEntity> findByRequiresSpecialistTrueAndSpecialistType(SpecialistType specialistType);
 
     /**
      * Busca ayudas diagnósticas por cantidad específica.
      */
-    List<DiagnosticAidEntity> findByQuantity(Integer quantity);
+    List<OrderDiagnosticAidEntity> findByQuantity(Integer quantity);
 
     /**
      * Busca ayudas diagnósticas con cantidad mayor o igual a un valor.
      */
-    List<DiagnosticAidEntity> findByQuantityGreaterThanEqual(Integer minQuantity);
+    List<OrderDiagnosticAidEntity> findByQuantityGreaterThanEqual(Integer minQuantity);
 
     /**
      * Verifica si existe una ayuda diagnóstica con el nombre especificado.

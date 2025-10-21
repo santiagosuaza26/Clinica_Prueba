@@ -11,8 +11,8 @@ import jakarta.persistence.Table;
  * Entidad JPA que representa un medicamento en el catálogo del sistema.
  */
 @Entity
-@Table(name = "medications")
-public class MedicationEntity {
+@Table(name = "order_medications")
+public class OrderMedicationEntity {
 
     @Id
     @Column(name = "id", nullable = false, unique = true)
@@ -31,11 +31,11 @@ public class MedicationEntity {
     private Integer durationDays;
 
     // Constructor vacío requerido por JPA
-    public MedicationEntity() {
+    public OrderMedicationEntity() {
     }
 
     // Constructor con parámetros
-    public MedicationEntity(String id, String name, BigDecimal cost, String dosage, Integer durationDays) {
+    public OrderMedicationEntity(String id, String name, BigDecimal cost, String dosage, Integer durationDays) {
         this.id = id;
         this.name = name;
         this.cost = cost;

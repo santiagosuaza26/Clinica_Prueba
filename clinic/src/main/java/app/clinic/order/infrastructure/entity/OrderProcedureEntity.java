@@ -11,11 +11,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 /**
- * Entidad JPA que representa una ayuda diagnóstica en el catálogo del sistema.
+ * Entidad JPA que representa un procedimiento médico en el catálogo del sistema.
  */
 @Entity
-@Table(name = "diagnostic_aids")
-public class DiagnosticAidEntity {
+@Table(name = "order_procedures")
+public class OrderProcedureEntity {
 
     @Id
     @Column(name = "id", nullable = false, unique = true)
@@ -24,8 +24,11 @@ public class DiagnosticAidEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "quantity", nullable = false)
-    private Integer quantity;
+    @Column(name = "repetitions", nullable = false)
+    private Integer repetitions;
+
+    @Column(name = "frequency")
+    private String frequency;
 
     @Column(name = "cost", nullable = false, precision = 12, scale = 2)
     private BigDecimal cost;
@@ -38,15 +41,16 @@ public class DiagnosticAidEntity {
     private SpecialistType specialistType;
 
     // Constructor vacío requerido por JPA
-    public DiagnosticAidEntity() {
+    public OrderProcedureEntity() {
     }
 
     // Constructor con parámetros
-    public DiagnosticAidEntity(String id, String name, Integer quantity, BigDecimal cost,
-                              Boolean requiresSpecialist, SpecialistType specialistType) {
+    public OrderProcedureEntity(String id, String name, Integer repetitions, String frequency,
+                         BigDecimal cost, Boolean requiresSpecialist, SpecialistType specialistType) {
         this.id = id;
         this.name = name;
-        this.quantity = quantity;
+        this.repetitions = repetitions;
+        this.frequency = frequency;
         this.cost = cost;
         this.requiresSpecialist = requiresSpecialist;
         this.specialistType = specialistType;
@@ -69,12 +73,20 @@ public class DiagnosticAidEntity {
         this.name = name;
     }
 
-    public Integer getQuantity() {
-        return quantity;
+    public Integer getRepetitions() {
+        return repetitions;
     }
 
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
+    public void setRepetitions(Integer repetitions) {
+        this.repetitions = repetitions;
+    }
+
+    public String getFrequency() {
+        return frequency;
+    }
+
+    public void setFrequency(String frequency) {
+        this.frequency = frequency;
     }
 
     public BigDecimal getCost() {
@@ -103,10 +115,11 @@ public class DiagnosticAidEntity {
 
     @Override
     public String toString() {
-        return "DiagnosticAidEntity{" +
+        return "ProcedureEntity{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
-                ", quantity=" + quantity +
+                ", repetitions=" + repetitions +
+                ", frequency='" + frequency + '\'' +
                 ", cost=" + cost +
                 ", requiresSpecialist=" + requiresSpecialist +
                 ", specialistType=" + specialistType +

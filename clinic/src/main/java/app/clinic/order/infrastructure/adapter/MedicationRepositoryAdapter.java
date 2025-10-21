@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 
 import app.clinic.order.domain.model.Medication;
 import app.clinic.order.domain.repository.MedicationRepository;
-import app.clinic.order.infrastructure.entity.MedicationEntity;
-import app.clinic.order.infrastructure.repository.JpaMedicationRepository;
+import app.clinic.order.infrastructure.entity.OrderMedicationEntity;
+import app.clinic.order.infrastructure.repository.JpaOrderMedicationRepository;
 
 /**
  * Adaptador que implementa el contrato de dominio MedicationRepository
@@ -18,9 +18,9 @@ import app.clinic.order.infrastructure.repository.JpaMedicationRepository;
 @Component
 public class MedicationRepositoryAdapter implements MedicationRepository {
 
-    private final JpaMedicationRepository jpaMedicationRepository;
+    private final JpaOrderMedicationRepository jpaMedicationRepository;
 
-    public MedicationRepositoryAdapter(JpaMedicationRepository jpaMedicationRepository) {
+    public MedicationRepositoryAdapter(JpaOrderMedicationRepository jpaMedicationRepository) {
         this.jpaMedicationRepository = jpaMedicationRepository;
     }
 
@@ -40,8 +40,8 @@ public class MedicationRepositoryAdapter implements MedicationRepository {
 
     @Override
     public Medication save(Medication medication) {
-        MedicationEntity entity = toEntity(medication);
-        MedicationEntity savedEntity = jpaMedicationRepository.save(entity);
+        OrderMedicationEntity entity = toEntity(medication);
+        OrderMedicationEntity savedEntity = jpaMedicationRepository.save(entity);
         return toDomain(savedEntity);
     }
 
@@ -53,7 +53,7 @@ public class MedicationRepositoryAdapter implements MedicationRepository {
     /**
      * Convierte una entidad JPA a una entidad de dominio.
      */
-    private Medication toDomain(MedicationEntity entity) {
+    private Medication toDomain(OrderMedicationEntity entity) {
         return new Medication(
                 entity.getId(),
                 entity.getName(),
@@ -66,8 +66,8 @@ public class MedicationRepositoryAdapter implements MedicationRepository {
     /**
      * Convierte una entidad de dominio a una entidad JPA.
      */
-    private MedicationEntity toEntity(Medication medication) {
-        return new MedicationEntity(
+    private OrderMedicationEntity toEntity(Medication medication) {
+        return new OrderMedicationEntity(
                 medication.getId(),
                 medication.getName(),
                 java.math.BigDecimal.valueOf(medication.getCost()),
