@@ -81,8 +81,8 @@ public class OrderRepositoryAdapter implements OrderRepository {
     private MedicalOrder toDomain(OrderEntity entity) {
         return new MedicalOrder(
                 entity.getOrderNumber(),
-                entity.getPatientId(),
-                entity.getDoctorId(),
+                Long.valueOf(entity.getPatientId()),
+                Long.valueOf(entity.getDoctorId()),
                 entity.getCreationDate()
         );
     }
@@ -94,8 +94,8 @@ public class OrderRepositoryAdapter implements OrderRepository {
     private OrderEntity toEntity(MedicalOrder order) {
         return new OrderEntity(
                 order.getOrderNumber(),
-                order.getPatientId(),
-                order.getDoctorId(),
+                order.getPatientId().toString(),
+                order.getDoctorId().toString(),
                 order.getCreationDate()
         );
     }

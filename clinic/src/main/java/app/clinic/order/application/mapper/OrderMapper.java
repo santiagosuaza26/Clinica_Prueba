@@ -19,8 +19,8 @@ public class OrderMapper {
 
         MedicalOrder order = new MedicalOrder(
             orderNumber,
-            dto.patientId().toString(),
-            dto.doctorId().toString(),
+            dto.patientId(),
+            dto.doctorId(),
             java.time.LocalDate.now()
         );
 
@@ -45,8 +45,8 @@ public class OrderMapper {
 
         MedicalOrder order = new MedicalOrder(
             existingOrderNumber,
-            dto.patientId().toString(),
-            dto.doctorId().toString(),
+            dto.patientId(),
+            dto.doctorId(),
             java.time.LocalDate.now() // This should ideally be the original creation date
         );
 
@@ -60,8 +60,8 @@ public class OrderMapper {
     public static OrderResponseDto toResponse(MedicalOrder order) {
         return new OrderResponseDto(
             order.getOrderNumber(),
-            Long.parseLong(order.getPatientId()),
-            Long.parseLong(order.getDoctorId()),
+            order.getPatientId(),
+            order.getDoctorId(),
             order.getCreationDate(),
             OrderStatus.CREATED.name(), // Default status since domain model doesn't have status
             order.calculateTotalCost(),

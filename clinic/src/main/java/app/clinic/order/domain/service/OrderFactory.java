@@ -20,7 +20,7 @@ public class OrderFactory {
      * @param creationDate Fecha de creación de la orden
      * @return Nueva instancia de MedicalOrder
      */
-    public MedicalOrder createOrder(String orderNumber, String patientId, String doctorId, LocalDate creationDate) {
+    public MedicalOrder createOrder(String orderNumber, Long patientId, Long doctorId, LocalDate creationDate) {
         return new MedicalOrder(orderNumber, patientId, doctorId, creationDate);
     }
 
@@ -34,7 +34,7 @@ public class OrderFactory {
      * @param initialItems Lista inicial de ítems (puede estar vacía)
      * @return Nueva instancia de MedicalOrder con ítems agregados
      */
-    public MedicalOrder createOrderWithItems(String orderNumber, String patientId, String doctorId,
+    public MedicalOrder createOrderWithItems(String orderNumber, Long patientId, Long doctorId,
                                            LocalDate creationDate, List<OrderItem> initialItems) {
         MedicalOrder order = new MedicalOrder(orderNumber, patientId, doctorId, creationDate);
 

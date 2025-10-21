@@ -26,8 +26,8 @@ public class MedicalOrder {
     public static final String ERROR_CODE_DIAGNOSTIC_AID_WITH_OTHERS = "ORDER_DIAGNOSTIC_AID_WITH_OTHERS";
 
     private final String orderNumber;
-    private final String patientId;
-    private final String doctorId;
+    private final Long patientId;
+    private final Long doctorId;
     private final LocalDate creationDate;
     private final List<OrderItem> items = new ArrayList<>();
 
@@ -35,7 +35,7 @@ public class MedicalOrder {
     private BigDecimal cachedTotalCost;
     private boolean costCacheValid = false;
 
-    public MedicalOrder(String orderNumber, String patientId, String doctorId, LocalDate creationDate) {
+    public MedicalOrder(String orderNumber, Long patientId, Long doctorId, LocalDate creationDate) {
         this.orderNumber = orderNumber;
         this.patientId = patientId;
         this.doctorId = doctorId;
@@ -46,11 +46,11 @@ public class MedicalOrder {
         return orderNumber;
     }
 
-    public String getPatientId() {
+    public Long getPatientId() {
         return patientId;
     }
 
-    public String getDoctorId() {
+    public Long getDoctorId() {
         return doctorId;
     }
 

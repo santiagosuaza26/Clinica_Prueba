@@ -30,7 +30,7 @@ public class CreateOrderUseCase {
      * @param doctorId ID del doctor
      * @return Orden médica creada
      */
-    public MedicalOrder execute(String patientId, String doctorId) {
+    public MedicalOrder execute(Long patientId, Long doctorId) {
         // Crear número de orden único (simplificado)
         String orderNumber = generateOrderNumber();
 

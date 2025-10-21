@@ -8,8 +8,10 @@ import org.springframework.stereotype.Component;
 
 import app.clinic.order.domain.model.OrderItem;
 import app.clinic.order.domain.repository.OrderItemRepository;
+import app.clinic.order.infrastructure.entity.OrderEntity;
 import app.clinic.order.infrastructure.entity.OrderItemEntity;
 import app.clinic.order.infrastructure.repository.JpaOrderItemRepository;
+import app.clinic.order.infrastructure.repository.JpaOrderRepository;
 
 /**
  * Adaptador que implementa el contrato de dominio OrderItemRepository
@@ -19,9 +21,12 @@ import app.clinic.order.infrastructure.repository.JpaOrderItemRepository;
 public class ItemRepositoryAdapter implements OrderItemRepository {
 
     private final JpaOrderItemRepository jpaOrderItemRepository;
+    private final JpaOrderRepository jpaOrderRepository;
 
-    public ItemRepositoryAdapter(JpaOrderItemRepository jpaOrderItemRepository) {
+    public ItemRepositoryAdapter(JpaOrderItemRepository jpaOrderItemRepository,
+                                JpaOrderRepository jpaOrderRepository) {
         this.jpaOrderItemRepository = jpaOrderItemRepository;
+        this.jpaOrderRepository = jpaOrderRepository;
     }
 
     @Override
@@ -42,8 +47,12 @@ public class ItemRepositoryAdapter implements OrderItemRepository {
 
     @Override
     public OrderItem save(String orderNumber, OrderItem item) {
-        // Crear entidad con el número de orden
-        OrderItemEntity entity = toEntity(item, orderNumber);
+        // Buscar la orden por número de orden
+        OrderEntity orderEntity = jpaOrderRepository.findByOrderNumber(orderNumber)
+                .orElseThrow(() -> new RuntimeException("Order not found with number: " + orderNumber));
+
+        // Crear entidad con la orden
+        OrderItemEntity entity = toEntity(item, orderEntity);
         OrderItemEntity savedEntity = jpaOrderItemRepository.save(entity);
         return toDomain(savedEntity);
     }
@@ -72,10 +81,10 @@ public class ItemRepositoryAdapter implements OrderItemRepository {
     }
 
     /**
-     * Convierte una entidad de dominio a una entidad JPA con número de orden.
+     * Convierte una entidad de dominio a una entidad JPA con la orden asociada.
      * Nota: Esta implementación básica no maneja las relaciones complejas.
      */
-    private OrderItemEntity toEntity(OrderItem orderItem, String orderNumber) {
+    private OrderItemEntity toEntity(OrderItem orderItem, OrderEntity orderEntity) {
         OrderItemEntity entity = new OrderItemEntity(
                 orderItem.getItemNumber(),
                 orderItem.getType(),
@@ -84,7 +93,7 @@ public class ItemRepositoryAdapter implements OrderItemRepository {
                 orderItem.getQuantity(),
                 orderItem.isRequiresSpecialist(),
                 orderItem.getSpecialistType(),
-                null // La orden se establecerá por separado si es necesario
+                orderEntity // La orden se establece directamente
         );
         return entity;
     }

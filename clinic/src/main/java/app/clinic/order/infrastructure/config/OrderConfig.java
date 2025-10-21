@@ -59,8 +59,9 @@ public class OrderConfig {
     }
 
     @Bean
-    public OrderItemRepository orderItemRepository(JpaOrderItemRepository jpaOrderItemRepository) {
-        return new ItemRepositoryAdapter(jpaOrderItemRepository);
+    public OrderItemRepository orderItemRepository(JpaOrderItemRepository jpaOrderItemRepository,
+                                                   JpaOrderRepository jpaOrderRepository) {
+        return new ItemRepositoryAdapter(jpaOrderItemRepository, jpaOrderRepository);
     }
 
     // ==================== SERVICIOS DE DOMINIO ====================
