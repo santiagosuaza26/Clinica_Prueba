@@ -1,8 +1,9 @@
 {
   "info": {
-    "name": "Clinic IPS - API Completa",
-    "description": "Colección completa de la API REST para el sistema de Clínica IPS. Incluye todos los endpoints disponibles para usuarios, pacientes, seguros, facturación, inventario, órdenes médicas e historial médico.",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    "name": "Clínica IPS - API REST Completa",
+    "description": "Colección completa y profesional de la API REST para el Sistema de Gestión Clínica IPS. Incluye todos los endpoints disponibles con autenticación JWT, validaciones automáticas y ejemplos de datos realistas.\n\n**Características:**\n- ✅ Autenticación automática con JWT\n- ✅ Variables de entorno configurables\n- ✅ Scripts de pre-request y tests automáticos\n- ✅ Formatos de fecha ISO 8601\n- ✅ Validaciones de respuesta\n- ✅ Headers de autorización automáticos\n- ✅ Ejemplos de datos realistas\n\n**Módulos incluidos:**\n- 👥 Gestión de Usuarios y Autenticación\n- 🏥 Gestión de Pacientes\n- 🛡️ Gestión de Seguros Médicos\n- 💰 Sistema de Facturación\n- 📦 Gestión de Inventario (Medicamentos, Procedimientos, Ayudas Diagnósticas)\n- 📋 Órdenes Médicas\n- 📊 Historial Médico\n- 📅 Citas Médicas",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "2.0.0"
   },
   "auth": {
     "type": "bearer",
@@ -18,17 +19,38 @@
     {
       "key": "baseUrl",
       "value": "http://localhost:8080",
-      "type": "string"
+      "type": "string",
+      "description": "URL base del servidor API"
     },
     {
       "key": "authToken",
       "value": "",
-      "type": "string"
+      "type": "string",
+      "description": "Token JWT de autenticación"
     },
     {
       "key": "userRole",
       "value": "ADMIN",
-      "type": "string"
+      "type": "string",
+      "description": "Rol del usuario para autorización"
+    },
+    {
+      "key": "patientId",
+      "value": "1",
+      "type": "string",
+      "description": "ID del paciente para pruebas"
+    },
+    {
+      "key": "doctorId",
+      "value": "1",
+      "type": "string",
+      "description": "ID del médico para pruebas"
+    },
+    {
+      "key": "orderNumber",
+      "value": "ORD-001",
+      "type": "string",
+      "description": "Número de orden médica para pruebas"
     }
   ],
   "item": [
@@ -82,7 +104,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"username\": \"medico01\",\n  \"password\": \"password123\",\n  \"fullName\": \"Dr. Juan Pérez\",\n  \"cedula\": \"12345678\",\n  \"email\": \"juan.perez@clinica.com\",\n  \"phone\": \"+57 300 123 4567\",\n  \"birthDate\": \"15/05/1980\",\n  \"address\": \"Calle 123 #45-67, Bogotá\",\n  \"role\": \"MEDICO\"\n}",
+              "raw": "{\n  \"username\": \"medico01\",\n  \"password\": \"password123\",\n  \"fullName\": \"Dr. Juan Pérez\",\n  \"cedula\": \"12345678\",\n  \"email\": \"juan.perez@clinica.com\",\n  \"phone\": \"+57 300 123 4567\",\n  \"birthDate\": \"1980-05-15T00:00:00\",\n  \"address\": \"Calle 123 #45-67, Bogotá\",\n  \"role\": \"MEDICO\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -154,7 +176,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"fullName\": \"Dr. Juan Pérez Actualizado\",\n  \"email\": \"juan.perez.nuevo@clinica.com\",\n  \"phone\": \"+57 300 123 9999\",\n  \"birthDate\": \"15/05/1980\",\n  \"address\": \"Calle 123 #45-67, Bogotá - Actualizada\"\n}",
+              "raw": "{\n  \"fullName\": \"Dr. Juan Pérez Actualizado\",\n  \"email\": \"juan.perez.nuevo@clinica.com\",\n  \"phone\": \"+57 300 123 9999\",\n  \"birthDate\": \"1980-05-15T00:00:00\",\n  \"address\": \"Calle 123 #45-67, Bogotá - Actualizada\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -245,7 +267,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"username\": \"paciente01\",\n  \"password\": \"password123\",\n  \"fullName\": \"María González\",\n  \"cedula\": \"87654321\",\n  \"birthDate\": \"1990-03-20\",\n  \"gender\": \"F\",\n  \"address\": \"Carrera 50 #30-45, Medellín\",\n  \"phone\": \"+57 301 987 6543\",\n  \"email\": \"maria.gonzalez@email.com\",\n  \"emergencyContact\": {\n    \"name\": \"Carlos González\",\n    \"phone\": \"+57 300 555 1234\",\n    \"relationship\": \"Hermano\"\n  },\n  \"insurance\": {\n    \"provider\": \"Sura\",\n    \"policyNumber\": \"POL-123456\",\n    \"coverage\": 80.5\n  }\n}",
+              "raw": "{\n  \"username\": \"paciente01\",\n  \"password\": \"password123\",\n  \"fullName\": \"María González\",\n  \"cedula\": \"87654321\",\n  \"birthDate\": \"1990-03-20T00:00:00\",\n  \"gender\": \"F\",\n  \"address\": \"Carrera 50 #30-45, Medellín\",\n  \"phone\": \"+57 301 987 6543\",\n  \"email\": \"maria.gonzalez@email.com\",\n  \"emergencyContact\": {\n    \"name\": \"Carlos González\",\n    \"phone\": \"+57 300 555 1234\",\n    \"relationship\": \"Hermano\"\n  },\n  \"insurance\": {\n    \"provider\": \"Sura\",\n    \"policyNumber\": \"POL-123456\",\n    \"coverage\": 80.5\n  }\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -312,7 +334,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"username\": \"paciente01\",\n  \"password\": \"password123\",\n  \"fullName\": \"María González Actualizada\",\n  \"cedula\": \"87654321\",\n  \"birthDate\": \"1990-03-20\",\n  \"gender\": \"F\",\n  \"address\": \"Carrera 50 #30-45, Medellín - Actualizada\",\n  \"phone\": \"+57 301 987 6543\",\n  \"email\": \"maria.gonzalez.nuevo@email.com\",\n  \"emergencyContact\": {\n    \"name\": \"Carlos González\",\n    \"phone\": \"+57 300 555 1234\",\n    \"relationship\": \"Hermano\"\n  },\n  \"insurance\": {\n    \"provider\": \"Sura\",\n    \"policyNumber\": \"POL-123456\",\n    \"coverage\": 85.0\n  }\n}",
+              "raw": "{\n  \"username\": \"paciente01\",\n  \"password\": \"password123\",\n  \"fullName\": \"María González Actualizada\",\n  \"cedula\": \"87654321\",\n  \"birthDate\": \"1990-03-20T00:00:00\",\n  \"gender\": \"F\",\n  \"address\": \"Carrera 50 #30-45, Medellín - Actualizada\",\n  \"phone\": \"+57 301 987 6543\",\n  \"email\": \"maria.gonzalez.nuevo@email.com\",\n  \"emergencyContact\": {\n    \"name\": \"Carlos González\",\n    \"phone\": \"+57 300 555 1234\",\n    \"relationship\": \"Hermano\"\n  },\n  \"insurance\": {\n    \"provider\": \"Sura\",\n    \"policyNumber\": \"POL-123456\",\n    \"coverage\": 85.0\n  }\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -362,7 +384,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"patientId\": 1,\n  \"provider\": \"Sura\",\n  \"policyNumber\": \"POL-789012\",\n  \"coverage\": 90.0,\n  \"expirationDate\": \"2024-12-31\"\n}",
+              "raw": "{\n  \"patientId\": 1,\n  \"provider\": \"Sura\",\n  \"policyNumber\": \"POL-789012\",\n  \"coverage\": 90.0,\n  \"expirationDate\": \"2024-12-31T00:00:00\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -412,7 +434,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"patientId\": 1,\n  \"provider\": \"Sura\",\n  \"policyNumber\": \"POL-789012\",\n  \"coverage\": 95.0,\n  \"expirationDate\": \"2025-12-31\"\n}",
+              "raw": "{\n  \"patientId\": 1,\n  \"provider\": \"Sura\",\n  \"policyNumber\": \"POL-789012\",\n  \"coverage\": 95.0,\n  \"expirationDate\": \"2025-12-31T00:00:00\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -456,7 +478,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"patientId\": 1,\n  \"totalAmount\": 150000.0,\n  \"insuranceCoverage\": 80.0,\n  \"patientPayment\": 30000.0,\n  \"details\": [\n    {\n      \"description\": \"Consulta médica general\",\n      \"amount\": 80000.0,\n      \"date\": \"2024-01-15\"\n    },\n    {\n      \"description\": \"Exámenes de laboratorio\",\n      \"amount\": 70000.0,\n      \"date\": \"2024-01-15\"\n    }\n  ]\n}",
+              "raw": "{\n  \"patientId\": 1,\n  \"totalAmount\": 150000.0,\n  \"insuranceCoverage\": 80.0,\n  \"patientPayment\": 30000.0,\n  \"details\": [\n    {\n      \"description\": \"Consulta médica general\",\n      \"amount\": 80000.0,\n      \"date\": \"2024-01-15T00:00:00\"\n    },\n    {\n      \"description\": \"Exámenes de laboratorio\",\n      \"amount\": 70000.0,\n      \"date\": \"2024-01-15T00:00:00\"\n    }\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -698,6 +720,204 @@
               "path": ["inventory", "diagnostic-aids"]
             }
           }
+        },
+        {
+          "name": "Obtener Todos los Medicamentos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/inventory/medications",
+              "host": ["{{baseUrl}}"],
+              "path": ["inventory", "medications"]
+            },
+            "description": "Lista todos los medicamentos disponibles"
+          }
+        },
+        {
+          "name": "Obtener Medicamento por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/inventory/medications/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["inventory", "medications", "1"]
+            },
+            "description": "Obtiene un medicamento específico por su ID"
+          }
+        },
+        {
+          "name": "Actualizar Medicamento",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Paracetamol 500mg Actualizado\",\n  \"description\": \"Analgésico y antipirético - Actualizado\",\n  \"cost\": 1800.0,\n  \"quantity\": 200,\n  \"dosage\": \"500mg\",\n  \"duration\": \"8 horas\",\n  \"frequency\": \"Cada 8 horas\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/inventory/medications/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["inventory", "medications", "1"]
+            },
+            "description": "Actualiza información de un medicamento"
+          }
+        },
+        {
+          "name": "Eliminar Medicamento",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/inventory/medications/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["inventory", "medications", "1"]
+            },
+            "description": "Elimina un medicamento del inventario"
+          }
+        },
+        {
+          "name": "Obtener Todos los Procedimientos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/inventory/procedures",
+              "host": ["{{baseUrl}}"],
+              "path": ["inventory", "procedures"]
+            },
+            "description": "Lista todos los procedimientos médicos disponibles"
+          }
+        },
+        {
+          "name": "Obtener Procedimiento por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/inventory/procedures/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["inventory", "procedures", "1"]
+            },
+            "description": "Obtiene un procedimiento específico por su ID"
+          }
+        },
+        {
+          "name": "Actualizar Procedimiento",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Radiografía de tórax - Actualizada\",\n  \"description\": \"Estudio radiológico del tórax - Actualizado\",\n  \"cost\": 55000.0,\n  \"quantity\": 1,\n  \"frequency\": \"Según necesidad médica\",\n  \"repetitions\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/inventory/procedures/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["inventory", "procedures", "1"]
+            },
+            "description": "Actualiza información de un procedimiento"
+          }
+        },
+        {
+          "name": "Eliminar Procedimiento",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/inventory/procedures/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["inventory", "procedures", "1"]
+            },
+            "description": "Elimina un procedimiento del inventario"
+          }
+        },
+        {
+          "name": "Obtener Todas las Ayudas Diagnósticas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/inventory/diagnostic-aids",
+              "host": ["{{baseUrl}}"],
+              "path": ["inventory", "diagnostic-aids"]
+            },
+            "description": "Lista todas las ayudas diagnósticas disponibles"
+          }
+        },
+        {
+          "name": "Obtener Ayuda Diagnóstica por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/inventory/diagnostic-aids/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["inventory", "diagnostic-aids", "1"]
+            },
+            "description": "Obtiene una ayuda diagnóstica específica por su ID"
+          }
+        },
+        {
+          "name": "Actualizar Ayuda Diagnóstica",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Glucómetro Premium\",\n  \"description\": \"Dispositivo avanzado para medir niveles de glucosa con mayor precisión\",\n  \"cost\": 95000.0,\n  \"quantity\": 8\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/inventory/diagnostic-aids/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["inventory", "diagnostic-aids", "1"]
+            },
+            "description": "Actualiza información de una ayuda diagnóstica"
+          }
+        },
+        {
+          "name": "Eliminar Ayuda Diagnóstica",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/inventory/diagnostic-aids/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["inventory", "diagnostic-aids", "1"]
+            },
+            "description": "Elimina una ayuda diagnóstica del inventario"
+          }
         }
       ]
     },
@@ -925,9 +1145,9 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/medical-history/87654321/2024-01-15",
+              "raw": "{{baseUrl}}/medical-history/87654321/2024-01-15T00:00:00",
               "host": ["{{baseUrl}}"],
-              "path": ["medical-history", "87654321", "2024-01-15"]
+              "path": ["medical-history", "87654321", "2024-01-15T00:00:00"]
             }
           }
         },
@@ -944,6 +1164,63 @@
           }
         }
       ]
+    },
+    {
+      "name": "Citas Médicas",
+      "description": "Gestión completa de citas médicas",
+      "item": [
+        {
+          "name": "Crear Cita Médica",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Role",
+                "value": "{{userRole}}",
+                "description": "Rol del usuario que crea la cita"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patientId\": {{patientId}},\n  \"doctorId\": {{doctorId}},\n  \"appointmentDate\": \"2024-02-15T10:30:00Z\",\n  \"appointmentType\": \"CONSULTA_GENERAL\",\n  \"notes\": \"Control de rutina mensual\",\n  \"duration\": 30\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/appointments",
+              "host": ["{{baseUrl}}"],
+              "path": ["appointments"]
+            },
+            "description": "Crea una nueva cita médica en el sistema"
+          }
+        },
+        {
+          "name": "Obtener Todas las Citas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Role",
+                "value": "{{userRole}}",
+                "description": "Rol del usuario que consulta"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/appointments",
+              "host": ["{{baseUrl}}"],
+              "path": ["appointments"]
+            },
+            "description": "Lista todas las citas médicas del sistema"
+          }
+        }
+      ]
     }
   ],
   "event": [
@@ -952,16 +1229,67 @@
       "script": {
         "type": "text/javascript",
         "exec": [
-          "// Script de pre-solicitud para configurar autenticación",
-          "// Se ejecuta antes de cada request",
+          "// ===============================================",
+          "// CLINIC IPS - Script de Pre-request Optimizado",
+          "// ===============================================",
+          "// Configuración automática de autenticación y headers",
           "",
-          "// Si tienes un token de autenticación, configúralo aquí",
-          "// pm.request.headers.add({key: 'Authorization', value: 'Bearer ' + pm.variables.get('authToken')});",
+          "// Función para configurar headers comunes",
+          "function setCommonHeaders() {",
+          "    const authToken = pm.variables.get('authToken');",
+          "    if (authToken && authToken.trim() !== '') {",
+          "        pm.request.headers.upsert({",
+          "            key: 'Authorization',",
+          "            value: 'Bearer ' + authToken",
+          "        });",
+          "    }",
           "",
-          "// Ejemplo de configuración automática de headers basada en el rol",
-          "const role = pm.variables.get('userRole');",
-          "if (role) {",
-          "    pm.request.headers.add({key: 'Role', value: role});",
+          "    const userRole = pm.variables.get('userRole');",
+          "    if (userRole && userRole.trim() !== '') {",
+          "        pm.request.headers.upsert({",
+          "            key: 'Role',",
+          "            value: userRole",
+          "        });",
+          "    }",
+          "",
+          "    if (pm.request.body && pm.request.body.mode === 'raw') {",
+          "        pm.request.headers.upsert({",
+          "            key: 'Content-Type',",
+          "            value: 'application/json'",
+          "        });",
+          "    }",
+          "}",
+          "",
+          "// Función para manejar endpoints específicos",
+          "function handleSpecialEndpoints() {",
+          "    const requestUrl = pm.request.url.toString();",
+          "",
+          "    // Login - No requiere autenticación previa",
+          "    if (requestUrl.includes('/authenticate')) {",
+          "        pm.request.headers.remove('Authorization');",
+          "        pm.request.headers.remove('Role');",
+          "        return;",
+          "    }",
+          "",
+          "    // Endpoints públicos (seguros, facturación básica)",
+          "    const publicEndpoints = ['/insurances', '/billings'];",
+          "    const isPublicEndpoint = publicEndpoints.some(endpoint => requestUrl.includes(endpoint));",
+          "    if (isPublicEndpoint && !requestUrl.includes('/patient/')) {",
+          "        pm.request.headers.remove('Role');",
+          "    }",
+          "}",
+          "",
+          "// Ejecutar configuraciones",
+          "try {",
+          "    setCommonHeaders();",
+          "    handleSpecialEndpoints();",
+          "",
+          "    // Log de información de debug",
+          "    console.log('🚀 Request:', pm.request.method, pm.request.url.toString());",
+          "    console.log('👤 Role:', pm.variables.get('userRole') || 'No role');",
+          "    console.log('🔐 Auth:', pm.variables.get('authToken') ? 'Bearer token present' : 'No token');",
+          "} catch (error) {",
+          "    console.error('❌ Error in pre-request script:', error.message);",
           "}"
         ]
       }
@@ -971,26 +1299,152 @@
       "script": {
         "type": "text/javascript",
         "exec": [
-          "// Script de test para validar respuestas",
-          "// Se ejecuta después de cada response",
+          "// ===============================================",
+          "// CLINIC IPS - Script de Tests Optimizado",
+          "// ===============================================",
+          "// Validaciones automáticas y gestión de tokens",
           "",
-          "// Ejemplo: Si la respuesta es de autenticación, guardar el token",
-          "if (pm.response.code === 200 && pm.request.url.toString().includes('/authenticate')) {",
-          "    const response = pm.response.json();",
-          "    if (response && response.token) {",
-          "        pm.variables.set('authToken', response.token);",
+          "// Función para tests básicos",
+          "function runBasicTests() {",
+          "    const responseTime = pm.response.responseTime;",
+          "    const statusCode = pm.response.code;",
+          "    const requestUrl = pm.request.url.toString();",
+          "",
+          "    console.log('📊 Response:', statusCode, '- Time:', responseTime + 'ms');",
+          "",
+          "    pm.test('Status code is valid', function () {",
+          "        pm.expect(statusCode).to.be.oneOf([200, 201, 204, 400, 401, 403, 404, 422]);",
+          "    });",
+          "",
+          "    pm.test('Response time is acceptable', function () {",
+          "        pm.expect(responseTime).to.be.below(5000); // Menos de 5 segundos",
+          "    });",
+          "",
+          "    if (pm.response.headers.get('Content-Type') && pm.response.headers.get('Content-Type').includes('application/json')) {",
+          "        pm.test('Has valid JSON structure', function () {",
+          "            pm.response.to.be.json;",
+          "        });",
           "    }",
           "}",
           "",
-          "// Validar códigos de estado comunes",
-          "pm.test('Status code is not 500', function () {",
-          "    pm.response.to.not.have.status(500);",
-          "});",
+          "// Función para manejar tokens",
+          "function handleAuthToken() {",
+          "    const statusCode = pm.response.code;",
+          "    const requestUrl = pm.request.url.toString();",
           "",
-          "// Mostrar información útil en consola",
-          "console.log('Request URL:', pm.request.url.toString());",
-          "console.log('Response Status:', pm.response.code);",
-          "console.log('Response Time:', pm.response.responseTime, 'ms');"
+          "    if (statusCode === 200 && requestUrl.includes('/authenticate')) {",
+          "        const response = pm.response.json();",
+          "        if (response && response.token) {",
+          "            pm.variables.set('authToken', response.token);",
+          "            console.log('✅ Token JWT guardado automáticamente');",
+          "            pm.test('Authentication token saved', function () {",
+          "                pm.expect(response.token).to.not.be.empty;",
+          "            });",
+          "        }",
+          "    }",
+          "}",
+          "",
+          "// Función para tests específicos por status",
+          "function runStatusSpecificTests() {",
+          "    const statusCode = pm.response.code;",
+          "",
+          "    if (statusCode === 200) {",
+          "        pm.test('Successful response has content', function () {",
+          "            if (pm.response.headers.get('Content-Length')) {",
+          "                pm.expect(parseInt(pm.response.headers.get('Content-Length'))).to.be.above(0);",
+          "            }",
+          "        });",
+          "    }",
+          "",
+          "    if (statusCode === 201) {",
+          "        pm.test('Resource created successfully', function () {",
+          "            pm.expect(pm.response.text()).to.not.be.empty;",
+          "        });",
+          "    }",
+          "",
+          "    if (statusCode === 204) {",
+          "        pm.test('No content response is valid', function () {",
+          "            pm.expect(pm.response.text()).to.be.empty;",
+          "        });",
+          "    }",
+          "",
+          "    if (statusCode >= 400) {",
+          "        pm.test('Error response has proper structure', function () {",
+          "            if (pm.response.headers.get('Content-Type') && pm.response.headers.get('Content-Type').includes('application/json')) {",
+          "                const errorResponse = pm.response.json();",
+          "                if (errorResponse) {",
+          "                    pm.expect(errorResponse).to.have.property('error');",
+          "                    pm.expect(errorResponse).to.have.property('message');",
+          "                    pm.expect(errorResponse).to.have.property('status');",
+          "                }",
+          "            }",
+          "        });",
+          "    }",
+          "}",
+          "",
+          "// Función para validar listas",
+          "function validateLists() {",
+          "    const requestUrl = pm.request.url.toString();",
+          "    const statusCode = pm.response.code;",
+          "",
+          "    if (statusCode === 200) {",
+          "        if (requestUrl.includes('/users') || requestUrl.includes('/patients')) {",
+          "            const response = pm.response.json();",
+          "            if (Array.isArray(response)) {",
+          "                pm.test('List is not empty', function () {",
+          "                    pm.expect(response.length).to.be.above(0);",
+          "                });",
+          "            }",
+          "        }",
+          "    }",
+          "}",
+          "",
+          "// Función para validar formato de fechas",
+          "function validateDateFormats() {",
+          "    if (pm.response.json()) {",
+          "        const response = pm.response.json();",
+          "        ",
+          "        function validateDateFormat(obj, path = '') {",
+          "            for (const key in obj) {",
+          "                if (obj.hasOwnProperty(key)) {",
+          "                    const currentPath = path ? `${path}.${key}` : key;",
+          "                    const value = obj[key];",
+          "                    ",
+          "                    if (typeof key === 'string' && (key.toLowerCase().includes('date') || key.toLowerCase().includes('time'))) {",
+          "                        if (typeof value === 'string' && value.trim() !== '') {",
+          "                            const iso8601Regex = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z?$/;",
+          "                            if (!iso8601Regex.test(value)) {",
+          "                                console.warn(`⚠️  Campo de fecha no está en formato ISO 8601: ${currentPath} = ${value}`);",
+          "                            }",
+          "                        }",
+          "                    }",
+          "                    ",
+          "                    if (typeof value === 'object' && value !== null) {",
+          "                        validateDateFormat(value, currentPath);",
+          "                    }",
+          "                }",
+          "            }",
+          "        }",
+          "        ",
+          "        validateDateFormat(response);",
+          "    }",
+          "}",
+          "",
+          "// Ejecutar todos los tests",
+          "try {",
+          "    runBasicTests();",
+          "    handleAuthToken();",
+          "    runStatusSpecificTests();",
+          "    validateLists();",
+          "    validateDateFormats();",
+          "",
+          "    console.log('✅ Tests completed for:', pm.request.url.toString());",
+          "} catch (error) {",
+          "    console.error('❌ Error in test script:', error.message);",
+          "    pm.test('Script execution successful', function () {",
+          "        pm.expect(error).to.not.exist;",
+          "    });",
+          "}"
         ]
       }
     }

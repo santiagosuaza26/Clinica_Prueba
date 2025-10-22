@@ -20,17 +20,27 @@ public class AuthenticateUserUseCase {
     }
 
     public LoginResponseDto execute(String username, String rawPassword) {
+        System.out.println("Iniciando autenticación para usuario: " + username);
         // Buscar usuario
         User user = repository.findByUsername(username)
-                .orElseThrow(() -> new AuthenticationException("Usuario o contraseña incorrectos."));
+                .orElseThrow(() -> {
+                    System.out.println("Usuario no encontrado: " + username);
+                    return new AuthenticationException("Usuario o contraseña incorrectos.");
+                });
+
+        System.out.println("Usuario encontrado: " + user.getUsername() + ", Rol: " + user.getRole().name());
 
         // Validar contraseña
         if (!passwordEncoder.matches(rawPassword, user.getPassword())) {
+            System.out.println("Contraseña incorrecta para usuario: " + username);
             throw new AuthenticationException("Usuario o contraseña incorrectos.");
         }
 
+        System.out.println("Contraseña validada correctamente.");
+
         // Generar token JWT
         String token = jwtUtil.generateToken(user.getUsername(), user.getRole().name());
+        System.out.println("Token JWT generado para usuario: " + username);
 
         return new LoginResponseDto(token, user.getUsername(), user.getRole().name());
     }
