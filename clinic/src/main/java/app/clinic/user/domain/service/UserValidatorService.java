@@ -12,13 +12,5 @@ public class UserValidatorService {
         GlobalValidator.validateBirthDate(user.getBirthDate());
         GlobalValidator.validatePassword(user.getPassword());
         GlobalValidator.validateTextLength(user.getAddress(), 30, "dirección");
-
-        if (user.getUsername() == null || user.getUsername().isBlank()) {
-            throw new ValidationException("El nombre de usuario no puede estar vacío.");
-        }
-
-        if (user.getCedula() == null || user.getCedula().isBlank()) {
-            throw new ValidationException("La cédula no puede estar vacía.");
-        }
     }
 }
