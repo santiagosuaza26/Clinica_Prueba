@@ -1,0 +1,998 @@
+{
+  "info": {
+    "name": "Clinic IPS - API Completa",
+    "description": "Colección completa de la API REST para el sistema de Clínica IPS. Incluye todos los endpoints disponibles para usuarios, pacientes, seguros, facturación, inventario, órdenes médicas e historial médico.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{authToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "userRole",
+      "value": "ADMIN",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Autenticación",
+      "description": "Endpoints para autenticación de usuarios",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/authenticate",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "authenticate"]
+            },
+            "description": "Autenticar usuario y obtener token. Nota: Este endpoint no requiere autenticación previa."
+          }
+        }
+      ],
+      "description": "Operaciones de autenticación"
+    },
+    {
+      "name": "Usuarios",
+      "description": "Gestión completa de usuarios del sistema",
+      "item": [
+        {
+          "name": "Crear Usuario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Role",
+                "value": "{{userRole}}",
+                "description": "Rol del usuario que crea"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"medico01\",\n  \"password\": \"password123\",\n  \"fullName\": \"Dr. Juan Pérez\",\n  \"cedula\": \"12345678\",\n  \"email\": \"juan.perez@clinica.com\",\n  \"phone\": \"+57 300 123 4567\",\n  \"birthDate\": \"1980-05-15\",\n  \"address\": \"Calle 123 #45-67, Bogotá\",\n  \"role\": \"MEDICO\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            }
+          }
+        },
+        {
+          "name": "Obtener Todos los Usuarios",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Role",
+                "value": "{{userRole}}",
+                "description": "Rol del usuario que consulta"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            }
+          }
+        },
+        {
+          "name": "Obtener Usuario por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Role",
+                "value": "{{userRole}}",
+                "description": "Rol del usuario que consulta"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "1"]
+            }
+          }
+        },
+        {
+          "name": "Actualizar Usuario",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Role",
+                "value": "{{userRole}}",
+                "description": "Rol del usuario que actualiza"
+              },
+              {
+                "key": "Username",
+                "value": "admin",
+                "description": "Username del usuario que actualiza"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Dr. Juan Pérez Actualizado\",\n  \"email\": \"juan.perez.nuevo@clinica.com\",\n  \"phone\": \"+57 300 123 9999\",\n  \"birthDate\": \"1980-05-15\",\n  \"address\": \"Calle 123 #45-67, Bogotá - Actualizada\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "1"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar Usuario",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Role",
+                "value": "{{userRole}}",
+                "description": "Rol del usuario que elimina"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "1"]
+            }
+          }
+        },
+        {
+          "name": "Cambiar Contraseña",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Role",
+                "value": "{{userRole}}",
+                "description": "Rol del usuario que cambia la contraseña"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"medico01\",\n  \"oldPassword\": \"password123\",\n  \"newPassword\": \"nuevaPassword456\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/1/change-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "1", "change-password"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Pacientes",
+      "description": "Gestión completa de pacientes",
+      "item": [
+        {
+          "name": "Crear Paciente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Role",
+                "value": "{{userRole}}",
+                "description": "Rol del usuario que crea"
+              },
+              {
+                "key": "UserId",
+                "value": "1",
+                "description": "ID del usuario que crea (opcional)"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"paciente01\",\n  \"password\": \"password123\",\n  \"fullName\": \"María González\",\n  \"cedula\": \"87654321\",\n  \"birthDate\": \"1990-03-20\",\n  \"gender\": \"F\",\n  \"address\": \"Carrera 50 #30-45, Medellín\",\n  \"phone\": \"+57 301 987 6543\",\n  \"email\": \"maria.gonzalez@email.com\",\n  \"emergencyContact\": {\n    \"name\": \"Carlos González\",\n    \"phone\": \"+57 300 555 1234\",\n    \"relationship\": \"Hermano\"\n  },\n  \"insurance\": {\n    \"provider\": \"Sura\",\n    \"policyNumber\": \"POL-123456\",\n    \"coverage\": 80.5\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/patients",
+              "host": ["{{baseUrl}}"],
+              "path": ["patients"]
+            }
+          }
+        },
+        {
+          "name": "Obtener Todos los Pacientes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Role",
+                "value": "{{userRole}}",
+                "description": "Rol del usuario que consulta"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/patients",
+              "host": ["{{baseUrl}}"],
+              "path": ["patients"]
+            }
+          }
+        },
+        {
+          "name": "Obtener Paciente por Cédula",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Role",
+                "value": "{{userRole}}",
+                "description": "Rol del usuario que consulta"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/patients/87654321",
+              "host": ["{{baseUrl}}"],
+              "path": ["patients", "87654321"]
+            }
+          }
+        },
+        {
+          "name": "Actualizar Paciente",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Role",
+                "value": "{{userRole}}",
+                "description": "Rol del usuario que actualiza"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"paciente01\",\n  \"password\": \"password123\",\n  \"fullName\": \"María González Actualizada\",\n  \"cedula\": \"87654321\",\n  \"birthDate\": \"1990-03-20\",\n  \"gender\": \"F\",\n  \"address\": \"Carrera 50 #30-45, Medellín - Actualizada\",\n  \"phone\": \"+57 301 987 6543\",\n  \"email\": \"maria.gonzalez.nuevo@email.com\",\n  \"emergencyContact\": {\n    \"name\": \"Carlos González\",\n    \"phone\": \"+57 300 555 1234\",\n    \"relationship\": \"Hermano\"\n  },\n  \"insurance\": {\n    \"provider\": \"Sura\",\n    \"policyNumber\": \"POL-123456\",\n    \"coverage\": 85.0\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/patients/87654321",
+              "host": ["{{baseUrl}}"],
+              "path": ["patients", "87654321"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar Paciente",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Role",
+                "value": "{{userRole}}",
+                "description": "Rol del usuario que elimina"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/patients/87654321",
+              "host": ["{{baseUrl}}"],
+              "path": ["patients", "87654321"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Seguros",
+      "description": "Gestión de seguros médicos",
+      "item": [
+        {
+          "name": "Crear Seguro",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patientId\": 1,\n  \"provider\": \"Sura\",\n  \"policyNumber\": \"POL-789012\",\n  \"coverage\": 90.0,\n  \"expirationDate\": \"2024-12-31\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/insurances",
+              "host": ["{{baseUrl}}"],
+              "path": ["insurances"]
+            }
+          }
+        },
+        {
+          "name": "Obtener Todos los Seguros",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/insurances",
+              "host": ["{{baseUrl}}"],
+              "path": ["insurances"]
+            }
+          }
+        },
+        {
+          "name": "Obtener Seguro por Paciente",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/insurances/patient/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["insurances", "patient", "1"]
+            }
+          }
+        },
+        {
+          "name": "Actualizar Seguro",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patientId\": 1,\n  \"provider\": \"Sura\",\n  \"policyNumber\": \"POL-789012\",\n  \"coverage\": 95.0,\n  \"expirationDate\": \"2025-12-31\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/insurances/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["insurances", "1"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar Seguro",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/insurances/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["insurances", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Facturación",
+      "description": "Gestión de facturación médica",
+      "item": [
+        {
+          "name": "Crear Factura",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patientId\": 1,\n  \"totalAmount\": 150000.0,\n  \"insuranceCoverage\": 80.0,\n  \"patientPayment\": 30000.0,\n  \"details\": [\n    {\n      \"description\": \"Consulta médica general\",\n      \"amount\": 80000.0,\n      \"date\": \"2024-01-15\"\n    },\n    {\n      \"description\": \"Exámenes de laboratorio\",\n      \"amount\": 70000.0,\n      \"date\": \"2024-01-15\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/billings",
+              "host": ["{{baseUrl}}"],
+              "path": ["billings"]
+            }
+          }
+        },
+        {
+          "name": "Obtener Todas las Facturas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/billings",
+              "host": ["{{baseUrl}}"],
+              "path": ["billings"]
+            }
+          }
+        },
+        {
+          "name": "Obtener Facturas por Paciente",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/billings/patient/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["billings", "patient", "1"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar Factura",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/billings/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["billings", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Inventario",
+      "description": "Gestión completa del inventario médico",
+      "item": [
+        {
+          "name": "Crear Ítem de Inventario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"MEDICATION\",\n  \"name\": \"Paracetamol 500mg\",\n  \"description\": \"Analgésico y antipirético\",\n  \"cost\": 1500.0,\n  \"quantity\": 100,\n  \"dosage\": \"500mg\",\n  \"duration\": \"8 horas\",\n  \"frequency\": \"Cada 8 horas\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/inventory",
+              "host": ["{{baseUrl}}"],
+              "path": ["inventory"]
+            }
+          }
+        },
+        {
+          "name": "Obtener Todos los Ítems",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/inventory?type=MEDICATION",
+              "host": ["{{baseUrl}}"],
+              "path": ["inventory"],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "MEDICATION",
+                  "description": "Tipo de ítem de inventario"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obtener Ítem por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/inventory/1?type=MEDICATION",
+              "host": ["{{baseUrl}}"],
+              "path": ["inventory", "1"],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "MEDICATION",
+                  "description": "Tipo de ítem de inventario"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Actualizar Ítem",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"MEDICATION\",\n  \"name\": \"Paracetamol 500mg\",\n  \"description\": \"Analgésico y antipirético - Actualizado\",\n  \"cost\": 1600.0,\n  \"quantity\": 150,\n  \"dosage\": \"500mg\",\n  \"duration\": \"8 horas\",\n  \"frequency\": \"Cada 8 horas\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/inventory/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["inventory", "1"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar Ítem",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/inventory/1?type=MEDICATION",
+              "host": ["{{baseUrl}}"],
+              "path": ["inventory", "1"],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "MEDICATION",
+                  "description": "Tipo de ítem de inventario"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Crear Medicamento",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Ibuprofeno 400mg\",\n  \"description\": \"Antiinflamatorio no esteroideo\",\n  \"cost\": 2000.0,\n  \"quantity\": 200,\n  \"dosage\": \"400mg\",\n  \"duration\": \"6 horas\",\n  \"frequency\": \"Cada 6-8 horas\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/inventory/medications",
+              "host": ["{{baseUrl}}"],
+              "path": ["inventory", "medications"]
+            }
+          }
+        },
+        {
+          "name": "Crear Procedimiento",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Radiografía de tórax\",\n  \"description\": \"Estudio radiológico del tórax\",\n  \"cost\": 50000.0,\n  \"quantity\": 1,\n  \"frequency\": \"Según necesidad\",\n  \"repetitions\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/inventory/procedures",
+              "host": ["{{baseUrl}}"],
+              "path": ["inventory", "procedures"]
+            }
+          }
+        },
+        {
+          "name": "Crear Ayuda Diagnóstica",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Glucómetro\",\n  \"description\": \"Dispositivo para medir niveles de glucosa\",\n  \"cost\": 80000.0,\n  \"quantity\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/inventory/diagnostic-aids",
+              "host": ["{{baseUrl}}"],
+              "path": ["inventory", "diagnostic-aids"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Órdenes Médicas",
+      "description": "Gestión completa de órdenes médicas",
+      "item": [
+        {
+          "name": "Crear Orden Médica",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Role",
+                "value": "MEDICO",
+                "description": "Solo médicos pueden crear órdenes"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patientId\": 1,\n  \"doctorId\": 1,\n  \"items\": [\n    {\n      \"type\": \"MEDICATION\",\n      \"id\": 1,\n      \"quantity\": 2,\n      \"instructions\": \"Tomar cada 8 horas\"\n    },\n    {\n      \"type\": \"PROCEDURE\",\n      \"id\": 1,\n      \"quantity\": 1,\n      \"instructions\": \"Realizar antes del tratamiento\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders"]
+            }
+          }
+        },
+        {
+          "name": "Obtener Todas las Órdenes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Role",
+                "value": "{{userRole}}",
+                "description": "Solo médicos y soporte pueden consultar órdenes"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders"]
+            }
+          }
+        },
+        {
+          "name": "Obtener Orden por Número",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Role",
+                "value": "{{userRole}}",
+                "description": "Rol del usuario que consulta"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/orders/ORD-001",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders", "ORD-001"]
+            }
+          }
+        },
+        {
+          "name": "Actualizar Orden",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Role",
+                "value": "MEDICO",
+                "description": "Solo médicos pueden actualizar órdenes"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patientId\": 1,\n  \"doctorId\": 1,\n  \"items\": [\n    {\n      \"type\": \"MEDICATION\",\n      \"id\": 1,\n      \"quantity\": 3,\n      \"instructions\": \"Tomar cada 8 horas - dosis aumentada\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders/ORD-001",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders", "ORD-001"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar Orden",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Role",
+                "value": "{{userRole}}",
+                "description": "Solo médicos y soporte pueden eliminar órdenes"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/orders/ORD-001",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders", "ORD-001"]
+            }
+          }
+        },
+        {
+          "name": "Agregar Ítem a Orden",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Role",
+                "value": "{{userRole}}",
+                "description": "Solo médicos y enfermeras pueden modificar ítems"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"MEDICATION\",\n  \"id\": 2,\n  \"quantity\": 1,\n  \"instructions\": \"Tomar en caso de fiebre\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders/ORD-001/items",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders", "ORD-001", "items"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar Ítem de Orden",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Role",
+                "value": "{{userRole}}",
+                "description": "Solo médicos y enfermeras pueden modificar ítems"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/orders/ORD-001/items/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["orders", "ORD-001", "items", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Historial Médico",
+      "description": "Gestión del historial médico de pacientes",
+      "item": [
+        {
+          "name": "Crear/Actualizar Visita Médica",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Role",
+                "value": "{{userRole}}",
+                "description": "Solo médicos y enfermeras pueden crear visitas"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"doctorId\": 1,\n  \"diagnosis\": \"Hipertensión arterial\",\n  \"symptoms\": \"Dolor de cabeza, mareos\",\n  \"treatment\": \"Medicación antihipertensiva\",\n  \"notes\": \"Paciente estable, continuar tratamiento\",\n  \"vitalSigns\": {\n    \"bloodPressure\": \"140/90\",\n    \"heartRate\": 75,\n    \"temperature\": 36.5,\n    \"weight\": 70.5,\n    \"height\": 175\n  },\n  \"prescriptions\": [\n    {\n      \"medicationId\": 1,\n      \"dosage\": \"1 tableta\",\n      \"frequency\": \"Cada 12 horas\",\n      \"duration\": \"30 días\"\n    }\n  ],\n  \"procedures\": [\n    {\n      \"procedureId\": 1,\n      \"notes\": \"Control de rutina\"\n    }\n  ],\n  \"diagnosticAids\": [\n    {\n      \"diagnosticAidId\": 1,\n      \"results\": \"Normales\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/medical-history/87654321",
+              "host": ["{{baseUrl}}"],
+              "path": ["medical-history", "87654321"]
+            }
+          }
+        },
+        {
+          "name": "Obtener Historial por Paciente",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/medical-history/87654321",
+              "host": ["{{baseUrl}}"],
+              "path": ["medical-history", "87654321"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar Visita",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/medical-history/87654321/2024-01-15",
+              "host": ["{{baseUrl}}"],
+              "path": ["medical-history", "87654321", "2024-01-15"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar Historial Completo",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/medical-history/87654321",
+              "host": ["{{baseUrl}}"],
+              "path": ["medical-history", "87654321"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Script de pre-solicitud para configurar autenticación",
+          "// Se ejecuta antes de cada request",
+          "",
+          "// Si tienes un token de autenticación, configúralo aquí",
+          "// pm.request.headers.add({key: 'Authorization', value: 'Bearer ' + pm.variables.get('authToken')});",
+          "",
+          "// Ejemplo de configuración automática de headers basada en el rol",
+          "const role = pm.variables.get('userRole');",
+          "if (role) {",
+          "    pm.request.headers.add({key: 'Role', value: role});",
+          "}"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Script de test para validar respuestas",
+          "// Se ejecuta después de cada response",
+          "",
+          "// Ejemplo: Si la respuesta es de autenticación, guardar el token",
+          "if (pm.response.code === 200 && pm.request.url.toString().includes('/authenticate')) {",
+          "    const response = pm.response.json();",
+          "    if (response && response.token) {",
+          "        pm.variables.set('authToken', response.token);",
+          "    }",
+          "}",
+          "",
+          "// Validar códigos de estado comunes",
+          "pm.test('Status code is not 500', function () {",
+          "    pm.response.to.not.have.status(500);",
+          "});",
+          "",
+          "// Mostrar información útil en consola",
+          "console.log('Request URL:', pm.request.url.toString());",
+          "console.log('Response Status:', pm.response.code);",
+          "console.log('Response Time:', pm.response.responseTime, 'ms');"
+        ]
+      }
+    }
+  ]
+}
