@@ -3,6 +3,7 @@ package app.clinic.user.infrastructure.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import app.clinic.shared.infrastructure.config.JwtUtil;
 import app.clinic.user.application.usecase.AuthenticateUserUseCase;
 import app.clinic.user.application.usecase.ChangePasswordUseCase;
 import app.clinic.user.application.usecase.CreateUserUseCase;
@@ -61,10 +62,11 @@ public class UserConfig {
 
     @Bean
     public AuthenticateUserUseCase authenticateUserUseCase(
-            UserRepository userRepository,
-            PasswordEncoderService passwordEncoderService) {
-        return new AuthenticateUserUseCase(userRepository, passwordEncoderService);
-    }
+             UserRepository userRepository,
+             PasswordEncoderService passwordEncoderService,
+             JwtUtil jwtUtil) {
+         return new AuthenticateUserUseCase(userRepository, passwordEncoderService, jwtUtil);
+     }
 
     @Bean
     public ChangePasswordUseCase changePasswordUseCase(

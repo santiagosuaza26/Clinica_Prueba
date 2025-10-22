@@ -9,13 +9,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import app.clinic.shared.domain.exception.ValidationException;
+import app.clinic.shared.infrastructure.config.SecurityUtils;
 import app.clinic.user.application.dto.ChangePasswordDto;
 import app.clinic.user.application.dto.LoginRequestDto;
+import app.clinic.user.application.dto.LoginResponseDto;
 import app.clinic.user.application.dto.UserRequestDto;
 import app.clinic.user.application.dto.UserResponseDto;
 import app.clinic.user.application.dto.UserUpdateDto;
@@ -61,55 +62,66 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserResponseDto> createUser(
-        @RequestBody UserRequestDto dto,
-        @RequestHeader("Role") String creatorRoleHeader
+         @RequestBody UserRequestDto dto
     ) {
+        String creatorRoleStr = SecurityUtils.getCurrentRole();
+        if (creatorRoleStr == null) {
+            throw new ValidationException("Rol no encontrado en el token.");
+        }
         try {
-            Role creatorRole = Role.valueOf(creatorRoleHeader.toUpperCase());
+            Role creatorRole = Role.valueOf(creatorRoleStr.toUpperCase());
             User user = UserMapper.toDomain(dto, dto.password());
             User created = createUserUseCase.execute(user, creatorRole);
             return ResponseEntity.ok(UserMapper.toResponse(created));
         } catch (IllegalArgumentException e) {
-            throw new ValidationException("Rol inválido: " + creatorRoleHeader);
+            throw new ValidationException("Rol inválido: " + creatorRoleStr);
         }
     }
 
     @GetMapping
-    public ResponseEntity<List<UserResponseDto>> getAll(
-        @RequestHeader("Role") String requesterRoleHeader
-    ) {
+    public ResponseEntity<List<UserResponseDto>> getAll() {
+        String requesterRoleStr = SecurityUtils.getCurrentRole();
+        if (requesterRoleStr == null) {
+            throw new ValidationException("Rol no encontrado en el token.");
+        }
         try {
-            Role requesterRole = Role.valueOf(requesterRoleHeader.toUpperCase());
+            Role requesterRole = Role.valueOf(requesterRoleStr.toUpperCase());
             List<User> users = getAllUsersUseCase.execute(requesterRole);
             return ResponseEntity.ok(users.stream().map(UserMapper::toResponse).toList());
         } catch (IllegalArgumentException e) {
-            throw new ValidationException("Rol inválido: " + requesterRoleHeader);
+            throw new ValidationException("Rol inválido: " + requesterRoleStr);
         }
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDto> getById(
-        @PathVariable Long id,
-        @RequestHeader("Role") String requesterRoleHeader
+         @PathVariable Long id
     ) {
+        String requesterRoleStr = SecurityUtils.getCurrentRole();
+        if (requesterRoleStr == null) {
+            throw new ValidationException("Rol no encontrado en el token.");
+        }
         try {
-            Role requesterRole = Role.valueOf(requesterRoleHeader.toUpperCase());
+            Role requesterRole = Role.valueOf(requesterRoleStr.toUpperCase());
             User user = getUserByIdUseCase.execute(id, requesterRole);
             return ResponseEntity.ok(UserMapper.toResponse(user));
         } catch (IllegalArgumentException e) {
-            throw new ValidationException("Rol inválido: " + requesterRoleHeader);
+            throw new ValidationException("Rol inválido: " + requesterRoleStr);
         }
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<UserResponseDto> updateUser(
-        @PathVariable Long id,
-        @RequestBody UserUpdateDto dto,
-        @RequestHeader("Role") String requesterRoleHeader,
-        @RequestHeader("Username") String requesterUsername
+         @PathVariable Long id,
+         @RequestBody UserUpdateDto dto
     ) {
+        String requesterRoleStr = SecurityUtils.getCurrentRole();
+        String requesterUsername = SecurityUtils.getCurrentUsername();
+        if (requesterRoleStr == null || requesterUsername == null) {
+            throw new ValidationException("Rol o username no encontrado en el token.");
+        }
         try {
-            Role requesterRole = Role.valueOf(requesterRoleHeader.toUpperCase());
+            Role requesterRole = Role.valueOf(requesterRoleStr.toUpperCase());
 
             // Convertir DTO a User para actualización
             User updatedData = new User();
@@ -122,44 +134,50 @@ public class UserController {
             User updated = updateUserUseCase.execute(id, updatedData, requesterRole, requesterUsername);
             return ResponseEntity.ok(UserMapper.toResponse(updated));
         } catch (IllegalArgumentException e) {
-            throw new ValidationException("Rol inválido: " + requesterRoleHeader);
+            throw new ValidationException("Rol inválido: " + requesterRoleStr);
         }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(
-        @PathVariable Long id,
-        @RequestHeader("Role") String requesterRoleHeader
+         @PathVariable Long id
     ) {
+        String requesterRoleStr = SecurityUtils.getCurrentRole();
+        if (requesterRoleStr == null) {
+            throw new ValidationException("Rol no encontrado en el token.");
+        }
         try {
-            Role requesterRole = Role.valueOf(requesterRoleHeader.toUpperCase());
+            Role requesterRole = Role.valueOf(requesterRoleStr.toUpperCase());
             deleteUserUseCase.execute(id, requesterRole);
             return ResponseEntity.noContent().build();
         } catch (IllegalArgumentException e) {
-            throw new ValidationException("Rol inválido: " + requesterRoleHeader);
+            throw new ValidationException("Rol inválido: " + requesterRoleStr);
         }
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<UserResponseDto> authenticate(
-        @RequestBody LoginRequestDto dto
+    public ResponseEntity<LoginResponseDto> authenticate(
+         @RequestBody LoginRequestDto dto
     ) {
-        User user = authenticateUserUseCase.execute(dto.username(), dto.password());
-        return ResponseEntity.ok(UserMapper.toResponse(user));
+        LoginResponseDto response = authenticateUserUseCase.execute(dto.username(), dto.password());
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/{id}/change-password")
     public ResponseEntity<Void> changePassword(
-        @PathVariable Long id,
-        @RequestBody ChangePasswordDto dto,
-        @RequestHeader("Role") String requesterRoleHeader
+         @PathVariable Long id,
+         @RequestBody ChangePasswordDto dto
     ) {
+        String requesterRoleStr = SecurityUtils.getCurrentRole();
+        if (requesterRoleStr == null) {
+            throw new ValidationException("Rol no encontrado en el token.");
+        }
         try {
-            Role requesterRole = Role.valueOf(requesterRoleHeader.toUpperCase());
+            Role requesterRole = Role.valueOf(requesterRoleStr.toUpperCase());
             changePasswordUseCase.execute(dto.username(), dto.oldPassword(), dto.newPassword(), requesterRole);
             return ResponseEntity.ok().build();
         } catch (IllegalArgumentException e) {
-            throw new ValidationException("Rol inválido: " + requesterRoleHeader);
+            throw new ValidationException("Rol inválido: " + requesterRoleStr);
         }
     }
 }

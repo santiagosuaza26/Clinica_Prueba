@@ -1,7 +1,5 @@
 package app.clinic.inventory.application.dto;
 
-import app.clinic.inventory.domain.model.SpecialistType;
-
 /**
  * DTO específico para respuestas completas de medicamentos en el inventario.
  * Contiene todos los campos del medicamento para proporcionar información detallada.

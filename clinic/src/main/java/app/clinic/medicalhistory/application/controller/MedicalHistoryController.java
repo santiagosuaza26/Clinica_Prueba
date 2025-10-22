@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,6 +16,8 @@ import app.clinic.medicalhistory.application.usecase.DeleteHistoryUseCase;
 import app.clinic.medicalhistory.application.usecase.DeleteVisitUseCase;
 import app.clinic.medicalhistory.application.usecase.GetHistoryByPatientUseCase;
 import app.clinic.medicalhistory.domain.model.MedicalVisit;
+import app.clinic.shared.domain.exception.ValidationException;
+import app.clinic.shared.infrastructure.config.SecurityUtils;
 import app.clinic.user.domain.model.Role;
 
 @RestController
@@ -42,19 +43,22 @@ public class MedicalHistoryController {
 
     @PostMapping("/{cedula}")
     public ResponseEntity<String> createOrUpdateVisit(
-            @PathVariable String cedula,
-            @RequestBody MedicalVisitRequestDto dto,
-            @RequestHeader("Role") String requesterRoleHeader
-    ) {
-        Role role = Role.valueOf(requesterRoleHeader.toUpperCase());
-        if (role != Role.MEDICO && role != Role.ENFERMERA) {
-            return ResponseEntity.status(403).body("Access denied.");
-        }
+             @PathVariable String cedula,
+             @RequestBody MedicalVisitRequestDto dto
+     ) {
+         String requesterRoleStr = SecurityUtils.getCurrentRole();
+         if (requesterRoleStr == null) {
+             throw new ValidationException("Rol no encontrado en el token.");
+         }
+         Role role = Role.valueOf(requesterRoleStr.toUpperCase());
+         if (role != Role.MEDICO && role != Role.ENFERMERA) {
+             return ResponseEntity.status(403).body("Access denied.");
+         }
 
-        MedicalVisit visit = MedicalHistoryMapper.toDomain(dto);
-        createOrUpdateVisitUseCase.execute(cedula, visit);
-        return ResponseEntity.ok("Medical visit saved successfully.");
-    }
+         MedicalVisit visit = MedicalHistoryMapper.toDomain(dto);
+         createOrUpdateVisitUseCase.execute(cedula, visit);
+         return ResponseEntity.ok("Medical visit saved successfully.");
+     }
 
     @GetMapping("/{cedula}")
     public ResponseEntity<?> getHistoryByPatient(@PathVariable String cedula) {

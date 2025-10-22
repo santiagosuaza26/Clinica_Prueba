@@ -9,7 +9,7 @@
 **Proyecto Académico** - Construcción de Software 2
 
 **Estudiante:** Santiago Suaza Cardona
-**Correo:** santiago.suaza@correo.tdea.edu.co
+**Correo:** [santiago.suaza@correo.tdea.edu.co](mailto:santiago.suaza@correo.tdea.edu.co)
 **Institución:** Tecnológico de Antioquia
 
 **Fecha:** Octubre 2025
@@ -113,8 +113,8 @@ mvn spring-boot:run
 ```
 
 4. **Verificar el estado:**
-   - Aplicación: http://localhost:8080
-   - H2 Console: http://localhost:8080/h2-console
+    - Aplicación: [http://localhost:8080](http://localhost:8080)
+    - H2 Console: [http://localhost:8080/h2-console](http://localhost:8080/h2-console)
 
 ### Configuración de Base de Datos
 
@@ -304,7 +304,7 @@ Este proyecto es parte de la evaluación académica de Construcción de Software
 ## 📞 Contacto
 
 **Santiago Suaza Cardona**
-- 📧 Email: santiago.suaza@correo.tdea.edu.co
+- 📧 Email: [santiago.suaza@correo.tdea.edu.co](mailto:santiago.suaza@correo.tdea.edu.co)
 - 🏫 Institución: Tecnológico de Antioquia
 - 📚 Asignatura: Construcción de Software 2
 

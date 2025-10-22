@@ -1,7 +1,6 @@
 package app.clinic.inventory.domain.exception;
 
 import app.clinic.shared.domain.exception.ValidationException;
-import java.util.Map;
 
 /**
  * Excepción lanzada cuando el nombre de un medicamento no es válido.

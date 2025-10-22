@@ -8,30 +8,35 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
- * Configuración de seguridad básica para la aplicación.
+ * Configuración de seguridad con JWT para la aplicación.
  * Permite acceso libre al endpoint de autenticación y H2 console,
- * pero protege los demás endpoints.
+ * pero protege los demás endpoints con JWT.
  */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(AbstractHttpConfigurer::disable) // Deshabilitar CSRF para facilitar pruebas con Postman
-            .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/users/authenticate", "/h2-console/**", "/users/**").permitAll() // Permitir acceso libre a login, H2 console y usuarios
-                .anyRequest().permitAll() // Permitir acceso a todos los endpoints para desarrollo
-            )
-            .httpBasic(httpBasic -> {
-                // Configuración básica HTTP deshabilitada
-            })
-            .headers(headers -> headers
-                .frameOptions().sameOrigin() // Permitir frames para H2 console
-            );
+             .csrf(AbstractHttpConfigurer::disable) // Deshabilitar CSRF para facilitar pruebas con Postman
+             .authorizeHttpRequests(authz -> authz
+                 .requestMatchers("/users/authenticate", "/h2-console/**").permitAll() // Permitir acceso libre a login y H2 console
+                 .anyRequest().authenticated() // Requerir autenticación para otros endpoints
+             )
+             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+             .headers(headers -> headers
+                 .frameOptions(frameOptions -> frameOptions.sameOrigin()) // Permitir frames para H2 console
+             );
 
         return http.build();
     }

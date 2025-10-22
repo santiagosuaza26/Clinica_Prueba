@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,6 +26,8 @@ import app.clinic.order.application.usecase.RemoveItemFromOrderUseCase;
 import app.clinic.order.application.usecase.UpdateOrderUseCase;
 import app.clinic.order.domain.model.MedicalOrder;
 import app.clinic.order.domain.model.OrderItem;
+import app.clinic.shared.domain.exception.ValidationException;
+import app.clinic.shared.infrastructure.config.SecurityUtils;
 import app.clinic.user.domain.model.Role;
 
 @RestController
@@ -34,14 +35,15 @@ import app.clinic.user.domain.model.Role;
 public class OrderController {
 
     /**
-     * Valida y parsea el header de rol de manera segura.
+     * Valida y parsea el rol desde el token JWT.
      */
-    private Role validateAndParseRole(String roleHeader) {
-        if (roleHeader == null || roleHeader.trim().isEmpty()) {
-            throw new IllegalArgumentException("Role header is required");
-        }
-        return Role.valueOf(roleHeader.toUpperCase().trim());
-    }
+    private Role validateAndParseRole() {
+         String roleStr = SecurityUtils.getCurrentRole();
+         if (roleStr == null) {
+             throw new ValidationException("Rol no encontrado en el token.");
+         }
+         return Role.valueOf(roleStr.toUpperCase());
+     }
 
     /**
      * Valida permisos para operación de creación (solo MÉDICO).
@@ -135,11 +137,10 @@ public class OrderController {
     // ✅ Crear una nueva orden médica (solo MÉDICO)
     @PostMapping
     public ResponseEntity<OrderResponseDto> createOrder(
-        @RequestHeader("Role") String roleHeader,
-        @RequestBody OrderRequestDto dto
-    ) {
-        try {
-            Role role = validateAndParseRole(roleHeader);
+         @RequestBody OrderRequestDto dto
+     ) {
+         try {
+             Role role = validateAndParseRole();
             validateCreatePermissions(role);
 
             if (!isValidOrderRequest(dto)) {
@@ -162,11 +163,10 @@ public class OrderController {
     // ✅ Consultar una orden médica por número
     @GetMapping("/{orderNumber}")
     public ResponseEntity<OrderResponseDto> getOrderById(
-        @PathVariable String orderNumber,
-        @RequestHeader("Role") String roleHeader
-    ) {
-        try {
-            Role role = validateAndParseRole(roleHeader);
+         @PathVariable String orderNumber
+     ) {
+         try {
+             Role role = validateAndParseRole();
 
             // Validar permisos (RRHH no puede consultar órdenes específicas)
             if (role == Role.RECURSOS_HUMANOS) {
@@ -190,11 +190,9 @@ public class OrderController {
 
     // ✅ Listar todas las órdenes médicas (solo SOPORTE o MÉDICO)
     @GetMapping
-    public ResponseEntity<List<OrderResponseDto>> getAllOrders(
-        @RequestHeader("Role") String roleHeader
-    ) {
-        try {
-            Role role = validateAndParseRole(roleHeader);
+    public ResponseEntity<List<OrderResponseDto>> getAllOrders() {
+         try {
+             Role role = validateAndParseRole();
             validateReadPermissions(role);
 
             List<MedicalOrder> orders = getAllOrdersUseCase.execute();
@@ -214,11 +212,10 @@ public class OrderController {
     // ✅ Actualizar una orden (solo MÉDICO)
     @PutMapping("/{orderNumber}")
     public ResponseEntity<OrderResponseDto> updateOrder(
-        @PathVariable String orderNumber,
-        @RequestHeader("Role") String roleHeader,
-        @RequestBody OrderRequestDto dto
-    ) {
-        Role role = Role.valueOf(roleHeader.toUpperCase());
+         @PathVariable String orderNumber,
+         @RequestBody OrderRequestDto dto
+     ) {
+         Role role = validateAndParseRole();
         if (role != Role.MEDICO) {
             return ResponseEntity.status(403).build();
         }
@@ -235,11 +232,10 @@ public class OrderController {
     // ✅ Eliminar una orden (solo SOPORTE o MÉDICO)
     @DeleteMapping("/{orderNumber}")
     public ResponseEntity<Void> deleteOrder(
-        @PathVariable String orderNumber,
-        @RequestHeader("Role") String roleHeader
-    ) {
-        try {
-            Role role = validateAndParseRole(roleHeader);
+         @PathVariable String orderNumber
+     ) {
+         try {
+             Role role = validateAndParseRole();
             validateDeletePermissions(role);
 
             if (!isValidOrderNumber(orderNumber)) {
@@ -261,12 +257,11 @@ public class OrderController {
     // ✅ Agregar un ítem a la orden (medicamento, procedimiento o ayuda diagnóstica)
     @PostMapping("/{orderNumber}/items")
     public ResponseEntity<OrderResponseDto> addItemToOrder(
-        @PathVariable String orderNumber,
-        @RequestHeader("Role") String roleHeader,
-        @RequestBody OrderItemDto itemDto
-    ) {
-        try {
-            Role role = validateAndParseRole(roleHeader);
+         @PathVariable String orderNumber,
+         @RequestBody OrderItemDto itemDto
+     ) {
+         try {
+             Role role = validateAndParseRole();
             validateItemModificationPermissions(role);
 
             if (!isValidOrderNumber(orderNumber) || !isValidItemRequest(itemDto)) {
@@ -289,12 +284,11 @@ public class OrderController {
     // ✅ Eliminar un ítem de una orden
     @DeleteMapping("/{orderNumber}/items/{itemNumber}")
     public ResponseEntity<OrderResponseDto> removeItemFromOrder(
-        @PathVariable String orderNumber,
-        @PathVariable int itemNumber,
-        @RequestHeader("Role") String roleHeader
-    ) {
-        try {
-            Role role = validateAndParseRole(roleHeader);
+         @PathVariable String orderNumber,
+         @PathVariable int itemNumber
+     ) {
+         try {
+             Role role = validateAndParseRole();
             validateItemModificationPermissions(role);
 
             if (!isValidOrderNumber(orderNumber) || itemNumber <= 0) {

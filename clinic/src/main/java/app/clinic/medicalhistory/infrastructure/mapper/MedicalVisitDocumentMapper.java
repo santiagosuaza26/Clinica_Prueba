@@ -11,12 +11,10 @@ import app.clinic.medicalhistory.domain.model.MedicalVisit;
 import app.clinic.medicalhistory.domain.model.Prescription;
 import app.clinic.medicalhistory.domain.model.ProcedureRecord;
 import app.clinic.medicalhistory.domain.model.VitalSigns;
-import app.clinic.medicalhistory.infrastructure.document.DiagnosisDocument;
 import app.clinic.medicalhistory.infrastructure.document.DiagnosticAidRecordDocument;
 import app.clinic.medicalhistory.infrastructure.document.MedicalVisitDocument;
 import app.clinic.medicalhistory.infrastructure.document.PrescriptionDocument;
 import app.clinic.medicalhistory.infrastructure.document.ProcedureRecordDocument;
-import app.clinic.medicalhistory.infrastructure.document.VitalSignsDocument;
 
 @Component
 public class MedicalVisitDocumentMapper {
