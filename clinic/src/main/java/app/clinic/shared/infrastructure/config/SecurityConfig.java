@@ -28,11 +28,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-             .csrf(AbstractHttpConfigurer::disable) // Deshabilitar CSRF para facilitar pruebas con Postman
-             .authorizeHttpRequests(authz -> authz
-                 .requestMatchers("/users/authenticate", "/h2-console/**").permitAll() // Permitir acceso libre a login y H2 console
-                 .anyRequest().authenticated() // Requerir autenticación para otros endpoints
-             )
+              .csrf(AbstractHttpConfigurer::disable) // Deshabilitar CSRF para facilitar pruebas con Postman
+              .authorizeHttpRequests(authz -> authz
+                  .requestMatchers("/users/authenticate", "/h2-console/**", "/billings").permitAll() // Permitir acceso libre a login, H2 console y billings
+                  .anyRequest().authenticated() // Requerir autenticación para otros endpoints
+              )
              .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
              .headers(headers -> headers
                  .frameOptions(frameOptions -> frameOptions.sameOrigin()) // Permitir frames para H2 console

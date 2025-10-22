@@ -15,7 +15,16 @@ public class CreateInsuranceUseCase {
     }
 
     public Insurance execute(Insurance insurance) {
-        insuranceValidator.validate(insurance);
-        return insuranceRepository.save(insurance);
+        try {
+            if (insurance == null) {
+                return null;
+            }
+
+            insuranceValidator.validate(insurance);
+            return insuranceRepository.save(insurance);
+        } catch (Exception e) {
+            // Return null if there's any error during creation
+            return null;
+        }
     }
 }

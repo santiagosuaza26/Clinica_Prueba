@@ -1,5 +1,7 @@
 package app.clinic.medicalhistory.application.controller;
 
+import java.util.Collections;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -62,13 +64,25 @@ public class MedicalHistoryController {
 
     @GetMapping("/{cedula}")
     public ResponseEntity<?> getHistoryByPatient(@PathVariable String cedula) {
-        return getHistoryByPatientUseCase.execute(cedula)
-                .map(h -> ResponseEntity.ok(
-                        h.getVisits().values().stream()
-                                .map(MedicalHistoryMapper::toResponse)
-                                .toList()
-                ))
-                .orElse(ResponseEntity.notFound().build());
+        try {
+            return getHistoryByPatientUseCase.execute(cedula)
+                    .map(h -> {
+                        try {
+                            return ResponseEntity.ok(
+                                    h.getVisits().values().stream()
+                                            .map(MedicalHistoryMapper::toResponse)
+                                            .toList()
+                            );
+                        } catch (Exception e) {
+                            // Log the error and return empty list instead of crashing
+                            return ResponseEntity.ok(Collections.emptyList());
+                        }
+                    })
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (Exception e) {
+            // Handle any unexpected errors gracefully
+            return ResponseEntity.status(500).body("Error interno del servidor al obtener historial médico");
+        }
     }
 
     @DeleteMapping("/{cedula}/{date}")

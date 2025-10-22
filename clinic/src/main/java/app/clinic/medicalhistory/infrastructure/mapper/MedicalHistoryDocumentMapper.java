@@ -13,7 +13,11 @@ import app.clinic.medicalhistory.infrastructure.document.MedicalVisitDocument;
 @Component
 public class MedicalHistoryDocumentMapper {
 
-    private final MedicalVisitDocumentMapper visitMapper = new MedicalVisitDocumentMapper();
+     private final MedicalVisitDocumentMapper visitMapper;
+
+     public MedicalHistoryDocumentMapper(MedicalVisitDocumentMapper visitMapper) {
+         this.visitMapper = visitMapper;
+     }
 
     public MedicalHistoryDocument toDocument(MedicalHistory domain) {
         Map<String, MedicalVisitDocument> visitDocuments = domain.getVisits().entrySet().stream()

@@ -20,40 +20,64 @@ public class InsuranceRepositoryAdapter implements InsuranceRepository {
     }
 
     private Insurance toDomain(InsuranceEntity e) {
-        return new Insurance(
-                e.getId(),
-                e.getPatientId(),
-                e.getInsuranceCompany(),
-                e.getPolicyNumber(),
-                e.getStartDate(),
-                e.getEndDate(),
-                e.isActive(),
-                e.getPolicyHolderName(),
-                e.getCoverageDetails(),
-                e.getAnnualCopayTotal(),
-                e.isCopayLimitReached()
-        );
+        if (e == null) {
+            return null;
+        }
+
+        try {
+            return new Insurance(
+                    e.getId(),
+                    e.getPatientId(),
+                    e.getInsuranceCompany(),
+                    e.getPolicyNumber(),
+                    e.getStartDate(),
+                    e.getEndDate(),
+                    e.isActive(),
+                    e.getPolicyHolderName(),
+                    e.getCoverageDetails(),
+                    e.getAnnualCopayTotal(),
+                    e.isCopayLimitReached()
+            );
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     private InsuranceEntity toEntity(Insurance i) {
-        InsuranceEntity e = new InsuranceEntity();
-        e.setId(i.getId());
-        e.setPatientId(i.getPatientId());
-        e.setInsuranceCompany(i.getInsuranceCompany());
-        e.setPolicyNumber(i.getPolicyNumber());
-        e.setStartDate(i.getStartDate());
-        e.setEndDate(i.getEndDate());
-        e.setActive(i.isActive());
-        e.setPolicyHolderName(i.getPolicyHolderName());
-        e.setCoverageDetails(i.getCoverageDetails());
-        e.setAnnualCopayTotal(i.getAnnualCopayTotal());
-        e.setCopayLimitReached(i.isCopayLimitReached());
-        return e;
+        if (i == null) {
+            return null;
+        }
+
+        try {
+            InsuranceEntity e = new InsuranceEntity();
+            e.setId(i.getId());
+            e.setPatientId(i.getPatientId());
+            e.setInsuranceCompany(i.getInsuranceCompany());
+            e.setPolicyNumber(i.getPolicyNumber());
+            e.setStartDate(i.getStartDate());
+            e.setEndDate(i.getEndDate());
+            e.setActive(i.isActive());
+            e.setPolicyHolderName(i.getPolicyHolderName());
+            e.setCoverageDetails(i.getCoverageDetails());
+            e.setAnnualCopayTotal(i.getAnnualCopayTotal());
+            e.setCopayLimitReached(i.isCopayLimitReached());
+            return e;
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     @Override
     public Insurance save(Insurance insurance) {
-        return toDomain(repository.save(toEntity(insurance)));
+        try {
+            if (insurance == null) {
+                return null;
+            }
+
+            return toDomain(repository.save(toEntity(insurance)));
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
@@ -68,7 +92,15 @@ public class InsuranceRepositoryAdapter implements InsuranceRepository {
 
     @Override
     public List<Insurance> findAll() {
-        return repository.findAll().stream().map(this::toDomain).toList();
+        try {
+            return repository.findAll().stream()
+                    .map(this::toDomain)
+                    .filter(insurance -> insurance != null)
+                    .toList();
+        } catch (Exception e) {
+            // Return empty list if there's any error
+            return List.of();
+        }
     }
 
     @Override

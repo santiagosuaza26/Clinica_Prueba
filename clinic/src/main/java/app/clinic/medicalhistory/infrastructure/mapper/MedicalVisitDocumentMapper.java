@@ -19,44 +19,64 @@ import app.clinic.medicalhistory.infrastructure.document.ProcedureRecordDocument
 @Component
 public class MedicalVisitDocumentMapper {
 
-    public MedicalVisitDocument toDocument(MedicalVisit domain) {
-        MedicalVisitDocument document = new MedicalVisitDocument();
-        document.setDate(domain.getDate());
-        document.setDoctorCedula(domain.getDoctorCedula());
-        document.setReason(domain.getReason());
-        document.setSymptoms(domain.getSymptoms());
+     private final DiagnosisDocumentMapper diagnosisMapper;
+     private final VitalSignsDocumentMapper vitalSignsMapper;
+     private final PrescriptionDocumentMapper prescriptionMapper;
+     private final ProcedureRecordDocumentMapper procedureMapper;
+     private final DiagnosticAidRecordDocumentMapper diagnosticAidMapper;
 
-        if (domain.getDiagnosis() != null) {
-            document.setDiagnosis(new DiagnosisDocumentMapper().toDocument(domain.getDiagnosis()));
-        }
+     public MedicalVisitDocumentMapper(
+             DiagnosisDocumentMapper diagnosisMapper,
+             VitalSignsDocumentMapper vitalSignsMapper,
+             PrescriptionDocumentMapper prescriptionMapper,
+             ProcedureRecordDocumentMapper procedureMapper,
+             DiagnosticAidRecordDocumentMapper diagnosticAidMapper
+     ) {
+         this.diagnosisMapper = diagnosisMapper;
+         this.vitalSignsMapper = vitalSignsMapper;
+         this.prescriptionMapper = prescriptionMapper;
+         this.procedureMapper = procedureMapper;
+         this.diagnosticAidMapper = diagnosticAidMapper;
+     }
 
-        if (domain.getVitalSigns() != null) {
-            document.setVitalSigns(new VitalSignsDocumentMapper().toDocument(domain.getVitalSigns()));
-        }
+     public MedicalVisitDocument toDocument(MedicalVisit domain) {
+         MedicalVisitDocument document = new MedicalVisitDocument();
+         document.setDate(domain.getDate());
+         document.setDoctorCedula(domain.getDoctorCedula());
+         document.setReason(domain.getReason());
+         document.setSymptoms(domain.getSymptoms());
 
-        if (domain.getPrescriptions() != null) {
-            List<PrescriptionDocument> prescriptionDocuments = domain.getPrescriptions().stream()
-                .map(p -> new PrescriptionDocumentMapper().toDocument(p))
-                .collect(Collectors.toList());
-            document.setPrescriptions(prescriptionDocuments);
-        }
+         if (domain.getDiagnosis() != null) {
+             document.setDiagnosis(diagnosisMapper.toDocument(domain.getDiagnosis()));
+         }
 
-        if (domain.getProcedures() != null) {
-            List<ProcedureRecordDocument> procedureDocuments = domain.getProcedures().stream()
-                .map(p -> new ProcedureRecordDocumentMapper().toDocument(p))
-                .collect(Collectors.toList());
-            document.setProcedures(procedureDocuments);
-        }
+         if (domain.getVitalSigns() != null) {
+             document.setVitalSigns(vitalSignsMapper.toDocument(domain.getVitalSigns()));
+         }
 
-        if (domain.getDiagnosticAids() != null) {
-            List<DiagnosticAidRecordDocument> diagnosticAidDocuments = domain.getDiagnosticAids().stream()
-                .map(d -> new DiagnosticAidRecordDocumentMapper().toDocument(d))
-                .collect(Collectors.toList());
-            document.setDiagnosticAids(diagnosticAidDocuments);
-        }
+         if (domain.getPrescriptions() != null) {
+             List<PrescriptionDocument> prescriptionDocuments = domain.getPrescriptions().stream()
+                 .map(prescriptionMapper::toDocument)
+                 .collect(Collectors.toList());
+             document.setPrescriptions(prescriptionDocuments);
+         }
 
-        return document;
-    }
+         if (domain.getProcedures() != null) {
+             List<ProcedureRecordDocument> procedureDocuments = domain.getProcedures().stream()
+                 .map(procedureMapper::toDocument)
+                 .collect(Collectors.toList());
+             document.setProcedures(procedureDocuments);
+         }
+
+         if (domain.getDiagnosticAids() != null) {
+             List<DiagnosticAidRecordDocument> diagnosticAidDocuments = domain.getDiagnosticAids().stream()
+                 .map(diagnosticAidMapper::toDocument)
+                 .collect(Collectors.toList());
+             document.setDiagnosticAids(diagnosticAidDocuments);
+         }
+
+         return document;
+     }
 
     public MedicalVisit toDomain(MedicalVisitDocument document) {
         MedicalVisit visit = new MedicalVisit(
@@ -67,32 +87,32 @@ public class MedicalVisitDocumentMapper {
         );
 
         if (document.getDiagnosis() != null) {
-            Diagnosis diagnosis = new DiagnosisDocumentMapper().toDomain(document.getDiagnosis());
+            Diagnosis diagnosis = diagnosisMapper.toDomain(document.getDiagnosis());
             visit.setDiagnosis(diagnosis);
         }
 
         if (document.getVitalSigns() != null) {
-            VitalSigns vitalSigns = new VitalSignsDocumentMapper().toDomain(document.getVitalSigns());
+            VitalSigns vitalSigns = vitalSignsMapper.toDomain(document.getVitalSigns());
             visit.setVitalSigns(vitalSigns);
         }
 
         if (document.getPrescriptions() != null) {
             List<Prescription> prescriptions = document.getPrescriptions().stream()
-                .map(p -> new PrescriptionDocumentMapper().toDomain(p))
+                .map(prescriptionMapper::toDomain)
                 .collect(Collectors.toList());
             visit.setPrescriptions(prescriptions);
         }
 
         if (document.getProcedures() != null) {
             List<ProcedureRecord> procedures = document.getProcedures().stream()
-                .map(p -> new ProcedureRecordDocumentMapper().toDomain(p))
+                .map(procedureMapper::toDomain)
                 .collect(Collectors.toList());
             visit.setProcedures(procedures);
         }
 
         if (document.getDiagnosticAids() != null) {
             List<DiagnosticAidRecord> diagnosticAids = document.getDiagnosticAids().stream()
-                .map(d -> new DiagnosticAidRecordDocumentMapper().toDomain(d))
+                .map(diagnosticAidMapper::toDomain)
                 .collect(Collectors.toList());
             visit.setDiagnosticAids(diagnosticAids);
         }

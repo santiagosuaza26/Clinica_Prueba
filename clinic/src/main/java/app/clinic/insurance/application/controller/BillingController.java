@@ -2,6 +2,8 @@ package app.clinic.insurance.application.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +25,8 @@ import app.clinic.insurance.domain.model.Billing;
 @RestController
 @RequestMapping("/billings")
 public class BillingController {
+
+    private static final Logger logger = LoggerFactory.getLogger(BillingController.class);
 
     private final CreateBillingUseCase createBillingUseCase;
     private final GetAllBillingsUseCase getAllBillingsUseCase;
@@ -50,8 +54,15 @@ public class BillingController {
 
     @GetMapping
     public ResponseEntity<List<BillingResponseDto>> getAllBillings() {
-        List<Billing> billings = getAllBillingsUseCase.execute();
-        return ResponseEntity.ok(billings.stream().map(BillingMapper::toResponse).toList());
+        logger.info("Recibiendo solicitud GET /billings");
+        try {
+            List<Billing> billings = getAllBillingsUseCase.execute();
+            logger.info("Se obtuvieron {} billings", billings.size());
+            return ResponseEntity.ok(billings.stream().map(BillingMapper::toResponse).toList());
+        } catch (Exception e) {
+            logger.error("Error en getAllBillings: {}", e.getMessage(), e);
+            throw e;
+        }
     }
 
     @GetMapping("/patient/{patientId}")

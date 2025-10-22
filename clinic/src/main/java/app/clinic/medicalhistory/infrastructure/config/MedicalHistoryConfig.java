@@ -16,6 +16,7 @@ import app.clinic.medicalhistory.application.usecase.GetHistoryByPatientUseCase;
 import app.clinic.medicalhistory.domain.repository.MedicalHistoryRepository;
 import app.clinic.medicalhistory.domain.service.MedicalHistoryValidator;
 import app.clinic.medicalhistory.infrastructure.mapper.MedicalHistoryDocumentMapper;
+import app.clinic.medicalhistory.infrastructure.mapper.MedicalVisitDocumentMapper;
 import app.clinic.medicalhistory.infrastructure.repository.MongoMedicalHistoryRepository;
 
 @Configuration
@@ -36,14 +37,18 @@ public class MedicalHistoryConfig {
 
     @Bean("medicalHistoryMongoTemplate")
     public MongoTemplate medicalHistoryMongoTemplate() {
-        MongoClient mongoClient = MongoClients.create("mongodb://" + mongoHost + ":" + mongoPort);
-        return new MongoTemplate(mongoClient, mongoDatabase);
+        try {
+            MongoClient mongoClient = MongoClients.create("mongodb://" + mongoHost + ":" + mongoPort);
+            return new MongoTemplate(mongoClient, mongoDatabase);
+        } catch (Exception e) {
+            throw new RuntimeException("Error al conectar con MongoDB en " + mongoHost + ":" + mongoPort, e);
+        }
     }
 
     @Bean
-    public MedicalHistoryDocumentMapper medicalHistoryDocumentMapper() {
-        return new MedicalHistoryDocumentMapper();
-    }
+    public MedicalHistoryDocumentMapper medicalHistoryDocumentMapper(MedicalVisitDocumentMapper visitMapper) {
+         return new MedicalHistoryDocumentMapper(visitMapper);
+     }
 
 
     @Bean

@@ -49,38 +49,119 @@ public class InsuranceController {
 
     @PostMapping
     public ResponseEntity<InsuranceResponseDto> createInsurance(@RequestBody InsuranceRequestDto dto) {
-        Insurance insurance = InsuranceMapper.toDomain(dto);
-        Insurance created = createInsuranceUseCase.execute(insurance);
-        return ResponseEntity.ok(InsuranceMapper.toResponse(created));
+        try {
+            if (dto == null) {
+                return ResponseEntity.badRequest().build();
+            }
+
+            Insurance insurance = InsuranceMapper.toDomain(dto);
+            if (insurance == null) {
+                return ResponseEntity.badRequest().build();
+            }
+
+            Insurance created = createInsuranceUseCase.execute(insurance);
+            if (created == null) {
+                return ResponseEntity.status(500).build();
+            }
+
+            InsuranceResponseDto response = InsuranceMapper.toResponse(created);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 
     @GetMapping
     public ResponseEntity<List<InsuranceResponseDto>> getAllInsurances() {
-        List<Insurance> insurances = getAllInsurancesUseCase.execute();
-        return ResponseEntity.ok(insurances.stream().map(InsuranceMapper::toResponse).toList());
+        try {
+            List<Insurance> insurances = getAllInsurancesUseCase.execute();
+            if (insurances == null) {
+                return ResponseEntity.ok(List.of());
+            }
+
+            List<InsuranceResponseDto> response = insurances.stream()
+                    .filter(insurance -> insurance != null)
+                    .map(insurance -> {
+                        try {
+                            return InsuranceMapper.toResponse(insurance);
+                        } catch (Exception e) {
+                            // Log error and skip this insurance record
+                            return null;
+                        }
+                    })
+                    .filter(dto -> dto != null)
+                    .toList();
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            // Handle any unexpected errors gracefully
+            return ResponseEntity.ok(List.of());
+        }
     }
 
     @GetMapping("/patient/{patientId}")
-    public ResponseEntity<InsuranceResponseDto> getInsuranceByPatient(@PathVariable Long patientId) {
-        Optional<Insurance> insuranceOpt = getInsuranceByPatientUseCase.execute(patientId);
-        return insuranceOpt
-                .map(insurance -> ResponseEntity.ok(InsuranceMapper.toResponse(insurance)))
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<?> getInsuranceByPatient(@PathVariable Long patientId) {
+        try {
+            if (patientId == null) {
+                return ResponseEntity.badRequest().build();
+            }
+
+            Optional<Insurance> insuranceOpt = getInsuranceByPatientUseCase.execute(patientId);
+            return insuranceOpt
+                    .map(insurance -> {
+                        try {
+                            if (insurance == null) {
+                                return ResponseEntity.notFound().build();
+                            }
+                            return ResponseEntity.ok(InsuranceMapper.toResponse(insurance));
+                        } catch (Exception e) {
+                            return ResponseEntity.status(500).build();
+                        }
+                    })
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<InsuranceResponseDto> updateInsurance(
+    public ResponseEntity<?> updateInsurance(
             @PathVariable Long id,
             @RequestBody InsuranceRequestDto dto
     ) {
-        Insurance insurance = InsuranceMapper.toDomain(dto);
-        Insurance updated = updateInsuranceUseCase.execute(id, insurance);
-        return ResponseEntity.ok(InsuranceMapper.toResponse(updated));
+        try {
+            if (id == null || dto == null) {
+                return ResponseEntity.badRequest().build();
+            }
+
+            Insurance insurance = InsuranceMapper.toDomain(dto);
+            if (insurance == null) {
+                return ResponseEntity.badRequest().build();
+            }
+
+            Insurance updated = updateInsuranceUseCase.execute(id, insurance);
+            if (updated == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            InsuranceResponseDto response = InsuranceMapper.toResponse(updated);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteInsurance(@PathVariable Long id) {
-        deleteInsuranceUseCase.execute(id);
-        return ResponseEntity.noContent().build();
+        try {
+            if (id == null) {
+                return ResponseEntity.badRequest().build();
+            }
+
+            deleteInsuranceUseCase.execute(id);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 }

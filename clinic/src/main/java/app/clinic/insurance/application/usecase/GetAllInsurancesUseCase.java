@@ -14,6 +14,12 @@ public class GetAllInsurancesUseCase {
     }
 
     public List<Insurance> execute() {
-        return insuranceRepository.findAll();
+        try {
+            List<Insurance> insurances = insuranceRepository.findAll();
+            return insurances != null ? insurances : List.of();
+        } catch (Exception e) {
+            // Return empty list if there's any error
+            return List.of();
+        }
     }
 }

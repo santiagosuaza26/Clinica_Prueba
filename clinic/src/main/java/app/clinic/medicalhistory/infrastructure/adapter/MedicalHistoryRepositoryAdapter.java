@@ -16,10 +16,10 @@ public class MedicalHistoryRepositoryAdapter implements MedicalHistoryRepository
     private final MongoMedicalHistoryRepository mongoRepository;
     private final MedicalHistoryDocumentMapper mapper;
 
-    public MedicalHistoryRepositoryAdapter(MongoMedicalHistoryRepository mongoRepository) {
-        this.mongoRepository = mongoRepository;
-        this.mapper = new MedicalHistoryDocumentMapper();
-    }
+    public MedicalHistoryRepositoryAdapter(MongoMedicalHistoryRepository mongoRepository, MedicalHistoryDocumentMapper mapper) {
+         this.mongoRepository = mongoRepository;
+         this.mapper = mapper;
+     }
 
     @Override
     public Optional<MedicalHistory> findByPatientCedula(String cedula) {
