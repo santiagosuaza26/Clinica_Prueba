@@ -1,166 +1,317 @@
-# Clínica IPS - Sistema de Gestión Clínica
+# Sistema de Gestión Clínica - Clínica IPS
 
-## Configuración de Bases de Datos
+[![Java](https://img.shields.io/badge/Java-17-orange.svg)](https://www.oracle.com/java/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.6-brightgreen.svg)](https://spring.io/projects/spring-boot)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-Este proyecto utiliza múltiples bases de datos para diferentes propósitos:
+## 📋 Información del Proyecto
 
-### Bases de Datos Configuradas
+**Proyecto Académico** - Construcción de Software 2
 
-1. **H2** (Desarrollo y pruebas)
-   - Base de datos en memoria
-   - Configuración por defecto para desarrollo rápido
-   - Consola H2 habilitada en desarrollo
+**Estudiante:** Santiago Suaza Cardona
+**Correo:** santiago.suaza@correo.tdea.edu.co
+**Institución:** Tecnológico de Antioquia
 
-2. **PostgreSQL** (Producción)
-   - Base de datos principal para módulos: Patient, User, Insurance, Order
-   - Configuración optimizada para producción
-   - Variables de entorno para credenciales
+**Fecha:** Octubre 2025
+**Versión:** 1.0.0-SNAPSHOT
 
-3. **MongoDB** (Historial Médico)
-   - Base de datos NoSQL para historial médico
-   - Especialmente diseñada para datos médicos complejos
-   - Configuración independiente
+## 🎯 Descripción General
 
-### Perfiles de Spring
+Sistema integral de gestión para Instituciones Prestadoras de Servicios de Salud (IPS) desarrollado con arquitectura limpia y mejores prácticas de desarrollo. El sistema permite la administración completa de usuarios, pacientes, seguros médicos, facturación, inventario médico, órdenes médicas e historial clínico.
 
-#### Desarrollo (`dev`)
+## 🏗️ Arquitectura del Sistema
+
+### Patrón Arquitectónico
+- **Arquitectura Limpia (Clean Architecture)**
+- **Separación por capas:**
+  - `application`: Casos de uso y lógica de aplicación
+  - `domain`: Modelo de dominio y reglas de negocio
+  - `infrastructure`: Adaptadores e implementación técnica
+
+### Tecnologías Utilizadas
+
+| Tecnología | Versión | Descripción |
+|------------|---------|-------------|
+| **Java** | 17 | Lenguaje de programación principal |
+| **Spring Boot** | 3.5.6 | Framework para aplicaciones Java |
+| **Spring Data JPA** | 3.5.6 | Persistencia de datos con Hibernate |
+| **Spring Data MongoDB** | 3.5.6 | Base de datos NoSQL para historial médico |
+| **Spring Security** | 3.5.6 | Seguridad y autenticación |
+| **H2 Database** | 2.3.232 | Base de datos en memoria para desarrollo |
+| **PostgreSQL** | 15 | Base de datos de producción |
+| **Maven** | 3.9 | Gestión de dependencias |
+
+## 🚀 Características Principales
+
+### ✅ Funcionalidades Implementadas
+
+#### 👥 Gestión de Usuarios
+- Autenticación segura con BCrypt
+- Autorización basada en roles
+- CRUD completo de usuarios
+- Gestión de contraseñas
+
+#### 🏥 Gestión de Pacientes
+- Registro completo de información personal
+- Contactos de emergencia
+- Información de seguros médicos
+- Validaciones de datos
+
+#### 🛡️ Gestión de Seguros
+- Múltiples proveedores de seguros
+- Control de cobertura y vigencia
+- Asociación con pacientes
+
+#### 💰 Sistema de Facturación
+- Facturación médica automatizada
+- Cálculo de copagos
+- Detalle de procedimientos
+- Integración con seguros
+
+#### 📦 Gestión de Inventario
+- Control de medicamentos
+- Ayudas diagnósticas
+- Procedimientos médicos
+- Gestión de stock
+
+#### 📋 Órdenes Médicas
+- Creación de órdenes por médicos
+- Gestión de ítems médicos
+- Validación de competencias
+
+#### 📊 Historial Médico
+- Registro de visitas médicas
+- Signos vitales
+- Diagnósticos y tratamientos
+- Prescripciones médicas
+
+## 🛠️ Instalación y Configuración
+
+### Prerrequisitos
+
+- **Java 17** o superior
+- **Maven 3.9** o superior
+- **Git**
+- **Postman** (opcional, para pruebas de API)
+
+### Instalación
+
+1. **Clonar el repositorio:**
 ```bash
-java -jar clinic-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev
+git clone <url-del-repositorio>
+cd clinic
 ```
-- Usa H2 como base de datos principal
-- MongoDB para historial médico (localhost:27017)
-- Logging detallado habilitado
-- H2 Console disponible en `/h2-console`
 
-#### Producción (`prod`)
+2. **Compilar el proyecto:**
 ```bash
-java -jar clinic-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod
+mvn clean compile
 ```
-- Usa PostgreSQL como base de datos principal
-- MongoDB para historial médico
-- Logging mínimo
-- Variables de entorno requeridas:
-  - `DB_USERNAME`: Usuario de PostgreSQL
-  - `DB_PASSWORD`: Contraseña de PostgreSQL
-  - `MONGO_HOST`: Host de MongoDB
-  - `MONGO_PORT`: Puerto de MongoDB
-  - `MONGO_USERNAME`: Usuario de MongoDB
-  - `MONGO_PASSWORD`: Contraseña de MongoDB
 
-#### Pruebas (`test`)
+3. **Ejecutar la aplicación:**
 ```bash
-java -jar clinic-0.0.1-SNAPSHOT.jar --spring.profiles.active=test
+mvn spring-boot:run
 ```
-- Configuración aislada para pruebas
-- H2 en modo memoria
-- Logging mínimo
 
-### Configuración de Variables de Entorno (Producción)
+4. **Verificar el estado:**
+   - Aplicación: http://localhost:8080
+   - H2 Console: http://localhost:8080/h2-console
 
+### Configuración de Base de Datos
+
+#### H2 (Desarrollo)
+```properties
+spring.datasource.url=jdbc:h2:mem:clinic_db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+spring.jpa.hibernate.ddl-auto=create-drop
+```
+
+#### PostgreSQL (Producción)
+```properties
+spring.datasource-postgresql.url=jdbc:postgresql://localhost:5432/clinic_db
+spring.jpa-postgresql.hibernate.ddl-auto=update
+```
+
+## 🔐 Credenciales de Acceso
+
+### Usuarios Iniciales
+
+Al iniciar la aplicación por primera vez, se crean automáticamente los siguientes usuarios:
+
+| Usuario | Contraseña | Rol | Descripción |
+|---------|------------|-----|-------------|
+| `admin` | `admin123` | ADMINISTRATIVO | Administrador completo del sistema |
+| `medico01` | `password123` | MEDICO | Médico general |
+| `enfermera01` | `password123` | ENFERMERA | Personal de enfermería |
+| `soporte01` | `password123` | SOPORTE | Soporte técnico |
+| `rrhh01` | `password123` | RECURSOS_HUMANOS | Recursos humanos |
+
+### Autenticación
+
+**Endpoint de Login:**
+```
+POST http://localhost:8080/users/authenticate
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin123"
+}
+```
+
+## 📖 Uso de la API
+
+### Configuración de Postman
+
+1. **Importar colección:** `clinic-ips-postman-collection.json`
+2. **Configurar variables:**
+   - `baseUrl`: `http://localhost:8080`
+   - `userRole`: `ADMIN` (o el rol deseado)
+   - `authToken`: (se llena automáticamente)
+
+### Ejemplos de Uso
+
+#### 1. Inicio de Sesión
 ```bash
-export DB_USERNAME=clinic_prod_user
-export DB_PASSWORD=secure_password
-export MONGO_HOST=localhost
-export MONGO_PORT=27017
-export MONGO_USERNAME=clinic_prod_user
-export MONGO_PASSWORD=secure_password
-export MONGO_DATABASE=clinic_prod_medical_history
-export MONGO_AUTH_DB=admin
+curl -X POST http://localhost:8080/users/authenticate \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"admin123"}'
 ```
 
-### Arquitectura de Datos
+#### 2. Crear Paciente
+```bash
+curl -X POST http://localhost:8080/patients \
+  -H "Content-Type: application/json" \
+  -H "Role: MEDICO" \
+  -d '{
+    "username": "paciente01",
+    "password": "password123",
+    "fullName": "María González",
+    "cedula": "87654321",
+    "email": "maria.gonzalez@email.com"
+  }'
+```
 
-#### Módulos y Bases de Datos
+#### 3. Crear Orden Médica
+```bash
+curl -X POST http://localhost:8080/orders \
+  -H "Content-Type: application/json" \
+  -H "Role: MEDICO" \
+  -d '{
+    "patientId": 1,
+    "doctorId": 1,
+    "items": [
+      {
+        "type": "MEDICATION",
+        "id": 1,
+        "quantity": 2,
+        "instructions": "Tomar cada 8 horas"
+      }
+    ]
+  }'
+```
 
-| Módulo | Base de Datos | Propósito |
-|--------|---------------|-----------|
-| Patient | PostgreSQL | Gestión de pacientes |
-| User | PostgreSQL | Autenticación y usuarios |
-| Insurance | PostgreSQL | Seguros médicos y facturación |
-| Order | PostgreSQL | Órdenes médicas |
-| MedicalHistory | MongoDB | Historial médico completo |
+## 📁 Estructura del Proyecto
 
-#### Ventajas de esta Arquitectura
+```
+clinic/
+├── src/main/java/app/clinic/
+│   ├── application/           # Casos de uso y DTOs
+│   ├── domain/               # Modelo de dominio y reglas
+│   ├── infrastructure/       # Adaptadores e implementación
+│   └── shared/              # Código compartido
+├── src/main/resources/
+│   ├── application.properties # Configuración
+│   └── static/              # Recursos estáticos
+├── clinic-ips-postman-collection.json # Colección Postman
+├── README.md                # Este archivo
+└── pom.xml                  # Dependencias Maven
+```
 
-1. **Separación de responsabilidades**: Cada base de datos maneja datos específicos
-2. **Rendimiento optimizado**: PostgreSQL para transacciones, MongoDB para documentos complejos
-3. **Escalabilidad**: Cada base de datos puede escalar independientemente
-4. **Mantenimiento**: Problemas en una base de datos no afectan a las otras
+## 🔒 Seguridad
 
-### Instalación y Configuración
+### Roles Disponibles
+- **ADMINISTRATIVO**: Acceso completo al sistema
+- **MEDICO**: Gestión de pacientes y órdenes médicas
+- **ENFERMERA**: Gestión de visitas y modificaciones
+- **SOPORTE**: Consultas y reportes
+- **RECURSOS_HUMANOS**: Gestión limitada de usuarios
 
-#### Prerrequisitos
+### Headers Requeridos
+La mayoría de endpoints requieren el header `Role` con el valor correspondiente al permiso del usuario.
 
-1. **Java 17** o superior
-2. **PostgreSQL** (para producción)
-3. **MongoDB** (para historial médico)
+## 🧪 Pruebas
 
-#### Configuración Inicial
+### Ejecutar Pruebas Unitarias
+```bash
+mvn test
+```
 
-1. **Clonar el repositorio**
-   ```bash
-   git clone <repository-url>
-   cd clinic
-   ```
+### Cobertura de Pruebas
+- ✅ Casos de uso principales
+- ✅ Validaciones de dominio
+- ✅ Servicios de infraestructura
+- ✅ Controladores REST
 
-2. **Configurar PostgreSQL** (Producción)
-   ```sql
-   CREATE DATABASE clinic_prod_db;
-   CREATE USER clinic_prod_user WITH PASSWORD 'secure_password';
-   GRANT ALL PRIVILEGES ON DATABASE clinic_prod_db TO clinic_prod_user;
-   ```
-
-3. **Configurar MongoDB** (Producción)
-   ```javascript
-   use admin
-   db.createUser({
-     user: "clinic_prod_user",
-     pwd: "secure_password",
-     roles: [
-       { role: "readWrite", db: "clinic_prod_medical_history" }
-     ]
-   })
-   ```
-
-4. **Ejecutar la aplicación**
-   ```bash
-   # Desarrollo
-   ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
-
-   # Producción
-   ./mvnw spring-boot:run -Dspring-boot.run.profiles=prod
-   ```
-
-### Solución de Problemas
-
-#### Problemas Comunes
-
-1. **Error de conexión PostgreSQL**
-   - Verificar que PostgreSQL esté ejecutándose
-   - Comprobar credenciales en variables de entorno
-   - Verificar configuración de red
-
-2. **Error de conexión MongoDB**
-   - Verificar que MongoDB esté ejecutándose
-   - Comprobar configuración de autenticación
-   - Verificar permisos de usuario
-
-3. **Errores de compilación**
-   ```bash
-   ./mvnw clean compile
-   ./mvnw dependency:resolve
-   ```
-
-### Monitoreo y Logs
-
-- **H2 Console**: http://localhost:8080/h2-console (solo desarrollo)
-- **Application Logs**: Configurables por perfil
-- **Health Checks**: Endpoint `/actuator/health` (si está habilitado)
+## 🚀 Despliegue
 
 ### Desarrollo
+```bash
+mvn spring-boot:run
+```
 
-Para desarrollo local, se recomienda usar el perfil `dev` que utiliza H2 y configura automáticamente las bases de datos necesarias.
+### Producción
+```bash
+mvn clean package
+java -jar target/clinic-0.0.1-SNAPSHOT.jar
+```
 
-### Soporte
+## 📊 Monitoreo
 
-Para problemas o preguntas sobre la configuración de bases de datos, revisar los logs de la aplicación y verificar la configuración específica del perfil utilizado.
+### Logs de Aplicación
+- Nivel DEBUG habilitado para desarrollo
+- Logs estructurados por componente
+- Información detallada de SQL queries
+
+### Métricas
+- Estado de la aplicación: http://localhost:8080/actuator/health
+- Información de la aplicación: http://localhost:8080/actuator/info
+
+## 🔧 Configuración Avanzada
+
+### Variables de Entorno
+```properties
+# Base de datos
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=clinic_db
+
+# Seguridad
+JWT_SECRET=your-secret-key
+
+# Aplicación
+SERVER_PORT=8080
+```
+
+## 📚 Documentación Adicional
+
+- [Guía de Postman](README-Postman.md)
+- [Documentación de Spring Boot](https://spring.io/projects/spring-boot)
+- [Arquitectura Limpia](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+
+## 🤝 Contribución
+
+Este proyecto es parte de la evaluación académica de Construcción de Software 2. Para modificaciones o mejoras, por favor contactar al estudiante desarrollador.
+
+## 📞 Contacto
+
+**Santiago Suaza Cardona**
+- 📧 Email: santiago.suaza@correo.tdea.edu.co
+- 🏫 Institución: Tecnológico de Antioquia
+- 📚 Asignatura: Construcción de Software 2
+
+## 📄 Licencia
+
+Este proyecto es desarrollado para fines académicos bajo la guía del Tecnológico de Antioquia.
+
+---
+
+**Desarrollado con ❤️ para el aprendizaje y la mejora continua en el desarrollo de software.**

@@ -87,6 +87,38 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
+    @ExceptionHandler(app.clinic.shared.domain.exception.AuthenticationException.class)
+    public ResponseEntity<ErrorResponseDto> handleAuthentication(app.clinic.shared.domain.exception.AuthenticationException ex, WebRequest request) {
+        logger.warn("AuthenticationException capturada: {}", ex.getMessage());
+
+        ErrorResponseDto errorResponse = ErrorResponseDto.builder()
+            .status(HttpStatus.UNAUTHORIZED.value())
+            .error(HttpStatus.UNAUTHORIZED.getReasonPhrase())
+            .message(ex.getMessage())
+            .errorCode("AUTHENTICATION_FAILED")
+            .path(getPath(request))
+            .traceId(generateTraceId())
+            .build();
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
+
+    @ExceptionHandler(app.clinic.shared.domain.exception.ForbiddenException.class)
+    public ResponseEntity<ErrorResponseDto> handleForbidden(app.clinic.shared.domain.exception.ForbiddenException ex, WebRequest request) {
+        logger.warn("ForbiddenException capturada: {}", ex.getMessage());
+
+        ErrorResponseDto errorResponse = ErrorResponseDto.builder()
+            .status(HttpStatus.FORBIDDEN.value())
+            .error(HttpStatus.FORBIDDEN.getReasonPhrase())
+            .message(ex.getMessage())
+            .errorCode("ACCESS_FORBIDDEN")
+            .path(getPath(request))
+            .traceId(generateTraceId())
+            .build();
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponseDto> handleIllegalArgument(IllegalArgumentException ex, WebRequest request) {
         logger.warn("IllegalArgumentException capturada: {}", ex.getMessage());
