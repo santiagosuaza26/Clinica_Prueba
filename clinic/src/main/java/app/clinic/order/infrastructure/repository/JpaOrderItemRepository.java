@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import app.clinic.order.domain.model.OrderType;
 import app.clinic.order.infrastructure.entity.OrderItemEntity;
+import app.clinic.shared.domain.model.SpecialistType;
 
 /**
  * Repositorio JPA para la gestión de ítems de órdenes médicas en la base de datos.
@@ -39,7 +40,7 @@ public interface JpaOrderItemRepository extends JpaRepository<OrderItemEntity, L
     /**
      * Busca ítems por tipo de especialista.
      */
-    List<OrderItemEntity> findBySpecialistType(app.clinic.order.domain.model.SpecialistType specialistType);
+    List<OrderItemEntity> findBySpecialistType(SpecialistType specialistType);
 
     /**
      * Cuenta ítems por orden.
@@ -54,20 +55,20 @@ public interface JpaOrderItemRepository extends JpaRepository<OrderItemEntity, L
     /**
      * Busca ítems con referencias a medicamentos específicos.
      */
-    @Query("SELECT oi FROM OrderItemEntity oi WHERE oi.medication.id = :medicationId")
-    List<OrderItemEntity> findByMedicationId(@Param("medicationId") String medicationId);
+    @Query("SELECT oi FROM OrderItemEntity oi WHERE oi.inventoryMedicationId = :medicationId")
+    List<OrderItemEntity> findByMedicationId(@Param("medicationId") Long medicationId);
 
     /**
      * Busca ítems con referencias a procedimientos específicos.
      */
-    @Query("SELECT oi FROM OrderItemEntity oi WHERE oi.procedure.id = :procedureId")
-    List<OrderItemEntity> findByProcedureId(@Param("procedureId") String procedureId);
+    @Query("SELECT oi FROM OrderItemEntity oi WHERE oi.inventoryProcedureId = :procedureId")
+    List<OrderItemEntity> findByProcedureId(@Param("procedureId") Long procedureId);
 
     /**
      * Busca ítems con referencias a ayudas diagnósticas específicas.
      */
-    @Query("SELECT oi FROM OrderItemEntity oi WHERE oi.diagnosticAid.id = :diagnosticAidId")
-    List<OrderItemEntity> findByDiagnosticAidId(@Param("diagnosticAidId") String diagnosticAidId);
+    @Query("SELECT oi FROM OrderItemEntity oi WHERE oi.inventoryDiagnosticAidId = :diagnosticAidId")
+    List<OrderItemEntity> findByDiagnosticAidId(@Param("diagnosticAidId") Long diagnosticAidId);
 
     /**
      * Busca ítems por nombre (búsqueda parcial, case-insensitive).

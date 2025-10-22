@@ -6,8 +6,8 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import app.clinic.order.domain.model.SpecialistType;
 import app.clinic.order.infrastructure.entity.OrderProcedureEntity;
+import app.clinic.shared.domain.model.SpecialistType;
 
 /**
  * Repositorio JPA para la gestión de procedimientos médicos en la base de datos.

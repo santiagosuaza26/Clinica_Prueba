@@ -3,7 +3,7 @@ package app.clinic.order.infrastructure.entity;
 import java.math.BigDecimal;
 
 import app.clinic.order.domain.model.OrderType;
-import app.clinic.order.domain.model.SpecialistType;
+import app.clinic.shared.domain.model.SpecialistType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -54,17 +54,25 @@ public class OrderItemEntity {
     @JoinColumn(name = "order_id", nullable = false)
     private OrderEntity order;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "medication_id")
-    private OrderMedicationEntity medication;
+    // Referencias al inventario (fuente de verdad) - IDs directos
+    @Column(name = "inventory_medication_id")
+    private Long inventoryMedicationId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "procedure_id")
-    private OrderProcedureEntity procedure;
+    @Column(name = "inventory_procedure_id")
+    private Long inventoryProcedureId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "diagnostic_aid_id")
-    private OrderDiagnosticAidEntity diagnosticAid;
+    @Column(name = "inventory_diagnostic_aid_id")
+    private Long inventoryDiagnosticAidId;
+
+    // Campos personalizados específicos de la orden
+    @Column(name = "custom_dosage")
+    private String customDosage;
+
+    @Column(name = "custom_frequency")
+    private String customFrequency;
+
+    @Column(name = "custom_duration")
+    private Integer customDuration;
 
     // Constructor vacío requerido por JPA
     public OrderItemEntity() {
@@ -72,8 +80,8 @@ public class OrderItemEntity {
 
     // Constructor con parámetros
     public OrderItemEntity(Integer itemNumber, OrderType type, String name, BigDecimal cost,
-                          Integer quantity, Boolean requiresSpecialist, SpecialistType specialistType,
-                          OrderEntity order) {
+                           Integer quantity, Boolean requiresSpecialist, SpecialistType specialistType,
+                           OrderEntity order) {
         this.itemNumber = itemNumber;
         this.type = type;
         this.name = name;
@@ -82,6 +90,28 @@ public class OrderItemEntity {
         this.requiresSpecialist = requiresSpecialist;
         this.specialistType = specialistType;
         this.order = order;
+    }
+
+    // Constructor completo con referencias al inventario y campos personalizados
+    public OrderItemEntity(Integer itemNumber, OrderType type, String name, BigDecimal cost,
+                           Integer quantity, Boolean requiresSpecialist, SpecialistType specialistType,
+                           OrderEntity order, Long inventoryMedicationId, Long inventoryProcedureId,
+                           Long inventoryDiagnosticAidId, String customDosage, String customFrequency,
+                           Integer customDuration) {
+        this.itemNumber = itemNumber;
+        this.type = type;
+        this.name = name;
+        this.cost = cost;
+        this.quantity = quantity;
+        this.requiresSpecialist = requiresSpecialist;
+        this.specialistType = specialistType;
+        this.order = order;
+        this.inventoryMedicationId = inventoryMedicationId;
+        this.inventoryProcedureId = inventoryProcedureId;
+        this.inventoryDiagnosticAidId = inventoryDiagnosticAidId;
+        this.customDosage = customDosage;
+        this.customFrequency = customFrequency;
+        this.customDuration = customDuration;
     }
 
     // Getters y Setters
@@ -157,28 +187,54 @@ public class OrderItemEntity {
         this.order = order;
     }
 
-    public OrderMedicationEntity getMedication() {
-        return medication;
+    // Getters y setters para referencias al inventario (IDs)
+    public Long getInventoryMedicationId() {
+        return inventoryMedicationId;
     }
 
-    public void setMedication(OrderMedicationEntity medication) {
-        this.medication = medication;
+    public void setInventoryMedicationId(Long inventoryMedicationId) {
+        this.inventoryMedicationId = inventoryMedicationId;
     }
 
-    public OrderProcedureEntity getProcedure() {
-        return procedure;
+    public Long getInventoryProcedureId() {
+        return inventoryProcedureId;
     }
 
-    public void setProcedure(OrderProcedureEntity procedure) {
-        this.procedure = procedure;
+    public void setInventoryProcedureId(Long inventoryProcedureId) {
+        this.inventoryProcedureId = inventoryProcedureId;
     }
 
-    public OrderDiagnosticAidEntity getDiagnosticAid() {
-        return diagnosticAid;
+    public Long getInventoryDiagnosticAidId() {
+        return inventoryDiagnosticAidId;
     }
 
-    public void setDiagnosticAid(OrderDiagnosticAidEntity diagnosticAid) {
-        this.diagnosticAid = diagnosticAid;
+    public void setInventoryDiagnosticAidId(Long inventoryDiagnosticAidId) {
+        this.inventoryDiagnosticAidId = inventoryDiagnosticAidId;
+    }
+
+    // Getters y setters para campos personalizados
+    public String getCustomDosage() {
+        return customDosage;
+    }
+
+    public void setCustomDosage(String customDosage) {
+        this.customDosage = customDosage;
+    }
+
+    public String getCustomFrequency() {
+        return customFrequency;
+    }
+
+    public void setCustomFrequency(String customFrequency) {
+        this.customFrequency = customFrequency;
+    }
+
+    public Integer getCustomDuration() {
+        return customDuration;
+    }
+
+    public void setCustomDuration(Integer customDuration) {
+        this.customDuration = customDuration;
     }
 
     @Override
@@ -192,6 +248,12 @@ public class OrderItemEntity {
                 ", quantity=" + quantity +
                 ", requiresSpecialist=" + requiresSpecialist +
                 ", specialistType=" + specialistType +
+                ", inventoryMedicationId=" + inventoryMedicationId +
+                ", inventoryProcedureId=" + inventoryProcedureId +
+                ", inventoryDiagnosticAidId=" + inventoryDiagnosticAidId +
+                ", customDosage='" + customDosage + '\'' +
+                ", customFrequency='" + customFrequency + '\'' +
+                ", customDuration=" + customDuration +
                 '}';
     }
 }

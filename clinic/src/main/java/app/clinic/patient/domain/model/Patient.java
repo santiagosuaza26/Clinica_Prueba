@@ -3,8 +3,6 @@ package app.clinic.patient.domain.model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import app.clinic.shared.domain.exception.ValidationException;
-
 public class Patient {
 
     private Long id;
@@ -89,19 +87,4 @@ public class Patient {
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
-    // Validación básica interna
-    public void validateBasic() {
-        if (fullName == null || fullName.isBlank()) {
-            throw new ValidationException("El nombre completo es obligatorio.");
-        }
-        if (cedula == null || cedula.isBlank()) {
-            throw new ValidationException("La cédula es obligatoria.");
-        }
-        if (username != null && username.length() > 15) {
-            throw new ValidationException("El nombre de usuario no puede superar los 15 caracteres.");
-        }
-        if (address != null && address.length() > 30) {
-            throw new ValidationException("La dirección no puede superar los 30 caracteres.");
-        }
-    }
 }

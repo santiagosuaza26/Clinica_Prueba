@@ -13,17 +13,15 @@ import app.clinic.order.domain.exception.InvalidOrderException;
  */
 public class MedicalOrder {
 
-    // Constantes para validaciones de negocio
+    // Constantes simplificadas para validaciones de negocio
     public static final String ORDER_NUMBER_PREFIX = "ORD";
     public static final int MAX_ITEMS_PER_ORDER = 50;
-    public static final String DIAGNOSTIC_AID_TYPE = "DIAGNOSTIC_AID";
 
-    // Códigos de error para excepciones
-    public static final String ERROR_CODE_NULL_ITEM = "ORDER_ITEM_NULL";
-    public static final String ERROR_CODE_MAX_ITEMS_EXCEEDED = "ORDER_MAX_ITEMS_EXCEEDED";
-    public static final String ERROR_CODE_DUPLICATE_ITEM = "ORDER_DUPLICATE_ITEM";
-    public static final String ERROR_CODE_DIAGNOSTIC_AID_MIX = "ORDER_DIAGNOSTIC_AID_MIX";
-    public static final String ERROR_CODE_DIAGNOSTIC_AID_WITH_OTHERS = "ORDER_DIAGNOSTIC_AID_WITH_OTHERS";
+    // Códigos de error simplificados
+    public static final String ERROR_NULL_ITEM = "ORDER_ITEM_NULL";
+    public static final String ERROR_MAX_ITEMS = "ORDER_MAX_ITEMS_EXCEEDED";
+    public static final String ERROR_DUPLICATE_ITEM = "ORDER_DUPLICATE_ITEM";
+    public static final String ERROR_DIAGNOSTIC_AID_MIX = "ORDER_DIAGNOSTIC_AID_MIX";
 
     private final String orderNumber;
     private final Long patientId;
@@ -64,27 +62,27 @@ public class MedicalOrder {
 
     public void addItem(OrderItem item) {
         if (item == null) {
-            throw new InvalidOrderException(ERROR_CODE_NULL_ITEM, "El ítem no puede ser nulo");
+            throw new InvalidOrderException(ERROR_NULL_ITEM, "El ítem no puede ser nulo");
         }
 
         if (items.size() >= MAX_ITEMS_PER_ORDER) {
-            throw new InvalidOrderException(ERROR_CODE_MAX_ITEMS_EXCEEDED,
+            throw new InvalidOrderException(ERROR_MAX_ITEMS,
                 "No se pueden agregar más de " + MAX_ITEMS_PER_ORDER + " ítems por orden");
         }
 
         // Reglas: no puede haber duplicado de ítem ni mezcla con tipo diagnóstico
         if (items.stream().anyMatch(i -> i.getItemNumber() == item.getItemNumber())) {
-            throw new InvalidOrderException(ERROR_CODE_DUPLICATE_ITEM,
+            throw new InvalidOrderException(ERROR_DUPLICATE_ITEM,
                 "Ya existe un ítem con el número " + item.getItemNumber());
         }
 
         if (containsDiagnosticAid() && item.getType() != OrderType.DIAGNOSTIC_AID) {
-            throw new InvalidOrderException(ERROR_CODE_DIAGNOSTIC_AID_MIX,
+            throw new InvalidOrderException(ERROR_DIAGNOSTIC_AID_MIX,
                 "No se pueden combinar diagnósticos con otros ítems en la misma orden.");
         }
 
         if (item.getType() == OrderType.DIAGNOSTIC_AID && !items.isEmpty()) {
-            throw new InvalidOrderException(ERROR_CODE_DIAGNOSTIC_AID_WITH_OTHERS,
+            throw new InvalidOrderException(ERROR_DIAGNOSTIC_AID_MIX,
                 "No se pueden agregar ayudas diagnósticas si ya hay otros ítems.");
         }
 

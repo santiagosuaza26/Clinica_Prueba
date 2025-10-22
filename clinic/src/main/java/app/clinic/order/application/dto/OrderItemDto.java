@@ -1,40 +1,40 @@
 package app.clinic.order.application.dto;
 
-import java.math.BigDecimal;
+import app.clinic.order.domain.model.OrderType;
+import app.clinic.shared.domain.model.SpecialistType;
 
-/**
- * DTO para ítems de órdenes médicas con validaciones básicas.
- */
 public record OrderItemDto(
     int itemNumber,
-    String type,
+    OrderType type,
     String name,
+    double unitCost,
     int quantity,
-    String dosage,
-    String frequency,
-    BigDecimal cost,
     boolean requiresSpecialist,
-    Long specialtyId
+    SpecialistType specialistType,
+
+    // Referencias al inventario
+    Long inventoryMedicationId,
+    Long inventoryProcedureId,
+    Long inventoryDiagnosticAidId,
+
+    // Campos personalizados
+    String customDosage,
+    String customFrequency,
+    Integer customDuration
 ) {
-    /**
-     * Valida que los datos del ítem sean correctos.
-     */
     public boolean isValid() {
-        return itemNumber > 0 &&
-               type != null && !type.trim().isEmpty() &&
-               name != null && !name.trim().isEmpty() &&
-               quantity > 0 &&
-               cost != null && cost.compareTo(BigDecimal.ZERO) >= 0;
+        return name != null && !name.isBlank() && quantity > 0 && unitCost >= 0;
     }
 
-    /**
-     * Valida que el tipo sea uno de los valores permitidos.
-     */
     public boolean hasValidType() {
-        return type != null && (
-            "MEDICATION".equals(type) ||
-            "PROCEDURE".equals(type) ||
-            "DIAGNOSTIC_AID".equals(type)
-        );
+        return type != null;
+    }
+
+    public boolean hasValidInventoryReference() {
+        return switch (type) {
+            case MEDICATION -> inventoryMedicationId != null;
+            case PROCEDURE -> inventoryProcedureId != null;
+            case DIAGNOSTIC_AID -> inventoryDiagnosticAidId != null;
+        };
     }
 }

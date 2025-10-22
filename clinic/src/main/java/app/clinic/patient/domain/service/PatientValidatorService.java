@@ -54,8 +54,14 @@ public class PatientValidatorService {
             if (ec.getName() == null || ec.getName().isBlank()) {
                 throw new ValidationException("El contacto de emergencia debe tener nombre.");
             }
+            if (ec.getName().length() > 50) {
+                throw new ValidationException("El nombre del contacto de emergencia no puede superar los 50 caracteres.");
+            }
             if (ec.getRelation() == null || ec.getRelation().isBlank()) {
                 throw new ValidationException("El contacto de emergencia debe especificar la relación con el paciente.");
+            }
+            if (ec.getRelation().length() > 30) {
+                throw new ValidationException("La relación con el paciente no puede superar los 30 caracteres.");
             }
             validatePhoneExactly(ec.getPhone(), "teléfono del contacto de emergencia");
         }
@@ -67,7 +73,12 @@ public class PatientValidatorService {
         }
 
         // Validaciones básicas del dominio
-        patient.validateBasic();
+        if (patient.getFullName() == null || patient.getFullName().isBlank()) {
+            throw new ValidationException("El nombre completo es obligatorio.");
+        }
+        if (patient.getUsername() != null && patient.getUsername().length() > 15) {
+            throw new ValidationException("El nombre de usuario no puede superar los 15 caracteres.");
+        }
     }
 
     private void validatePhoneExactly(String phone, String fieldName) {
@@ -80,6 +91,9 @@ public class PatientValidatorService {
         if (insurance.getCompanyName() == null || insurance.getCompanyName().isBlank()) {
             throw new ValidationException("El seguro médico debe tener nombre de la compañía.");
         }
+        if (insurance.getCompanyName().length() > 100) {
+            throw new ValidationException("El nombre de la compañía no puede superar los 100 caracteres.");
+        }
 
         if (insurance.getPolicyNumber() == null || insurance.getPolicyNumber().isBlank()) {
             throw new ValidationException("El seguro médico debe tener número de póliza.");
@@ -88,6 +102,9 @@ public class PatientValidatorService {
         // Validar formato del número de póliza (alfanumérico, mínimo 5 caracteres)
         if (insurance.getPolicyNumber().length() < 5) {
             throw new ValidationException("El número de póliza debe tener al menos 5 caracteres.");
+        }
+        if (insurance.getPolicyNumber().length() > 50) {
+            throw new ValidationException("El número de póliza no puede superar los 50 caracteres.");
         }
 
         // Validar vigencia automática basada en fecha de expiración

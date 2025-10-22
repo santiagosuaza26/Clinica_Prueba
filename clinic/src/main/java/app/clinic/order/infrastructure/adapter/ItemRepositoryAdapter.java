@@ -76,25 +76,36 @@ public class ItemRepositoryAdapter implements OrderItemRepository {
                 entity.getCost(),
                 entity.getQuantity() != null ? entity.getQuantity() : 1,
                 entity.getRequiresSpecialist() != null ? entity.getRequiresSpecialist() : false,
-                entity.getSpecialistType()
+                entity.getSpecialistType(), // Ahora usa el SpecialistType del módulo shared
+                entity.getInventoryMedicationId(),
+                entity.getInventoryProcedureId(),
+                entity.getInventoryDiagnosticAidId(),
+                entity.getCustomDosage(),
+                entity.getCustomFrequency(),
+                entity.getCustomDuration()
         );
     }
 
     /**
      * Convierte una entidad de dominio a una entidad JPA con la orden asociada.
-     * Nota: Esta implementación básica no maneja las relaciones complejas.
+     * Usa el constructor completo que incluye todas las referencias al inventario.
      */
     private OrderItemEntity toEntity(OrderItem orderItem, OrderEntity orderEntity) {
-        OrderItemEntity entity = new OrderItemEntity(
+        return new OrderItemEntity(
                 orderItem.getItemNumber(),
                 orderItem.getType(),
                 orderItem.getName(),
-                orderItem.getCost(),
+                orderItem.getUnitCost(),
                 orderItem.getQuantity(),
                 orderItem.isRequiresSpecialist(),
-                orderItem.getSpecialistType(),
-                orderEntity // La orden se establece directamente
+                orderItem.getSpecialistType(), // Ahora usa el SpecialistType del módulo shared
+                orderEntity, // La orden se establece directamente
+                orderItem.getInventoryMedicationId(),
+                orderItem.getInventoryProcedureId(),
+                orderItem.getInventoryDiagnosticAidId(),
+                orderItem.getCustomDosage(),
+                orderItem.getCustomFrequency(),
+                orderItem.getCustomDuration()
         );
-        return entity;
     }
 }

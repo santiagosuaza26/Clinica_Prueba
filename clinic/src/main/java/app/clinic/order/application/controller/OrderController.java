@@ -25,88 +25,11 @@ import app.clinic.order.application.usecase.GetOrderByIdUseCase;
 import app.clinic.order.application.usecase.RemoveItemFromOrderUseCase;
 import app.clinic.order.application.usecase.UpdateOrderUseCase;
 import app.clinic.order.domain.model.MedicalOrder;
-import app.clinic.order.domain.model.OrderItem;
-import app.clinic.shared.domain.exception.ValidationException;
-import app.clinic.shared.infrastructure.config.SecurityUtils;
 import app.clinic.user.domain.model.Role;
 
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
-
-    /**
-     * Valida y parsea el rol desde el token JWT.
-     */
-    private Role validateAndParseRole() {
-         String roleStr = SecurityUtils.getCurrentRole();
-         if (roleStr == null) {
-             throw new ValidationException("Rol no encontrado en el token.");
-         }
-         return Role.valueOf(roleStr.toUpperCase());
-     }
-
-    /**
-     * Valida permisos para operación de creación (solo MÉDICO).
-     */
-    private void validateCreatePermissions(Role role) {
-        if (role != Role.MEDICO) {
-            throw new SecurityException("Solo médicos pueden crear órdenes");
-        }
-    }
-
-    /**
-     * Valida permisos para operación de lectura (MÉDICO y SOPORTE).
-     */
-    private void validateReadPermissions(Role role) {
-        if (role != Role.MEDICO && role != Role.SOPORTE) {
-            throw new SecurityException("Solo médicos y soporte pueden consultar órdenes");
-        }
-    }
-
-    /**
-     * Valida permisos para operación de eliminación (MÉDICO y SOPORTE).
-     */
-    private void validateDeletePermissions(Role role) {
-        if (role != Role.MEDICO && role != Role.SOPORTE) {
-            throw new SecurityException("Solo médicos y soporte pueden eliminar órdenes");
-        }
-    }
-
-    /**
-     * Valida permisos para operación de modificación de ítems (MÉDICO y ENFERMERA).
-     */
-    private void validateItemModificationPermissions(Role role) {
-        if (role != Role.MEDICO && role != Role.ENFERMERA) {
-            throw new SecurityException("Solo médicos y enfermeras pueden modificar ítems");
-        }
-    }
-
-    /**
-     * Valida que los datos de la solicitud de orden sean válidos.
-     */
-    private boolean isValidOrderRequest(OrderRequestDto dto) {
-        return dto != null &&
-               dto.patientId() != null &&
-               dto.doctorId() != null &&
-               dto.items() != null &&
-               !dto.items().isEmpty();
-    }
-
-    /**
-     * Valida que el número de orden sea válido.
-     */
-    private boolean isValidOrderNumber(String orderNumber) {
-        return orderNumber != null && !orderNumber.trim().isEmpty();
-    }
-
-    /**
-     * Valida que los datos del ítem sean válidos.
-     */
-    private boolean isValidItemRequest(OrderItemDto itemDto) {
-        return itemDto != null &&
-               itemDto.isValid() &&
-               itemDto.hasValidType();
-    }
 
     private final CreateOrderUseCase createOrderUseCase;
     private final GetOrderByIdUseCase getOrderByIdUseCase;
@@ -136,77 +59,44 @@ public class OrderController {
 
     // ✅ Crear una nueva orden médica (solo MÉDICO)
     @PostMapping
-    public ResponseEntity<OrderResponseDto> createOrder(
-         @RequestBody OrderRequestDto dto
-     ) {
-         try {
-             Role role = validateAndParseRole();
-            validateCreatePermissions(role);
+    public ResponseEntity<OrderResponseDto> createOrder(@RequestBody OrderRequestDto dto) {
+        Role role = OrderSecurityValidator.getCurrentRole();
+        OrderSecurityValidator.requireDoctorRole(role);
 
-            if (!isValidOrderRequest(dto)) {
-                return ResponseEntity.badRequest().build();
-            }
-
-            MedicalOrder order = OrderMapper.toDomain(dto);
-            MedicalOrder created = createOrderUseCase.execute(order.getPatientId(), order.getDoctorId());
-            return ResponseEntity.ok(OrderMapper.toResponse(created));
-
-        } catch (SecurityException e) {
-            return ResponseEntity.status(403).build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(400).build();
-        } catch (Exception e) {
-            return ResponseEntity.status(500).build();
+        if (!OrderDataValidator.isValidOrderRequest(dto)) {
+            return ResponseUtils.badRequest();
         }
+
+        MedicalOrder order = OrderMapper.toDomain(dto);
+        MedicalOrder created = createOrderUseCase.execute(order.getPatientId(), order.getDoctorId());
+        return ResponseUtils.ok(OrderMapper.toResponse(created));
     }
 
     // ✅ Consultar una orden médica por número
     @GetMapping("/{orderNumber}")
-    public ResponseEntity<OrderResponseDto> getOrderById(
-         @PathVariable String orderNumber
-     ) {
-         try {
-             Role role = validateAndParseRole();
+    public ResponseEntity<OrderResponseDto> getOrderById(@PathVariable String orderNumber) {
+        Role role = OrderSecurityValidator.getCurrentRole();
+        OrderSecurityValidator.validateNotHumanResources(role);
 
-            // Validar permisos (RRHH no puede consultar órdenes específicas)
-            if (role == Role.RECURSOS_HUMANOS) {
-                return ResponseEntity.status(403).build();
-            }
-
-            if (!isValidOrderNumber(orderNumber)) {
-                return ResponseEntity.badRequest().build();
-            }
-
-            return getOrderByIdUseCase.execute(orderNumber)
-                .map(order -> ResponseEntity.ok(OrderMapper.toResponse(order)))
-                .orElse(ResponseEntity.notFound().build());
-
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(400).build();
-        } catch (Exception e) {
-            return ResponseEntity.status(500).build();
+        if (!OrderDataValidator.isValidOrderNumber(orderNumber)) {
+            return ResponseUtils.badRequest();
         }
+
+        return getOrderByIdUseCase.execute(orderNumber)
+            .map(order -> ResponseUtils.ok(OrderMapper.toResponse(order)))
+            .orElse(ResponseUtils.notFound());
     }
 
     // ✅ Listar todas las órdenes médicas (solo SOPORTE o MÉDICO)
     @GetMapping
     public ResponseEntity<List<OrderResponseDto>> getAllOrders() {
-         try {
-             Role role = validateAndParseRole();
-            validateReadPermissions(role);
+        Role role = OrderSecurityValidator.getCurrentRole();
+        OrderSecurityValidator.requireReadPermissions(role);
 
-            List<MedicalOrder> orders = getAllOrdersUseCase.execute();
-            return ResponseEntity.ok(
-                orders.stream().map(OrderMapper::toResponse).collect(Collectors.toList())
-            );
-
-        } catch (SecurityException e) {
-            return ResponseEntity.status(403).build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(400).build();
-        } catch (Exception e) {
-            return ResponseEntity.status(500).build();
-        }
+        List<MedicalOrder> orders = getAllOrdersUseCase.execute();
+        return ResponseUtils.ok(
+            orders.stream().map(OrderMapper::toResponse).collect(Collectors.toList())
+        );
     }
 
     // ✅ Actualizar una orden (solo MÉDICO)
@@ -215,71 +105,48 @@ public class OrderController {
          @PathVariable String orderNumber,
          @RequestBody OrderRequestDto dto
      ) {
-         Role role = validateAndParseRole();
-        if (role != Role.MEDICO) {
-            return ResponseEntity.status(403).build();
-        }
+        Role role = OrderSecurityValidator.getCurrentRole();
+        OrderSecurityValidator.requireDoctorRole(role);
 
         return getOrderByIdUseCase.execute(orderNumber)
             .map(existing -> {
                 MedicalOrder updated = OrderMapper.toDomainForUpdate(dto, orderNumber);
                 MedicalOrder saved = updateOrderUseCase.execute(updated);
-                return ResponseEntity.ok(OrderMapper.toResponse(saved));
+                return ResponseUtils.ok(OrderMapper.toResponse(saved));
             })
-            .orElse(ResponseEntity.notFound().build());
+            .orElse(ResponseUtils.notFound());
     }
 
     // ✅ Eliminar una orden (solo SOPORTE o MÉDICO)
     @DeleteMapping("/{orderNumber}")
-    public ResponseEntity<Void> deleteOrder(
-         @PathVariable String orderNumber
-     ) {
-         try {
-             Role role = validateAndParseRole();
-            validateDeletePermissions(role);
+    public ResponseEntity<Void> deleteOrder(@PathVariable String orderNumber) {
+        Role role = OrderSecurityValidator.getCurrentRole();
+        OrderSecurityValidator.requireDeletePermissions(role);
 
-            if (!isValidOrderNumber(orderNumber)) {
-                return ResponseEntity.badRequest().build();
-            }
-
-            deleteOrderUseCase.execute(orderNumber);
-            return ResponseEntity.noContent().build();
-
-        } catch (SecurityException e) {
-            return ResponseEntity.status(403).build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(400).build();
-        } catch (Exception e) {
-            return ResponseEntity.status(500).build();
+        if (!OrderDataValidator.isValidOrderNumber(orderNumber)) {
+            return ResponseUtils.badRequest();
         }
+
+        deleteOrderUseCase.execute(orderNumber);
+        return ResponseUtils.noContent();
     }
 
     // ✅ Agregar un ítem a la orden (medicamento, procedimiento o ayuda diagnóstica)
     @PostMapping("/{orderNumber}/items")
     public ResponseEntity<OrderResponseDto> addItemToOrder(
-         @PathVariable String orderNumber,
-         @RequestBody OrderItemDto itemDto
-     ) {
-         try {
-             Role role = validateAndParseRole();
-            validateItemModificationPermissions(role);
+          @PathVariable String orderNumber,
+          @RequestBody OrderItemDto itemDto
+      ) {
+          Role role = OrderSecurityValidator.getCurrentRole();
+         OrderSecurityValidator.requireItemModificationPermissions(role);
 
-            if (!isValidOrderNumber(orderNumber) || !isValidItemRequest(itemDto)) {
-                return ResponseEntity.badRequest().build();
-            }
+         if (!OrderDataValidator.isValidOrderNumber(orderNumber) || !OrderDataValidator.isValidItemRequest(itemDto)) {
+             return ResponseUtils.badRequest();
+         }
 
-            OrderItem newItem = OrderMapper.toDomain(itemDto);
-            MedicalOrder updated = addItemToOrderUseCase.execute(orderNumber, newItem);
-            return ResponseEntity.ok(OrderMapper.toResponse(updated));
-
-        } catch (SecurityException e) {
-            return ResponseEntity.status(403).build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(400).build();
-        } catch (Exception e) {
-            return ResponseEntity.status(500).build();
-        }
-    }
+         MedicalOrder updated = addItemToOrderUseCase.execute(orderNumber, itemDto);
+         return ResponseUtils.ok(OrderMapper.toResponse(updated));
+     }
 
     // ✅ Eliminar un ítem de una orden
     @DeleteMapping("/{orderNumber}/items/{itemNumber}")
@@ -287,23 +154,14 @@ public class OrderController {
          @PathVariable String orderNumber,
          @PathVariable int itemNumber
      ) {
-         try {
-             Role role = validateAndParseRole();
-            validateItemModificationPermissions(role);
+         Role role = OrderSecurityValidator.getCurrentRole();
+        OrderSecurityValidator.requireItemModificationPermissions(role);
 
-            if (!isValidOrderNumber(orderNumber) || itemNumber <= 0) {
-                return ResponseEntity.badRequest().build();
-            }
-
-            MedicalOrder updated = removeItemFromOrderUseCase.execute(orderNumber, itemNumber);
-            return ResponseEntity.ok(OrderMapper.toResponse(updated));
-
-        } catch (SecurityException e) {
-            return ResponseEntity.status(403).build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(400).build();
-        } catch (Exception e) {
-            return ResponseEntity.status(500).build();
+        if (!OrderDataValidator.isValidOrderNumber(orderNumber) || !OrderDataValidator.isValidItemNumber(itemNumber)) {
+            return ResponseUtils.badRequest();
         }
+
+        MedicalOrder updated = removeItemFromOrderUseCase.execute(orderNumber, itemNumber);
+        return ResponseUtils.ok(OrderMapper.toResponse(updated));
     }
 }

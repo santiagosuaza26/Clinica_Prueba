@@ -2,8 +2,6 @@ package app.clinic.patient.domain.model;
 
 import java.time.LocalDate;
 
-import app.clinic.shared.domain.exception.ValidationException;
-
 public class Insurance {
 
     private String companyName;
@@ -18,7 +16,6 @@ public class Insurance {
         this.policyNumber = policyNumber;
         this.active = active;
         this.expiryDate = expiryDate;
-        validateInsurance();
     }
 
     // Getters y Setters
@@ -49,16 +46,4 @@ public class Insurance {
         }
     }
 
-    // Validaciones internas
-    private void validateInsurance() {
-        if (companyName != null && companyName.length() > 100) {
-            throw new ValidationException("El nombre de la compañía no puede superar los 100 caracteres.");
-        }
-        if (policyNumber != null && policyNumber.length() < 5) {
-            throw new ValidationException("El número de póliza debe tener al menos 5 caracteres.");
-        }
-        if (policyNumber != null && policyNumber.length() > 50) {
-            throw new ValidationException("El número de póliza no puede superar los 50 caracteres.");
-        }
-    }
 }

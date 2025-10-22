@@ -2,7 +2,7 @@ package app.clinic.order.infrastructure.entity;
 
 import java.math.BigDecimal;
 
-import app.clinic.order.domain.model.SpecialistType;
+import app.clinic.shared.domain.model.SpecialistType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

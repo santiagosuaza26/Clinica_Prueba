@@ -2,14 +2,14 @@ package app.clinic.order.application.mapper;
 
 import java.math.BigDecimal;
 
+import app.clinic.inventory.domain.model.Procedure;
+import app.clinic.inventory.domain.model.SpecialistType;
 import app.clinic.order.application.dto.ProcedureDto;
-import app.clinic.order.domain.model.Procedure;
-import app.clinic.order.domain.model.SpecialistType;
 
 public class ProcedureMapper {
     public static Procedure toDomain(ProcedureDto dto) {
         // Generate a UUID for the id field since DTO doesn't provide it
-        String id = java.util.UUID.randomUUID().toString();
+        Long id = java.util.UUID.randomUUID().getMostSignificantBits();
 
         // Convert BigDecimal to double for cost
         double cost = dto.cost().doubleValue();

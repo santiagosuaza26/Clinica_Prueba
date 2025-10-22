@@ -11,24 +11,16 @@ import app.clinic.order.application.usecase.GetAllOrdersUseCase;
 import app.clinic.order.application.usecase.GetOrderByIdUseCase;
 import app.clinic.order.application.usecase.RemoveItemFromOrderUseCase;
 import app.clinic.order.application.usecase.UpdateOrderUseCase;
-import app.clinic.order.domain.repository.DiagnosticAidRepository;
-import app.clinic.order.domain.repository.MedicationRepository;
 import app.clinic.order.domain.repository.OrderItemRepository;
 import app.clinic.order.domain.repository.OrderRepository;
-import app.clinic.order.domain.repository.ProcedureRepository;
+import app.clinic.order.domain.service.InventoryIntegrationService;
 import app.clinic.order.domain.service.OrderCostCalculator;
 import app.clinic.order.domain.service.OrderFactory;
 import app.clinic.order.domain.service.OrderRulesService;
-import app.clinic.order.infrastructure.adapter.DiagnosticAidRepositoryAdapter;
 import app.clinic.order.infrastructure.adapter.ItemRepositoryAdapter;
-import app.clinic.order.infrastructure.adapter.MedicationRepositoryAdapter;
 import app.clinic.order.infrastructure.adapter.OrderRepositoryAdapter;
-import app.clinic.order.infrastructure.adapter.ProcedureRepositoryAdapter;
-import app.clinic.order.infrastructure.repository.JpaOrderDiagnosticAidRepository;
-import app.clinic.order.infrastructure.repository.JpaOrderMedicationRepository;
 import app.clinic.order.infrastructure.repository.JpaOrderItemRepository;
 import app.clinic.order.infrastructure.repository.JpaOrderRepository;
-import app.clinic.order.infrastructure.repository.JpaOrderProcedureRepository;
 
 /**
  * Configuración de infraestructura para el módulo de órdenes médicas.
@@ -43,32 +35,13 @@ public class OrderConfig {
     // Los repositorios JPA son automáticamente creados por Spring Data JPA
 
     @Bean
-    public MedicationRepository orderMedicationRepository(JpaOrderMedicationRepository jpaMedicationRepository) {
-        logger.info("ORDER_CONFIG: Creando bean orderMedicationRepository desde OrderConfig");
-        logger.info("ORDER_CONFIG: JpaMedicationRepository recibido: {}", jpaMedicationRepository.getClass().getSimpleName());
-        MedicationRepository repository = new MedicationRepositoryAdapter(jpaMedicationRepository);
-        logger.info("ORDER_CONFIG: MedicationRepositoryAdapter creado exitosamente");
-        return repository;
-    }
-
-    @Bean
-    public ProcedureRepository orderProcedureRepository(JpaOrderProcedureRepository jpaProcedureRepository) {
-        return new ProcedureRepositoryAdapter(jpaProcedureRepository);
-    }
-
-    @Bean
-    public DiagnosticAidRepository orderDiagnosticAidRepository(JpaOrderDiagnosticAidRepository jpaDiagnosticAidRepository) {
-        return new DiagnosticAidRepositoryAdapter(jpaDiagnosticAidRepository);
-    }
-
-    @Bean
     public OrderRepository orderRepository(JpaOrderRepository jpaOrderRepository) {
         return new OrderRepositoryAdapter(jpaOrderRepository);
     }
 
     @Bean
     public OrderItemRepository orderItemRepository(JpaOrderItemRepository jpaOrderItemRepository,
-                                                   JpaOrderRepository jpaOrderRepository) {
+                                                    JpaOrderRepository jpaOrderRepository) {
         return new ItemRepositoryAdapter(jpaOrderItemRepository, jpaOrderRepository);
     }
 
@@ -87,6 +60,14 @@ public class OrderConfig {
     @Bean
     public OrderFactory orderFactory() {
         return new OrderFactory();
+    }
+
+    @Bean
+    public InventoryIntegrationService inventoryIntegrationService(
+            app.clinic.inventory.domain.repository.MedicationRepository medicationRepository,
+            app.clinic.inventory.domain.repository.ProcedureRepository procedureRepository,
+            app.clinic.inventory.domain.repository.DiagnosticAidRepository diagnosticAidRepository) {
+        return new InventoryIntegrationService(medicationRepository, procedureRepository, diagnosticAidRepository);
     }
 
     // ==================== CASOS DE USO DE APLICACIÓN ====================
@@ -111,9 +92,11 @@ public class OrderConfig {
         return new DeleteOrderUseCase(orderRepository);
     }
 
+    // Actualizar casos de uso para incluir el servicio de integración
     @Bean
-    public AddItemToOrderUseCase addItemToOrderUseCase(OrderRepository orderRepository) {
-        return new AddItemToOrderUseCase(orderRepository);
+    public AddItemToOrderUseCase addItemToOrderUseCase(OrderRepository orderRepository,
+                                                        InventoryIntegrationService inventoryService) {
+        return new AddItemToOrderUseCase(orderRepository, inventoryService);
     }
 
     @Bean
