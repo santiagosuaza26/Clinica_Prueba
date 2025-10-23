@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinic IPS - Iniciar Sesión</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div style="text-align: center; margin-bottom: 1rem;">
+                <i class="fas fa-hospital" style="font-size: 2.5rem; color: var(--primary-color); margin-bottom: 1rem;"></i>
+            </div>
+            <h1>Iniciar Sesión</h1>
+            <p>Accede al sistema de gestión clínica con tus credenciales</p>
+        </header>
+
+        <main>
+            <form id="loginForm" style="max-width: 400px; margin: 0 auto;">
+                <div class="form-group">
+                    <label for="username">
+                        <i class="fas fa-user" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                        Usuario:
+                    </label>
+                    <input type="text"
+                           id="username"
+                           placeholder="Ingrese su nombre de usuario"
+                           required
+                           autocomplete="username">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">
+                        <i class="fas fa-lock" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                        Contraseña:
+                    </label>
+                    <div style="position: relative;">
+                        <input type="password"
+                               id="password"
+                               placeholder="Ingrese su contraseña"
+                               required
+                               autocomplete="current-password">
+                        <button type="button"
+                                id="togglePassword"
+                                style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1rem;">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div style="margin: 1.5rem 0;">
+                    <button type="submit" class="btn-primary" style="width: 100%; position: relative;">
+                        <span class="loading" id="loginLoading" style="display: none;"></span>
+                        <span id="loginText">Iniciar Sesión</span>
+                    </button>
+                </div>
+
+                <div style="text-align: center; margin-top: 1rem;">
+                    <button type="button" id="backBtn" class="btn-secondary">
+                        <i class="fas fa-arrow-left"></i>
+                        Volver al Inicio
+                    </button>
+                </div>
+            </form>
+
+            <div id="message" style="max-width: 400px; margin: 0 auto;"></div>
+
+            <!-- Información de ayuda -->
+            <div style="max-width: 400px; margin: 2rem auto 0; padding: 1.5rem; background: var(--background-color); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm);">
+                <h3 style="margin-top: 0; color: var(--text-primary); font-size: 1rem;">
+                    <i class="fas fa-info-circle" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                    Información de Acceso
+                </h3>
+                <div style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">
+                    <p><strong>Recursos Humanos:</strong> Gestiona usuarios y personal</p>
+                    <p><strong>Administrativo:</strong> Gestiona pacientes y citas</p>
+                    <p><strong>Médico:</strong> Accede a historias clínicas</p>
+                    <p><strong>Enfermera:</strong> Registra signos vitales</p>
+                    <p><strong>Soporte:</strong> Mantenimiento del sistema</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        // Toggle password visibility
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const icon = this.querySelector('i');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinic IPS - Soporte</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Clinic IPS - Panel Soporte</h1>
+            <p>Bienvenido, <span id="username"></span></p>
+            <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+        </header>
+        <div class="tab">
+            <button class="tablinks active" onclick="openTab(event, 'medications')">Medicamentos</button>
+            <button class="tablinks" onclick="openTab(event, 'procedures')">Procedimientos</button>
+            <button class="tablinks" onclick="openTab(event, 'diagnosticAids')">Ayudas Diagnósticas</button>
+        </div>
+
+        <div id="medications" class="tabcontent" style="display: block;">
+            <button class="accordion">Crear Medicamento</button>
+            <div class="panel">
+                <form id="createMedicationForm">
+                    <div class="form-group">
+                        <label for="medName">Nombre:</label>
+                        <input type="text" id="medName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="medCost">Costo:</label>
+                        <input type="number" id="medCost" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="medDosage">Dosis:</label>
+                        <input type="text" id="medDosage" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Crear Medicamento</button>
+                </form>
+            </div>
+            <button class="accordion">Lista de Medicamentos</button>
+            <div class="panel">
+                <button class="btn-secondary" onclick="loadMedications()">Cargar Medicamentos</button>
+                <div id="medicationsList"></div>
+            </div>
+        </div>
+
+        <div id="procedures" class="tabcontent">
+            <button class="accordion">Crear Procedimiento</button>
+            <div class="panel">
+                <form id="createProcedureForm">
+                    <div class="form-group">
+                        <label for="procName">Nombre:</label>
+                        <input type="text" id="procName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="procCost">Costo:</label>
+                        <input type="number" id="procCost" step="0.01" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Crear Procedimiento</button>
+                </form>
+            </div>
+            <button class="accordion">Lista de Procedimientos</button>
+            <div class="panel">
+                <button class="btn-secondary" onclick="loadProcedures()">Cargar Procedimientos</button>
+                <div id="proceduresList"></div>
+            </div>
+        </div>
+
+        <div id="diagnosticAids" class="tabcontent">
+            <button class="accordion">Crear Ayuda Diagnóstica</button>
+            <div class="panel">
+                <form id="createDiagnosticAidForm">
+                    <div class="form-group">
+                        <label for="aidName">Nombre:</label>
+                        <input type="text" id="aidName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="aidCost">Costo:</label>
+                        <input type="number" id="aidCost" step="0.01" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Crear Ayuda Diagnóstica</button>
+                </form>
+            </div>
+            <button class="accordion">Lista de Ayudas Diagnósticas</button>
+            <div class="panel">
+                <button class="btn-secondary" onclick="loadDiagnosticAids()">Cargar Ayudas Diagnósticas</button>
+                <div id="diagnosticAidsList"></div>
+            </div>
+        </div>
+    </div>
+    <script src="api.js"></script>
+    <script src="support.js"></script>
+</body>
+</html>

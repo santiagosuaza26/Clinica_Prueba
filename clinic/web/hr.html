@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinic IPS - Recursos Humanos</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Clinic IPS - Panel Recursos Humanos</h1>
+            <p>Bienvenido, <span id="username"></span></p>
+            <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+        </header>
+        <div class="tab">
+            <button class="tablinks active" onclick="openTab(event, 'createUser')">
+                <i class="fas fa-user-plus"></i>
+                Crear Usuario
+            </button>
+            <button class="tablinks" onclick="openTab(event, 'listUsers')">
+                <i class="fas fa-users"></i>
+                Gestionar Usuarios
+            </button>
+        </div>
+
+        <div id="createUser" class="tabcontent" style="display: block;">
+            <h2><i class="fas fa-user-plus" style="margin-right: 0.5rem; color: var(--primary-color);"></i>Crear Nuevo Usuario</h2>
+            <button class="accordion">
+                <i class="fas fa-address-card"></i>
+                Información del Empleado
+            </button>
+            <div class="panel">
+                <form id="createUserForm">
+                    <fieldset style="border: 2px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.5rem;">
+                        <legend style="color: var(--primary-color); font-weight: 600; padding: 0 1rem;">Datos Personales</legend>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="userCedula">
+                                    <i class="fas fa-id-card" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                    Número de Cédula:
+                                </label>
+                                <input type="text"
+                                       id="userCedula"
+                                       placeholder="Número de identificación único"
+                                       pattern="[0-9]+"
+                                       title="Solo números"
+                                       required>
+                            </div>
+                            <div class="form-group">
+                                <label for="userFullName">
+                                    <i class="fas fa-user" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                    Nombre Completo:
+                                </label>
+                                <input type="text"
+                                       id="userFullName"
+                                       placeholder="Nombres y apellidos completos"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="userEmail">
+                                    <i class="fas fa-envelope" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                    Correo Electrónico:
+                                </label>
+                                <input type="email"
+                                       id="userEmail"
+                                       placeholder="empleado@clinica.com"
+                                       required>
+                            </div>
+                            <div class="form-group">
+                                <label for="userPhone">
+                                    <i class="fas fa-phone" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                    Teléfono:
+                                </label>
+                                <input type="tel"
+                                       id="userPhone"
+                                       placeholder="3101234567"
+                                       pattern="[0-9]{10}"
+                                       title="Debe tener 10 dígitos"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="userBirthDate">
+                                    <i class="fas fa-calendar" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                    Fecha de Nacimiento:
+                                </label>
+                                <input type="date"
+                                       id="userBirthDate"
+                                       max="2010-01-01"
+                                       required>
+                            </div>
+                            <div class="form-group">
+                                <label for="userAddress">
+                                    <i class="fas fa-map-marker-alt" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                    Dirección:
+                                </label>
+                                <input type="text"
+                                       id="userAddress"
+                                       placeholder="Dirección residencial completa"
+                                       required>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset style="border: 2px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.5rem;">
+                        <legend style="color: var(--primary-color); font-weight: 600; padding: 0 1rem;">Credenciales de Acceso</legend>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="userUsername">
+                                    <i class="fas fa-user-circle" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                    Nombre de Usuario:
+                                </label>
+                                <input type="text"
+                                       id="userUsername"
+                                       placeholder="Usuario único para el sistema"
+                                       maxlength="15"
+                                       pattern="[a-zA-Z0-9]+"
+                                       title="Solo letras y números"
+                                       required>
+                            </div>
+                            <div class="form-group">
+                                <label for="userPassword">
+                                    <i class="fas fa-lock" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                    Contraseña Temporal:
+                                </label>
+                                <div style="position: relative;">
+                                    <input type="password"
+                                           id="userPassword"
+                                           placeholder="Mínimo 8 caracteres"
+                                           minlength="8"
+                                           required>
+                                    <button type="button"
+                                            id="generatePassword"
+                                            class="btn-secondary"
+                                            style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); padding: 0.5rem; font-size: 0.8rem;">
+                                        <i class="fas fa-random"></i>
+                                        Generar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="userRole">
+                                <i class="fas fa-user-tag" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                Rol en la Clínica:
+                            </label>
+                            <select id="userRole" required>
+                                <option value="">Seleccionar rol del empleado</option>
+                                <option value="ADMINISTRATIVO">
+                                    <i class="fas fa-clipboard-list"></i>
+                                    Personal Administrativo
+                                </option>
+                                <option value="MEDICO">
+                                    <i class="fas fa-user-md"></i>
+                                    Médico
+                                </option>
+                                <option value="ENFERMERA">
+                                    <i class="fas fa-user-nurse"></i>
+                                    Enfermera
+                                </option>
+                                <option value="RECURSOS_HUMANOS">
+                                    <i class="fas fa-users-cog"></i>
+                                    Recursos Humanos
+                                </option>
+                                <option value="SOPORTE">
+                                    <i class="fas fa-tools"></i>
+                                    Soporte Técnico
+                                </option>
+                            </select>
+                        </div>
+                    </fieldset>
+
+                    <div style="text-align: center; padding: 1rem; background: #eff6ff; border-radius: var(--radius-lg); margin-bottom: 1.5rem;">
+                        <i class="fas fa-info-circle" style="color: var(--primary-color); margin-right: 0.5rem;"></i>
+                        <strong>Nota:</strong> Se creará un usuario con las credenciales especificadas. La contraseña es temporal y debe ser cambiada en el primer inicio de sesión.
+                    </div>
+
+                    <div style="text-align: center;">
+                        <button type="submit" class="btn-primary btn-success">
+                            <i class="fas fa-user-plus"></i>
+                            Crear Usuario
+                        </button>
+                        <button type="button" class="btn-secondary" onclick="this.closest('form').reset()" style="margin-left: 1rem;">
+                            <i class="fas fa-undo"></i>
+                            Limpiar Formulario
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="listUsers" class="tabcontent">
+            <h2><i class="fas fa-users" style="margin-right: 0.5rem; color: var(--primary-color);"></i>Gestión de Usuarios</h2>
+            <button class="accordion">
+                <i class="fas fa-list"></i>
+                Lista de Usuarios del Sistema
+            </button>
+            <div class="panel">
+                <div style="margin-bottom: 1rem; display: flex; gap: 1rem; align-items: center;">
+                    <button class="btn-secondary" onclick="loadUsers()">
+                        <i class="fas fa-sync-alt"></i>
+                        Actualizar Lista
+                    </button>
+                    <input type="text"
+                           id="userSearch"
+                           placeholder="Buscar por nombre, usuario o rol..."
+                           style="flex: 1; max-width: 300px; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: var(--radius-md);">
+                    <select id="roleFilter" style="padding: 0.75rem; border: 2px solid var(--border-color); border-radius: var(--radius-md);">
+                        <option value="">Todos los roles</option>
+                        <option value="ADMINISTRATIVO">Administrativo</option>
+                        <option value="MEDICO">Médico</option>
+                        <option value="ENFERMERA">Enfermera</option>
+                        <option value="RECURSOS_HUMANOS">Recursos Humanos</option>
+                        <option value="SOPORTE">Soporte</option>
+                    </select>
+                </div>
+                <div id="usersList" style="max-height: 500px; overflow-y: auto;"></div>
+            </div>
+        </div>
+    </div>
+    <script src="api.js"></script>
+    <script src="hr.js"></script>
+</body>
+</html>

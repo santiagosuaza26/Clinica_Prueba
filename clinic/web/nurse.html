@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinic IPS - Enfermera</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Clinic IPS - Panel Enfermera</h1>
+            <p>Bienvenido, <span id="username"></span></p>
+            <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+        </header>
+        <div class="tab">
+            <button class="tablinks active" onclick="openTab(event, 'appointments')">Citas</button>
+            <button class="tablinks" onclick="openTab(event, 'patients')">Pacientes</button>
+            <button class="tablinks" onclick="openTab(event, 'vitals')">Signos Vitales</button>
+            <button class="tablinks" onclick="openTab(event, 'procedures')">Procedimientos</button>
+        </div>
+
+        <div id="appointments" class="tabcontent" style="display: block;">
+            <button class="accordion">Ver Citas</button>
+            <div class="panel">
+                <button class="btn-secondary" onclick="loadAppointments()">Cargar Citas</button>
+                <div id="appointmentsList"></div>
+            </div>
+        </div>
+
+        <div id="patients" class="tabcontent">
+            <button class="accordion">Ver Pacientes</button>
+            <div class="panel">
+                <button class="btn-secondary" onclick="loadPatients()">Cargar Pacientes</button>
+                <div id="patientsList"></div>
+            </div>
+        </div>
+
+        <div id="vitals" class="tabcontent">
+            <button class="accordion">Registrar Signos Vitales</button>
+            <div class="panel">
+                <form id="vitalsForm">
+                    <div class="form-group">
+                        <label for="vitalsPatientCedula">Cédula del Paciente:</label>
+                        <input type="text" id="vitalsPatientCedula" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="bloodPressure">Presión Arterial:</label>
+                        <input type="text" id="bloodPressure" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="temperature">Temperatura:</label>
+                        <input type="number" id="temperature" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="pulse">Pulso:</label>
+                        <input type="number" id="pulse" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="oxygenLevel">Nivel de Oxígeno:</label>
+                        <input type="number" id="oxygenLevel" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Registrar</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="procedures" class="tabcontent">
+            <button class="accordion">Registrar Procedimientos</button>
+            <div class="panel">
+                <form id="proceduresForm">
+                    <div class="form-group">
+                        <label for="procPatientCedula">Cédula del Paciente:</label>
+                        <input type="text" id="procPatientCedula" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="procedureName">Nombre del Procedimiento:</label>
+                        <input type="text" id="procedureName" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Registrar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="api.js"></script>
+    <script src="nurse.js"></script>
+</body>
+</html>

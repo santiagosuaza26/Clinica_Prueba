@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinic IPS - Médico</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Clinic IPS - Panel Médico</h1>
+            <p>Bienvenido, <span id="username"></span></p>
+            <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+        </header>
+        <div class="tab">
+            <button class="tablinks active" onclick="openTab(event, 'appointments')">
+                <i class="fas fa-calendar-check"></i>
+                Mis Citas
+            </button>
+            <button class="tablinks" onclick="openTab(event, 'patients')">
+                <i class="fas fa-users"></i>
+                Pacientes
+            </button>
+            <button class="tablinks" onclick="openTab(event, 'history')">
+                <i class="fas fa-file-medical"></i>
+                Historial Médico
+            </button>
+            <button class="tablinks" onclick="openTab(event, 'orders')">
+                <i class="fas fa-prescription"></i>
+                Órdenes Médicas
+            </button>
+        </div>
+
+        <div id="appointments" class="tabcontent" style="display: block;">
+            <h2><i class="fas fa-calendar-check" style="margin-right: 0.5rem; color: var(--primary-color);"></i>Mis Citas Médicas</h2>
+            <button class="accordion">
+                <i class="fas fa-eye"></i>
+                Ver Citas Programadas
+            </button>
+            <div class="panel">
+                <div style="margin-bottom: 1rem;">
+                    <button class="btn-secondary" onclick="loadAppointments()">
+                        <i class="fas fa-sync-alt"></i>
+                        Actualizar Lista
+                    </button>
+                    <span class="status-badge status-active" style="margin-left: 1rem;">
+                        <i class="fas fa-circle"></i>
+                        Citas de Hoy
+                    </span>
+                </div>
+                <div id="appointmentsList" style="max-height: 400px; overflow-y: auto;"></div>
+            </div>
+        </div>
+
+        <div id="patients" class="tabcontent">
+            <h2><i class="fas fa-users" style="margin-right: 0.5rem; color: var(--primary-color);"></i>Mis Pacientes</h2>
+            <button class="accordion">
+                <i class="fas fa-search"></i>
+                Buscar Pacientes
+            </button>
+            <div class="panel">
+                <div style="margin-bottom: 1rem;">
+                    <input type="text"
+                           id="patientSearch"
+                           placeholder="Buscar por nombre o cédula..."
+                           style="padding: 0.75rem; border: 2px solid var(--border-color); border-radius: var(--radius-md); width: 300px;">
+                    <button class="btn-secondary" onclick="loadPatients()" style="margin-left: 0.5rem;">
+                        <i class="fas fa-search"></i>
+                        Buscar
+                    </button>
+                </div>
+                <div id="patientsList" style="max-height: 400px; overflow-y: auto;"></div>
+            </div>
+        </div>
+
+        <div id="history" class="tabcontent">
+            <h2><i class="fas fa-file-medical" style="margin-right: 0.5rem; color: var(--primary-color);"></i>Historial Médico</h2>
+            <button class="accordion">
+                <i class="fas fa-plus"></i>
+                Registrar Consulta
+            </button>
+            <div class="panel">
+                <form id="createHistoryForm">
+                    <div class="form-group">
+                        <label for="patientCedula">
+                            <i class="fas fa-id-card" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                            Cédula del Paciente:
+                        </label>
+                        <input type="text"
+                               id="patientCedula"
+                               placeholder="Número de cédula del paciente"
+                               pattern="[0-9]+"
+                               title="Solo números"
+                               required>
+                    </div>
+                    <div class="form-group">
+                        <label for="diagnosis">
+                            <i class="fas fa-stethoscope" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                            Diagnóstico y Observaciones:
+                        </label>
+                        <textarea id="diagnosis"
+                                  placeholder="Describa el motivo de consulta, síntomas, diagnóstico y tratamiento..."
+                                  rows="6"
+                                  required></textarea>
+                    </div>
+                    <div style="text-align: center;">
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-save"></i>
+                            Guardar Consulta
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="orders" class="tabcontent">
+            <button class="accordion">Crear Órdenes</button>
+            <div class="panel">
+                <form id="createOrderForm">
+                    <div class="form-group">
+                        <label for="orderPatientCedula">Cédula del Paciente:</label>
+                        <input type="text" id="orderPatientCedula" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="orderType">Tipo de Orden:</label>
+                        <select id="orderType">
+                            <option value="MEDICATION">Medicamento</option>
+                            <option value="PROCEDURE">Procedimiento</option>
+                            <option value="DIAGNOSTIC_AID">Ayuda Diagnóstica</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="orderItem">Ítem:</label>
+                        <input type="text" id="orderItem" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Crear Orden</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="api.js"></script>
+    <script src="doctor.js"></script>
+</body>
+</html>

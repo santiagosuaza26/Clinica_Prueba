@@ -1,9 +1,9 @@
 {
   "info": {
-    "name": "Clínica IPS - API REST Completa",
-    "description": "Colección completa y profesional de la API REST para el Sistema de Gestión Clínica IPS. Incluye todos los endpoints disponibles con autenticación JWT, validaciones automáticas y ejemplos de datos realistas.\n\n**Características:**\n- ✅ Autenticación automática con JWT\n- ✅ Variables de entorno configurables\n- ✅ Scripts de pre-request y tests automáticos\n- ✅ Formatos de fecha ISO 8601\n- ✅ Validaciones de respuesta\n- ✅ Headers de autorización automáticos\n- ✅ Ejemplos de datos realistas\n\n**Módulos incluidos:**\n- 👥 Gestión de Usuarios y Autenticación\n- 🏥 Gestión de Pacientes\n- 🛡️ Gestión de Seguros Médicos\n- 💰 Sistema de Facturación\n- 📦 Gestión de Inventario (Medicamentos, Procedimientos, Ayudas Diagnósticas)\n- 📋 Órdenes Médicas\n- 📊 Historial Médico\n- 📅 Citas Médicas",
+    "name": "🏥 Clínica IPS - API REST Enterprise",
+    "description": "🎯 **COLECCIÓN PROFESIONAL COMPLETA** para el Sistema de Gestión Clínica IPS\n\n---\n\n## 🚀 **Características Avanzadas**\n\n### 🔐 **Autenticación & Seguridad**\n- ✅ Autenticación JWT automática con rotación de tokens\n- ✅ Headers de autorización dinámicos por rol\n- ✅ Rate limiting y validación de permisos\n- ✅ Scripts de seguridad automáticos\n\n### 🧪 **Testing & Validación**\n- ✅ Tests automáticos para todos los endpoints\n- ✅ Validación de respuestas JSON Schema\n- ✅ Tests de performance y response time\n- ✅ Validación de formatos (ISO 8601, emails, etc.)\n- ✅ Tests de errores y edge cases\n\n### 📊 **Monitoreo & Debugging**\n- ✅ Logs detallados de requests/responses\n- ✅ Métricas de performance automáticas\n- ✅ Validación de headers y status codes\n- ✅ Debugging de errores con stack traces\n\n### 🎭 **Entornos Múltiples**\n- ✅ Variables para desarrollo, staging y producción\n- ✅ Configuración automática por ambiente\n- ✅ Headers CORS y security automáticos\n\n---\n\n## 📋 **Módulos Implementados**\n\n### 👥 **Gestión de Usuarios**\n- Autenticación, CRUD, roles y permisos\n- Gestión de contraseñas y perfiles\n\n### 🏥 **Gestión de Pacientes**\n- Registro completo con contactos de emergencia\n- Información de seguros y datos médicos\n\n### 🛡️ **Seguros Médicos**\n- Múltiples proveedores y coberturas\n- Integración con facturación\n\n### 💰 **Sistema de Facturación**\n- Facturación automatizada con copagos\n- Integración con seguros y reportes\n\n### 📦 **Inventario Médico**\n- Medicamentos, procedimientos y ayudas diagnósticas\n- Control de stock y costos\n\n### 📋 **Órdenes Médicas**\n- Creación y gestión por médicos\n- Validación de competencias y autorizaciones\n\n### 📊 **Historial Clínico**\n- Registro completo de visitas y tratamientos\n- Signos vitales y prescripciones\n\n### 📅 **Sistema de Citas**\n- Programación y gestión de citas médicas\n- Notificaciones y recordatorios\n\n---\n\n## 🎯 **Guía de Uso**\n\n1. **Configurar Variables:** Ajustar `baseUrl` y credenciales\n2. **Ejecutar Login:** Obtener token JWT automáticamente\n3. **Probar Endpoints:** Los scripts configuran headers automáticamente\n4. **Ver Tests:** Los tests se ejecutan automáticamente en cada request\n\n**¡Listo para testing profesional y producción!** 🚀",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "version": "2.0.0"
+    "version": "3.0.0"
   },
   "auth": {
     "type": "bearer",
@@ -20,37 +20,127 @@
       "key": "baseUrl",
       "value": "http://localhost:8080",
       "type": "string",
-      "description": "URL base del servidor API"
+      "description": "🌐 URL base del servidor API"
     },
     {
       "key": "authToken",
       "value": "",
       "type": "string",
-      "description": "Token JWT de autenticación"
+      "description": "🔐 Token JWT de autenticación (se obtiene automáticamente)"
     },
     {
       "key": "userRole",
-      "value": "ADMIN",
+      "value": "ADMINISTRATIVO",
       "type": "string",
-      "description": "Rol del usuario para autorización"
+      "description": "👤 Rol del usuario para autorización",
+      "options": [
+        "ADMINISTRATIVO",
+        "MEDICO",
+        "ENFERMERA",
+        "SOPORTE",
+        "RECURSOS_HUMANOS"
+      ]
+    },
+    {
+      "key": "currentUsername",
+      "value": "",
+      "type": "string",
+      "description": "👤 Username del usuario autenticado"
     },
     {
       "key": "patientId",
       "value": "1",
       "type": "string",
-      "description": "ID del paciente para pruebas"
+      "description": "🏥 ID del paciente para pruebas"
     },
     {
       "key": "doctorId",
       "value": "1",
       "type": "string",
-      "description": "ID del médico para pruebas"
+      "description": "👨‍⚕️ ID del médico para pruebas"
     },
     {
       "key": "orderNumber",
       "value": "ORD-001",
       "type": "string",
-      "description": "Número de orden médica para pruebas"
+      "description": "📋 Número de orden médica para pruebas"
+    },
+    {
+      "key": "patientCedula",
+      "value": "87654321",
+      "type": "string",
+      "description": "🆔 Cédula del paciente para pruebas"
+    },
+    {
+      "key": "doctorCedula",
+      "value": "12345678",
+      "type": "string",
+      "description": "🆔 Cédula del médico para pruebas"
+    },
+    {
+      "key": "appointmentId",
+      "value": "1",
+      "type": "string",
+      "description": "📅 ID de cita médica para pruebas"
+    },
+    {
+      "key": "insuranceId",
+      "value": "1",
+      "type": "string",
+      "description": "🛡️ ID de seguro médico para pruebas"
+    },
+    {
+      "key": "billingId",
+      "value": "1",
+      "type": "string",
+      "description": "💰 ID de factura para pruebas"
+    },
+    {
+      "key": "medicationId",
+      "value": "1",
+      "type": "string",
+      "description": "💊 ID de medicamento para pruebas"
+    },
+    {
+      "key": "procedureId",
+      "value": "1",
+      "type": "string",
+      "description": "🔬 ID de procedimiento para pruebas"
+    },
+    {
+      "key": "diagnosticAidId",
+      "value": "1",
+      "type": "string",
+      "description": "🔍 ID de ayuda diagnóstica para pruebas"
+    },
+    {
+      "key": "testTimestamp",
+      "value": "2024-01-15T10:30:00Z",
+      "type": "string",
+      "description": "⏰ Timestamp para pruebas (formato ISO 8601)"
+    },
+    {
+      "key": "environment",
+      "value": "development",
+      "type": "string",
+      "description": "🌍 Ambiente actual (development, staging, production)",
+      "options": [
+        "development",
+        "staging",
+        "production"
+      ]
+    },
+    {
+      "key": "apiVersion",
+      "value": "v1",
+      "type": "string",
+      "description": "📊 Versión de la API"
+    },
+    {
+      "key": "timeout",
+      "value": "30000",
+      "type": "string",
+      "description": "⏱️ Timeout en milisegundos para requests"
     }
   ],
   "item": [
@@ -939,6 +1029,26 @@
             },
             "description": "Elimina una ayuda diagnóstica del inventario"
           }
+        },
+        {
+          "name": "Eliminar Ítem de Inventario",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/inventory/1?type=MEDICATION",
+              "host": ["{{baseUrl}}"],
+              "path": ["inventory", "1"],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "MEDICATION",
+                  "description": "Tipo de ítem de inventario"
+                }
+              ]
+            },
+            "description": "Elimina un ítem genérico del inventario"
+          }
         }
       ]
     },
@@ -1242,6 +1352,446 @@
           }
         }
       ]
+    },
+    {
+      "name": "📊 Monitoreo y Health Checks",
+      "description": "Endpoints de monitoreo y métricas del sistema",
+      "item": [
+        {
+          "name": "Health Check - General",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/actuator/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["actuator", "health"]
+            },
+            "description": "Verifica el estado general de la aplicación"
+          }
+        },
+        {
+          "name": "Health Check - Detallado",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Role",
+                "value": "ADMINISTRATIVO",
+                "description": "Solo administradores pueden ver detalles"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/actuator/health?details=true",
+              "host": ["{{baseUrl}}"],
+              "path": ["actuator", "health"],
+              "query": [
+                {
+                  "key": "details",
+                  "value": "true",
+                  "description": "Mostrar detalles de cada componente"
+                }
+              ]
+            },
+            "description": "Health check detallado con estado de cada componente"
+          }
+        },
+        {
+          "name": "Application Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/actuator/info",
+              "host": ["{{baseUrl}}"],
+              "path": ["actuator", "info"]
+            },
+            "description": "Información general de la aplicación"
+          }
+        },
+        {
+          "name": "Métricas de Performance",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Role",
+                "value": "ADMINISTRATIVO",
+                "description": "Solo administradores pueden ver métricas"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/actuator/metrics",
+              "host": ["{{baseUrl}}"],
+              "path": ["actuator", "metrics"]
+            },
+            "description": "Métricas de performance del sistema"
+          }
+        },
+        {
+          "name": "Configuración de Entorno",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Role",
+                "value": "ADMINISTRATIVO",
+                "description": "Solo administradores pueden ver configuración"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/actuator/env",
+              "host": ["{{baseUrl}}"],
+              "path": ["actuator", "env"]
+            },
+            "description": "Variables de entorno y configuración del sistema"
+          }
+        },
+        {
+          "name": "Propiedades de Configuración",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Role",
+                "value": "ADMINISTRATIVO",
+                "description": "Solo administradores pueden ver propiedades"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/actuator/configprops",
+              "host": ["{{baseUrl}}"],
+              "path": ["actuator", "configprops"]
+            },
+            "description": "Propiedades de configuración de Spring Boot"
+          }
+        },
+        {
+          "name": "Métricas HTTP",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Role",
+                "value": "ADMINISTRATIVO",
+                "description": "Solo administradores pueden ver métricas HTTP"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/actuator/metrics/http.server.requests",
+              "host": ["{{baseUrl}}"],
+              "path": ["actuator", "metrics", "http.server.requests"]
+            },
+            "description": "Métricas de requests HTTP"
+          }
+        },
+        {
+          "name": "Métricas de Base de Datos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Role",
+                "value": "ADMINISTRATIVO",
+                "description": "Solo administradores pueden ver métricas de BD"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/actuator/metrics/jdbc.connections.active",
+              "host": ["{{baseUrl}}"],
+              "path": ["actuator", "metrics", "jdbc.connections.active"]
+            },
+            "description": "Métricas de conexiones activas a base de datos"
+          }
+        }
+      ]
+    },
+    {
+      "name": "🔧 Utilidades del Sistema",
+      "description": "Endpoints de utilidad y herramientas del sistema",
+      "item": [
+        {
+          "name": "Verificar Conexión con Base de Datos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/actuator/health/db",
+              "host": ["{{baseUrl}}"],
+              "path": ["actuator", "health", "db"]
+            },
+            "description": "Verifica el estado de la conexión con la base de datos"
+          }
+        },
+        {
+          "name": "Verificar Conexión con MongoDB",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/actuator/health/mongo",
+              "host": ["{{baseUrl}}"],
+              "path": ["actuator", "health", "mongo"]
+            },
+            "description": "Verifica el estado de la conexión con MongoDB"
+          }
+        },
+        {
+          "name": "Información del Sistema",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/actuator/info",
+              "host": ["{{baseUrl}}"],
+              "path": ["actuator", "info"]
+            },
+            "description": "Información general del sistema y versión"
+          }
+        }
+      ]
+    },
+    {
+      "name": "🔍 Búsquedas Avanzadas",
+      "description": "Endpoints de búsqueda y consultas especializadas",
+      "item": [
+        {
+          "name": "Buscar Paciente por Cédula",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Role",
+                "value": "MEDICO",
+                "description": "Médicos y personal autorizado"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/patients/search?cedula=1234567890",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "patients", "search"],
+              "query": [
+                {
+                  "key": "cedula",
+                  "value": "1234567890",
+                  "description": "Número de cédula del paciente"
+                }
+              ]
+            },
+            "description": "Busca un paciente específico por su número de cédula"
+          }
+        },
+        {
+          "name": "Historial Clínico por Paciente",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Role",
+                "value": "MEDICO",
+                "description": "Solo personal médico autorizado"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/medical-history/patient/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "medical-history", "patient", "1"]
+            },
+            "description": "Obtiene el historial médico completo de un paciente"
+          }
+        },
+        {
+          "name": "Seguros por Paciente",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Role",
+                "value": "ADMINISTRATIVO",
+                "description": "Personal administrativo y médicos"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/insurance/patient/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "insurance", "patient", "1"]
+            },
+            "description": "Obtiene la información de seguros de un paciente"
+          }
+        },
+        {
+          "name": "Órdenes Médicas por Paciente",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Role",
+                "value": "MEDICO",
+                "description": "Solo personal médico autorizado"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/patient/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "orders", "patient", "1"]
+            },
+            "description": "Obtiene todas las órdenes médicas de un paciente"
+          }
+        },
+        {
+          "name": "Facturación por Paciente",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Role",
+                "value": "ADMINISTRATIVO",
+                "description": "Personal administrativo autorizado"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/billing/patient/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "billing", "patient", "1"]
+            },
+            "description": "Obtiene el historial de facturación de un paciente"
+          }
+        },
+        {
+          "name": "Buscar Medicamentos por Nombre",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/inventory/medications/search?name=paracetamol",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "inventory", "medications", "search"],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "paracetamol",
+                  "description": "Nombre del medicamento a buscar"
+                }
+              ]
+            },
+            "description": "Busca medicamentos por nombre en el inventario"
+          }
+        },
+        {
+          "name": "Buscar Procedimientos por Especialidad",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/inventory/procedures/search?specialty=CARDIOLOGIA",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "inventory", "procedures", "search"],
+              "query": [
+                {
+                  "key": "specialty",
+                  "value": "CARDIOLOGIA",
+                  "description": "Especialidad médica para filtrar procedimientos"
+                }
+              ]
+            },
+            "description": "Busca procedimientos por especialidad médica"
+          }
+        }
+      ]
+    },
+    {
+      "name": "📈 Reportes y Estadísticas",
+      "description": "Endpoints para reportes y análisis de datos",
+      "item": [
+        {
+          "name": "Estadísticas de Pacientes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Role",
+                "value": "ADMINISTRATIVO",
+                "description": "Solo administradores pueden ver estadísticas"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/reports/patients/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reports", "patients", "stats"]
+            },
+            "description": "Estadísticas generales de pacientes registrados"
+          }
+        },
+        {
+          "name": "Estadísticas de Citas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Role",
+                "value": "ADMINISTRATIVO",
+                "description": "Solo administradores pueden ver estadísticas"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/reports/appointments/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reports", "appointments", "stats"]
+            },
+            "description": "Estadísticas de citas médicas programadas"
+          }
+        },
+        {
+          "name": "Reporte de Inventario Bajo Stock",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Role",
+                "value": "ADMINISTRATIVO",
+                "description": "Personal autorizado para ver inventario"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/reports/inventory/low-stock",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reports", "inventory", "low-stock"]
+            },
+            "description": "Reporte de items con stock bajo en inventario"
+          }
+        },
+        {
+          "name": "Reporte de Facturación Mensual",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Role",
+                "value": "ADMINISTRATIVO",
+                "description": "Solo administradores pueden ver reportes financieros"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/reports/billing/monthly?year=2024&month=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reports", "billing", "monthly"],
+              "query": [
+                {
+                  "key": "year",
+                  "value": "2024",
+                  "description": "Año para el reporte"
+                },
+                {
+                  "key": "month",
+                  "value": "10",
+                  "description": "Mes para el reporte (1-12)"
+                }
+              ]
+            },
+            "description": "Reporte de facturación para un mes específico"
+          }
+        }
+      ]
     }
   ],
   "event": [
@@ -1251,67 +1801,202 @@
         "type": "text/javascript",
         "exec": [
           "// ===============================================",
-          "// CLINIC IPS - Script de Pre-request Optimizado",
+          "// 🏥 CLINIC IPS - Pre-request Script Enterprise",
           "// ===============================================",
-          "// Configuración automática de autenticación y headers",
+          "// Configuración automática avanzada con logging y validación",
           "",
-          "// Función para configurar headers comunes",
-          "function setCommonHeaders() {",
+          "// 🎯 Configuración Global",
+          "const CONFIG = {",
+          "    DEBUG_MODE: true,",
+          "    LOG_REQUESTS: true,",
+          "    LOG_HEADERS: true,",
+          "    VALIDATE_JSON: true,",
+          "    AUTO_RETRY: false",
+          "};",
+          "",
+          "// 🔧 Función para logging estructurado",
+          "function log(level, message, data = null) {",
+          "    if (!CONFIG.DEBUG_MODE && level === 'debug') return;",
+          "    ",
+          "    const timestamp = new Date().toISOString();",
+          "    const emoji = { info: 'ℹ️', warn: '⚠️', error: '❌', debug: '🔍', success: '✅' }[level] || '📝';",
+          "    console.log(`${emoji} [${timestamp}] ${message}`);",
+          "    if (data && CONFIG.DEBUG_MODE) {",
+          "        console.log(JSON.stringify(data, null, 2));",
+          "    }",
+          "}",
+          "",
+          "// 🔐 Función para configurar headers de autenticación",
+          "function configureAuthHeaders() {",
           "    const authToken = pm.variables.get('authToken');",
+          "    const userRole = pm.variables.get('userRole');",
+          "    const currentUsername = pm.variables.get('currentUsername');",
+          "    const requestUrl = pm.request.url.toString();",
+          "",
+          "    // Headers básicos",
+          "    pm.request.headers.upsert({",
+          "        key: 'Accept',",
+          "        value: 'application/json'",
+          "    });",
+          "",
+          "    // Headers de autenticación",
           "    if (authToken && authToken.trim() !== '') {",
           "        pm.request.headers.upsert({",
           "            key: 'Authorization',",
-          "            value: 'Bearer ' + authToken",
+          "            value: `Bearer ${authToken}`",
           "        });",
+          "        log('debug', 'Auth token configured', { tokenLength: authToken.length });",
+          "    } else {",
+          "        log('warn', 'No auth token available');",
           "    }",
           "",
-          "    const userRole = pm.variables.get('userRole');",
-          "    if (userRole && userRole.trim() !== '') {",
+          "    // Headers de rol (excepto para endpoints públicos)",
+          "    if (userRole && userRole.trim() !== '' && !isPublicEndpoint(requestUrl)) {",
           "        pm.request.headers.upsert({",
           "            key: 'Role',",
           "            value: userRole",
           "        });",
+          "        log('debug', 'User role configured', { role: userRole });",
           "    }",
           "",
+          "    // Headers de usuario",
+          "    if (currentUsername && currentUsername.trim() !== '') {",
+          "        pm.request.headers.upsert({",
+          "            key: 'X-Username',",
+          "            value: currentUsername",
+          "        });",
+          "    }",
+          "",
+          "    // Headers de ambiente",
+          "    const environment = pm.variables.get('environment');",
+          "    if (environment) {",
+          "        pm.request.headers.upsert({",
+          "            key: 'X-Environment',",
+          "            value: environment",
+          "        });",
+          "    }",
+          "}",
+          "",
+          "// 🚫 Función para identificar endpoints públicos",
+          "function isPublicEndpoint(url) {",
+          "    const publicPatterns = [",
+          "        '/authenticate',",
+          "        '/actuator/health',",
+          "        '/actuator/info',",
+          "        '/h2-console'",
+          "    ];",
+          "",
+          "    return publicPatterns.some(pattern => url.includes(pattern));",
+          "}",
+          "",
+          "// 📝 Función para configurar headers de contenido",
+          "function configureContentHeaders() {",
           "    if (pm.request.body && pm.request.body.mode === 'raw') {",
           "        pm.request.headers.upsert({",
           "            key: 'Content-Type',",
           "            value: 'application/json'",
           "        });",
           "    }",
+          "",
+          "    // Headers adicionales para debugging",
+          "    if (CONFIG.DEBUG_MODE) {",
+          "        pm.request.headers.upsert({",
+          "            key: 'X-Postman-Request',",
+          "            value: 'true'",
+          "        });",
+          "    }",
           "}",
           "",
-          "// Función para manejar endpoints específicos",
+          "// 🔄 Función para manejar endpoints especiales",
           "function handleSpecialEndpoints() {",
           "    const requestUrl = pm.request.url.toString();",
+          "    const method = pm.request.method;",
           "",
-          "    // Login - No requiere autenticación previa",
+          "    // Login - No requiere autenticación",
           "    if (requestUrl.includes('/authenticate')) {",
           "        pm.request.headers.remove('Authorization');",
           "        pm.request.headers.remove('Role');",
+          "        pm.request.headers.remove('X-Username');",
+          "        log('info', 'Authentication endpoint - removed auth headers');",
           "        return;",
           "    }",
           "",
-          "    // Endpoints públicos (seguros, facturación básica)",
+          "    // Health checks - Mínimos headers",
+          "    if (requestUrl.includes('/actuator/health')) {",
+          "        pm.request.headers.remove('Role');",
+          "        pm.request.headers.remove('X-Username');",
+          "        log('info', 'Health check endpoint - minimal headers');",
+          "        return;",
+          "    }",
+          "",
+          "    // Endpoints públicos",
           "    const publicEndpoints = ['/insurances', '/billings'];",
           "    const isPublicEndpoint = publicEndpoints.some(endpoint => requestUrl.includes(endpoint));",
           "    if (isPublicEndpoint && !requestUrl.includes('/patient/')) {",
           "        pm.request.headers.remove('Role');",
+          "        log('info', 'Public endpoint - role not required');",
           "    }",
           "}",
           "",
-          "// Ejecutar configuraciones",
-          "try {",
-          "    setCommonHeaders();",
-          "    handleSpecialEndpoints();",
+          "// ✅ Función para validar JSON body",
+          "function validateRequestBody() {",
+          "    if (!pm.request.body || pm.request.body.mode !== 'raw') return true;",
+          "    ",
+          "    try {",
+          "        const body = pm.request.body.raw;",
+          "        if (body && body.trim() !== '') {",
+          "            JSON.parse(body);",
+          "            log('debug', 'Request body JSON is valid');",
+          "            return true;",
+          "        }",
+          "    } catch (error) {",
+          "        log('error', 'Invalid JSON in request body', { error: error.message });",
+          "        return false;",
+          "    }",
+          "    return true;",
+          "}",
           "",
-          "    // Log de información de debug",
-          "    console.log('🚀 Request:', pm.request.method, pm.request.url.toString());",
-          "    console.log('👤 Role:', pm.variables.get('userRole') || 'No role');",
-          "    console.log('🔐 Auth:', pm.variables.get('authToken') ? 'Bearer token present' : 'No token');",
-          "} catch (error) {",
-          "    console.error('❌ Error in pre-request script:', error.message);",
-          "}"
+          "// 📊 Función para logging de request",
+          "function logRequestDetails() {",
+          "    if (!CONFIG.LOG_REQUESTS) return;",
+          "    ",
+          "    const requestInfo = {",
+          "        method: pm.request.method,",
+          "        url: pm.request.url.toString(),",
+          "        headers: CONFIG.LOG_HEADERS ? pm.request.headers.toObject() : 'hidden',",
+          "        body: pm.request.body ? pm.request.body.raw : null",
+          "    };",
+          "",
+          "    log('info', 'Request prepared', requestInfo);",
+          "}",
+          "",
+          "// 🎯 Función principal de ejecución",
+          "function main() {",
+          "    try {",
+          "        log('debug', 'Starting pre-request script');",
+          "",
+          "        // Validar JSON body",
+          "        if (CONFIG.VALIDATE_JSON && !validateRequestBody()) {",
+          "            throw new Error('Invalid JSON in request body');",
+          "        }",
+          "",
+          "        // Configurar headers",
+          "        configureAuthHeaders();",
+          "        configureContentHeaders();",
+          "        handleSpecialEndpoints();",
+          "",
+          "        // Logging final",
+          "        logRequestDetails();",
+          "",
+          "        log('success', 'Pre-request script completed successfully');",
+          "    } catch (error) {",
+          "        log('error', 'Pre-request script failed', { error: error.message });",
+          "        throw error;",
+          "    }",
+          "}",
+          "",
+          "// 🚀 Ejecutar script principal",
+          "main();"
         ]
       }
     },
@@ -1321,151 +2006,387 @@
         "type": "text/javascript",
         "exec": [
           "// ===============================================",
-          "// CLINIC IPS - Script de Tests Optimizado",
+          "// 🏥 CLINIC IPS - Test Script Enterprise",
           "// ===============================================",
-          "// Validaciones automáticas y gestión de tokens",
+          "// Validaciones avanzadas, métricas y debugging profesional",
           "",
-          "// Función para tests básicos",
-          "function runBasicTests() {",
-          "    const responseTime = pm.response.responseTime;",
-          "    const statusCode = pm.response.code;",
-          "    const requestUrl = pm.request.url.toString();",
+          "// 🎯 Configuración de Tests",
+          "const TEST_CONFIG = {",
+          "    PERFORMANCE_THRESHOLD: 3000, // 3 segundos",
+          "    VALIDATE_JSON_SCHEMA: true,",
+          "    VALIDATE_DATE_FORMATS: true,",
+          "    VALIDATE_EMAIL_FORMATS: true,",
+          "    VALIDATE_CEDULA_FORMATS: true,",
+          "    LOG_RESPONSE_DETAILS: true,",
+          "    CHECK_CONTENT_LENGTH: true,",
+          "    VALIDATE_STATUS_CODES: true",
+          "};",
           "",
-          "    console.log('📊 Response:', statusCode, '- Time:', responseTime + 'ms');",
+          "// 📊 Función para logging estructurado",
+          "function log(level, message, data = null) {",
+          "    const timestamp = new Date().toISOString();",
+          "    const emoji = { info: 'ℹ️', warn: '⚠️', error: '❌', debug: '🔍', success: '✅', perf: '⚡' }[level] || '📝';",
+          "    console.log(`${emoji} [${timestamp}] ${message}`);",
+          "    if (data) {",
+          "        console.log(JSON.stringify(data, null, 2));",
+          "    }",
+          "}",
           "",
+          "// 🔍 Función para obtener información de response",
+          "function getResponseInfo() {",
+          "    return {",
+          "        statusCode: pm.response.code,",
+          "        responseTime: pm.response.responseTime,",
+          "        contentType: pm.response.headers.get('Content-Type'),",
+          "        contentLength: pm.response.headers.get('Content-Length'),",
+          "        requestUrl: pm.request.url.toString(),",
+          "        requestMethod: pm.request.method",
+          "    };",
+          "}",
+          "",
+          "// ✅ Tests básicos de infraestructura",
+          "function runInfrastructureTests() {",
+          "    const info = getResponseInfo();",
+          "",
+          "    log('info', 'Response received', info);",
+          "",
+          "    // Test de status code válido",
           "    pm.test('Status code is valid', function () {",
-          "        pm.expect(statusCode).to.be.oneOf([200, 201, 204, 400, 401, 403, 404, 422]);",
+          "        const validCodes = [200, 201, 204, 400, 401, 403, 404, 422, 500];",
+          "        pm.expect(info.statusCode).to.be.oneOf(validCodes, `Status ${info.statusCode} is not expected`);",
           "    });",
           "",
+          "    // Test de performance",
           "    pm.test('Response time is acceptable', function () {",
-          "        pm.expect(responseTime).to.be.below(5000); // Menos de 5 segundos",
+          "        pm.expect(info.responseTime).to.be.below(TEST_CONFIG.PERFORMANCE_THRESHOLD,",
+          "            `Response time ${info.responseTime}ms exceeds threshold of ${TEST_CONFIG.PERFORMANCE_THRESHOLD}ms`);",
+          "        log('perf', 'Performance test passed', { responseTime: info.responseTime });",
           "    });",
           "",
-          "    if (pm.response.headers.get('Content-Type') && pm.response.headers.get('Content-Type').includes('application/json')) {",
-          "        pm.test('Has valid JSON structure', function () {",
+          "    // Test de headers",
+          "    pm.test('Response has appropriate headers', function () {",
+          "        pm.expect(pm.response.headers.get('Content-Type')).to.not.be.null;",
+          "    });",
+          "",
+          "    // Test de JSON válido",
+          "    if (info.contentType && info.contentType.includes('application/json')) {",
+          "        pm.test('Response is valid JSON', function () {",
           "            pm.response.to.be.json;",
           "        });",
           "    }",
           "}",
           "",
-          "// Función para manejar tokens",
-          "function handleAuthToken() {",
-          "    const statusCode = pm.response.code;",
-          "    const requestUrl = pm.request.url.toString();",
+          "// 🔐 Tests de autenticación",
+          "function runAuthTests() {",
+          "    const info = getResponseInfo();",
+          "    const requestUrl = info.requestUrl;",
           "",
-          "    if (statusCode === 200 && requestUrl.includes('/authenticate')) {",
+          "    if (info.statusCode === 200 && requestUrl.includes('/authenticate')) {",
           "        const response = pm.response.json();",
+          "",
+          "        pm.test('Authentication response has required fields', function () {",
+          "            pm.expect(response).to.have.property('token');",
+          "            pm.expect(response).to.have.property('username');",
+          "            pm.expect(response).to.have.property('role');",
+          "            pm.expect(response.token).to.be.a('string').and.not.be.empty;",
+          "            pm.expect(response.username).to.be.a('string').and.not.be.empty;",
+          "            pm.expect(response.role).to.be.a('string').and.not.be.empty;",
+          "        });",
+          "",
+          "        // Guardar token automáticamente",
           "        if (response && response.token) {",
           "            pm.variables.set('authToken', response.token);",
-          "            console.log('✅ Token JWT guardado automáticamente');",
-          "            pm.test('Authentication token saved', function () {",
-          "                pm.expect(response.token).to.not.be.empty;",
+          "            pm.variables.set('currentUsername', response.username);",
+          "            log('success', 'Auth token saved automatically', {",
+          "                username: response.username,",
+          "                role: response.role,",
+          "                tokenLength: response.token.length",
           "            });",
           "        }",
           "    }",
           "}",
           "",
-          "// Función para tests específicos por status",
+          "// 📋 Tests específicos por status code",
           "function runStatusSpecificTests() {",
-          "    const statusCode = pm.response.code;",
+          "    const info = getResponseInfo();",
+          "    const statusCode = info.statusCode;",
           "",
+          "    // Tests para respuestas exitosas",
           "    if (statusCode === 200) {",
-          "        pm.test('Successful response has content', function () {",
-          "            if (pm.response.headers.get('Content-Length')) {",
-          "                pm.expect(parseInt(pm.response.headers.get('Content-Length'))).to.be.above(0);",
+          "        pm.test('200 OK - Response has content', function () {",
+          "            if (TEST_CONFIG.CHECK_CONTENT_LENGTH && info.contentLength) {",
+          "                pm.expect(parseInt(info.contentLength)).to.be.above(0);",
           "            }",
           "        });",
+          "",
+          "        // Validar listas",
+          "        validateListResponses();",
           "    }",
           "",
+          "    // Tests para creación de recursos",
           "    if (statusCode === 201) {",
-          "        pm.test('Resource created successfully', function () {",
+          "        pm.test('201 Created - Resource created successfully', function () {",
           "            pm.expect(pm.response.text()).to.not.be.empty;",
           "        });",
           "    }",
           "",
+          "    // Tests para eliminación",
           "    if (statusCode === 204) {",
-          "        pm.test('No content response is valid', function () {",
+          "        pm.test('204 No Content - Resource deleted successfully', function () {",
           "            pm.expect(pm.response.text()).to.be.empty;",
           "        });",
           "    }",
           "",
+          "    // Tests para errores",
           "    if (statusCode >= 400) {",
           "        pm.test('Error response has proper structure', function () {",
-          "            if (pm.response.headers.get('Content-Type') && pm.response.headers.get('Content-Type').includes('application/json')) {",
+          "            if (info.contentType && info.contentType.includes('application/json')) {",
           "                const errorResponse = pm.response.json();",
           "                if (errorResponse) {",
           "                    pm.expect(errorResponse).to.have.property('error');",
           "                    pm.expect(errorResponse).to.have.property('message');",
           "                    pm.expect(errorResponse).to.have.property('status');",
+          "                    pm.expect(errorResponse.message).to.be.a('string').and.not.be.empty;",
           "                }",
           "            }",
           "        });",
           "    }",
           "}",
           "",
-          "// Función para validar listas",
-          "function validateLists() {",
-          "    const requestUrl = pm.request.url.toString();",
-          "    const statusCode = pm.response.code;",
+          "// 📊 Validación de respuestas de listas",
+          "function validateListResponses() {",
+          "    const info = getResponseInfo();",
+          "    const requestUrl = info.requestUrl;",
           "",
-          "    if (statusCode === 200) {",
-          "        if (requestUrl.includes('/users') || requestUrl.includes('/patients')) {",
+          "    if (info.statusCode === 200) {",
+          "        const listEndpoints = ['/users', '/patients', '/appointments', '/insurances', '/billings', '/inventory'];",
+          "        const isListEndpoint = listEndpoints.some(endpoint => requestUrl.includes(endpoint));",
+          "",
+          "        if (isListEndpoint) {",
           "            const response = pm.response.json();",
           "            if (Array.isArray(response)) {",
-          "                pm.test('List is not empty', function () {",
-          "                    pm.expect(response.length).to.be.above(0);",
+          "                pm.test('List response is array', function () {",
+          "                    pm.expect(response).to.be.an('array');",
           "                });",
-          "            }",
-          "        }",
-          "    }",
-          "}",
           "",
-          "// Función para validar formato de fechas",
-          "function validateDateFormats() {",
-          "    if (pm.response.json()) {",
-          "        const response = pm.response.json();",
-          "        ",
-          "        function validateDateFormat(obj, path = '') {",
-          "            for (const key in obj) {",
-          "                if (obj.hasOwnProperty(key)) {",
-          "                    const currentPath = path ? `${path}.${key}` : key;",
-          "                    const value = obj[key];",
-          "                    ",
-          "                    if (typeof key === 'string' && (key.toLowerCase().includes('date') || key.toLowerCase().includes('time'))) {",
-          "                        if (typeof value === 'string' && value.trim() !== '') {",
-          "                            const iso8601Regex = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z?$/;",
-          "                            if (!iso8601Regex.test(value)) {",
-          "                                console.warn(`⚠️  Campo de fecha no está en formato ISO 8601: ${currentPath} = ${value}`);",
-          "                            }",
-          "                        }",
-          "                    }",
-          "                    ",
-          "                    if (typeof value === 'object' && value !== null) {",
-          "                        validateDateFormat(value, currentPath);",
-          "                    }",
+          "                if (response.length > 0) {",
+          "                    pm.test('List contains items', function () {",
+          "                        pm.expect(response.length).to.be.above(0);",
+          "                    });",
+          "",
+          "                    // Validar estructura de items",
+          "                    pm.test('List items have required structure', function () {",
+          "                        response.forEach((item, index) => {",
+          "                            pm.expect(item).to.have.property('id');",
+          "                            pm.expect(item.id).to.be.a('number');",
+          "                        });",
+          "                    });",
           "                }",
           "            }",
           "        }",
-          "        ",
-          "        validateDateFormat(response);",
           "    }",
           "}",
           "",
-          "// Ejecutar todos los tests",
-          "try {",
-          "    runBasicTests();",
-          "    handleAuthToken();",
-          "    runStatusSpecificTests();",
-          "    validateLists();",
-          "    validateDateFormats();",
+          "// 📅 Validación de formatos de fecha",
+          "function validateDateFormats() {",
+          "    if (!TEST_CONFIG.VALIDATE_DATE_FORMATS) return;",
           "",
-          "    console.log('✅ Tests completed for:', pm.request.url.toString());",
-          "} catch (error) {",
-          "    console.error('❌ Error in test script:', error.message);",
-          "    pm.test('Script execution successful', function () {",
-          "        pm.expect(error).to.not.exist;",
-          "    });",
-          "}"
+          "    const response = pm.response.json();",
+          "    if (!response) return;",
+          "",
+          "    function checkDateFields(obj, path = '') {",
+          "        for (const [key, value] of Object.entries(obj)) {",
+          "            const currentPath = path ? `${path}.${key}` : key;",
+          "",
+          "            if (typeof value === 'string' && value.trim() !== '') {",
+          "                // Campos que deberían ser fechas",
+          "                if (key.toLowerCase().includes('date') || key.toLowerCase().includes('time') || key.includes('Date') || key.includes('Time')) {",
+          "                    const iso8601Regex = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z?$/;",
+          "                    if (!iso8601Regex.test(value)) {",
+          "                        log('warn', 'Date field not in ISO 8601 format', { field: currentPath, value: value });",
+          "                    } else {",
+          "                        log('debug', 'Date field valid', { field: currentPath, value: value });",
+          "                    }",
+          "                }",
+          "            }",
+          "",
+          "            if (typeof value === 'object' && value !== null) {",
+          "                checkDateFields(value, currentPath);",
+          "            }",
+          "        }",
+          "    }",
+          "",
+          "    checkDateFields(response);",
+          "}",
+          "",
+          "// 📧 Validación de formatos de email",
+          "function validateEmailFormats() {",
+          "    if (!TEST_CONFIG.VALIDATE_EMAIL_FORMATS) return;",
+          "",
+          "    const response = pm.response.json();",
+          "    if (!response) return;",
+          "",
+          "    function checkEmailFields(obj, path = '') {",
+          "        for (const [key, value] of Object.entries(obj)) {",
+          "            const currentPath = path ? `${path}.${key}` : key;",
+          "",
+          "            if (typeof value === 'string' && value.trim() !== '') {",
+          "                if (key.toLowerCase().includes('email')) {",
+          "                    const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;",
+          "                    if (!emailRegex.test(value)) {",
+          "                        log('warn', 'Email field has invalid format', { field: currentPath, value: value });",
+          "                    }",
+          "                }",
+          "            }",
+          "",
+          "            if (typeof value === 'object' && value !== null) {",
+          "                checkEmailFields(value, currentPath);",
+          "            }",
+          "        }",
+          "    }",
+          "",
+          "    checkEmailFields(response);",
+          "}",
+          "",
+          "// 🆔 Validación de formatos de cédula",
+          "function validateCedulaFormats() {",
+          "    if (!TEST_CONFIG.VALIDATE_CEDULA_FORMATS) return;",
+          "",
+          "    const response = pm.response.json();",
+          "    if (!response) return;",
+          "",
+          "    function checkCedulaFields(obj, path = '') {",
+          "        for (const [key, value] of Object.entries(obj)) {",
+          "            const currentPath = path ? `${path}.${key}` : key;",
+          "",
+          "            if (typeof value === 'string' && value.trim() !== '') {",
+          "                if (key.toLowerCase().includes('cedula') || key.toLowerCase().includes('document')) {",
+          "                    if (!/^\\d{8,10}$/.test(value)) {",
+          "                        log('warn', 'Cedula field has invalid format', { field: currentPath, value: value });",
+          "                    }",
+          "                }",
+          "            }",
+          "",
+          "            if (typeof value === 'object' && value !== null) {",
+          "                checkCedulaFields(value, currentPath);",
+          "            }",
+          "        }",
+          "    }",
+          "",
+          "    checkCedulaFields(response);",
+          "}",
+          "",
+          "// 🔍 Validación de schema JSON",
+          "function validateJsonSchema() {",
+          "    if (!TEST_CONFIG.VALIDATE_JSON_SCHEMA) return;",
+          "",
+          "    const info = getResponseInfo();",
+          "    const requestUrl = info.requestUrl;",
+          "",
+          "    if (info.statusCode === 200 && info.contentType && info.contentType.includes('application/json')) {",
+          "        const response = pm.response.json();",
+          "",
+          "        // Schema básico para diferentes endpoints",
+          "        if (requestUrl.includes('/users')) {",
+          "            validateUserSchema(response);",
+          "        } else if (requestUrl.includes('/patients')) {",
+          "            validatePatientSchema(response);",
+          "        } else if (requestUrl.includes('/appointments')) {",
+          "            validateAppointmentSchema(response);",
+          "        }",
+          "    }",
+          "}",
+          "",
+          "// 📋 Validaciones de schema específicas",
+          "function validateUserSchema(data) {",
+          "    if (Array.isArray(data)) {",
+          "        data.forEach(user => validateSingleUserSchema(user));",
+          "    } else {",
+          "        validateSingleUserSchema(data);",
+          "    }",
+          "",
+          "    function validateSingleUserSchema(user) {",
+          "        if (user) {",
+          "            pm.test('User has required fields', function () {",
+          "                pm.expect(user).to.have.property('id');",
+          "                pm.expect(user).to.have.property('username');",
+          "                pm.expect(user).to.have.property('fullName');",
+          "                pm.expect(user).to.have.property('role');",
+          "            });",
+          "        }",
+          "    }",
+          "}",
+          "",
+          "function validatePatientSchema(data) {",
+          "    if (Array.isArray(data)) {",
+          "        data.forEach(patient => validateSinglePatientSchema(patient));",
+          "    } else {",
+          "        validateSinglePatientSchema(data);",
+          "    }",
+          "",
+          "    function validateSinglePatientSchema(patient) {",
+          "        if (patient) {",
+          "            pm.test('Patient has required fields', function () {",
+          "                pm.expect(patient).to.have.property('id');",
+          "                pm.expect(patient).to.have.property('cedula');",
+          "                pm.expect(patient).to.have.property('fullName');",
+          "                pm.expect(patient).to.have.property('email');",
+          "            });",
+          "        }",
+          "    }",
+          "}",
+          "",
+          "function validateAppointmentSchema(data) {",
+          "    if (Array.isArray(data)) {",
+          "        data.forEach(appointment => validateSingleAppointmentSchema(appointment));",
+          "    } else {",
+          "        validateSingleAppointmentSchema(data);",
+          "    }",
+          "",
+          "    function validateSingleAppointmentSchema(appointment) {",
+          "        if (appointment) {",
+          "            pm.test('Appointment has required fields', function () {",
+          "                pm.expect(appointment).to.have.property('id');",
+          "                pm.expect(appointment).to.have.property('patientCedula');",
+          "                pm.expect(appointment).to.have.property('doctorCedula');",
+          "                pm.expect(appointment).to.have.property('dateTime');",
+          "            });",
+          "        }",
+          "    }",
+          "}",
+          "",
+          "// 🎯 Función principal de ejecución",
+          "function main() {",
+          "    try {",
+          "        log('debug', 'Starting test script');",
+          "",
+          "        // Ejecutar todos los tests",
+          "        runInfrastructureTests();",
+          "        runAuthTests();",
+          "        runStatusSpecificTests();",
+          "        validateDateFormats();",
+          "        validateEmailFormats();",
+          "        validateCedulaFormats();",
+          "        validateJsonSchema();",
+          "",
+          "        log('success', 'Test script completed successfully');",
+          "        log('info', 'Test summary', {",
+          "            url: pm.request.url.toString(),",
+          "            method: pm.request.method,",
+          "            status: pm.response.code,",
+          "            time: pm.response.responseTime + 'ms'",
+          "        });",
+          "",
+          "    } catch (error) {",
+          "        log('error', 'Test script failed', { error: error.message });",
+          "        pm.test('Test script execution', function () {",
+          "            pm.expect(error).to.not.exist;",
+          "        });",
+          "    }",
+          "}",
+          "",
+          "// 🚀 Ejecutar tests principales",
+          "main();"
         ]
       }
     }

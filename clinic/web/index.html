@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinic IPS - Sistema de Gestión Clínica</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏥</text></svg>">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div style="text-align: center; margin-bottom: 1rem;">
+                <i class="fas fa-hospital" style="font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem;"></i>
+            </div>
+            <h1>Clinic IPS</h1>
+            <p>Sistema integral de gestión para clínicas y centros médicos</p>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem;">
+                Gestiona pacientes, citas, historias clínicas e inventario de forma eficiente y segura
+            </p>
+        </header>
+
+        <main style="text-align: center;">
+            <div style="margin-bottom: 2rem;">
+                <button id="loginBtn" class="btn-primary" style="font-size: 1.1rem; padding: 1rem 2rem;">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Iniciar Sesión
+                </button>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 2rem; text-align: left;">
+                <div style="padding: 1.5rem; background: var(--background-color); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm);">
+                    <i class="fas fa-users" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 1rem;"></i>
+                    <h3 style="margin: 0 0 0.5rem 0; color: var(--text-primary);">Gestión de Usuarios</h3>
+                    <p style="margin: 0; color: var(--text-secondary); font-size: 0.9rem;">Control total de acceso y permisos para diferentes roles clínicos</p>
+                </div>
+
+                <div style="padding: 1.5rem; background: var(--background-color); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm);">
+                    <i class="fas fa-calendar-check" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 1rem;"></i>
+                    <h3 style="margin: 0 0 0.5rem 0; color: var(--text-primary);">Citas Médicas</h3>
+                    <p style="margin: 0; color: var(--text-secondary); font-size: 0.9rem;">Programación y seguimiento eficiente de citas médicas</p>
+                </div>
+
+                <div style="padding: 1.5rem; background: var(--background-color); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm);">
+                    <i class="fas fa-file-medical" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 1rem;"></i>
+                    <h3 style="margin: 0 0 0.5rem 0; color: var(--text-primary);">Historias Clínicas</h3>
+                    <p style="margin: 0; color: var(--text-secondary); font-size: 0.9rem;">Registro completo y seguro de historias clínicas digitales</p>
+                </div>
+            </div>
+        </main>
+
+        <footer style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border-color); color: var(--text-secondary); font-size: 0.8rem;">
+            <p>&copy; 2024 Clinic IPS - Sistema de Gestión Clínica</p>
+        </footer>
+    </div>
+    <script src="auth.js"></script>
+</body>
+</html>

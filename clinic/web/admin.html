@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinic IPS - Administrativo</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Clinic IPS - Panel Administrativo</h1>
+            <p>Bienvenido, <span id="username"></span></p>
+            <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+        </header>
+        <div class="tab">
+            <button class="tablinks active" onclick="openTab(event, 'patients')">
+                <i class="fas fa-users"></i>
+                Pacientes
+            </button>
+            <button class="tablinks" onclick="openTab(event, 'appointments')">
+                <i class="fas fa-calendar-check"></i>
+                Citas
+            </button>
+            <button class="tablinks" onclick="openTab(event, 'inventory')">
+                <i class="fas fa-boxes"></i>
+                Inventario
+            </button>
+            <button class="tablinks" onclick="openTab(event, 'billing')">
+                <i class="fas fa-file-invoice-dollar"></i>
+                Facturación
+            </button>
+        </div>
+
+        <div id="patients" class="tabcontent" style="display: block;">
+            <h2><i class="fas fa-users" style="margin-right: 0.5rem; color: var(--primary-color);"></i>Gestionar Pacientes</h2>
+            <button class="accordion">
+                <i class="fas fa-user-plus"></i>
+                Crear Nuevo Paciente
+            </button>
+            <div class="panel">
+                <form id="createPatientForm">
+                    <fieldset style="border: 2px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.5rem;">
+                        <legend style="color: var(--primary-color); font-weight: 600; padding: 0 1rem;">Información Personal</legend>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="patientFullName">
+                                    <i class="fas fa-user" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                    Nombre Completo:
+                                </label>
+                                <input type="text"
+                                       id="patientFullName"
+                                       placeholder="Ingrese nombres y apellidos completos"
+                                       required
+                                       maxlength="100">
+                            </div>
+                            <div class="form-group">
+                                <label for="patientEmail">
+                                    <i class="fas fa-envelope" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                    Correo Electrónico:
+                                </label>
+                                <input type="email"
+                                       id="patientEmail"
+                                       placeholder="paciente@ejemplo.com"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="patientPhone">
+                                    <i class="fas fa-phone" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                    Teléfono:
+                                </label>
+                                <input type="tel"
+                                       id="patientPhone"
+                                       placeholder="3101234567"
+                                       pattern="[0-9]{10}"
+                                       title="Debe tener 10 dígitos"
+                                       required>
+                            </div>
+                            <div class="form-group">
+                                <label for="patientBirthDate">
+                                    <i class="fas fa-calendar" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                    Fecha de Nacimiento:
+                                </label>
+                                <input type="date"
+                                       id="patientBirthDate"
+                                       max="2010-01-01"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="patientAddress">
+                                <i class="fas fa-map-marker-alt" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                Dirección:
+                            </label>
+                            <input type="text"
+                                   id="patientAddress"
+                                   placeholder="Calle 123 #45-67, Ciudad"
+                                   maxlength="100"
+                                   required>
+                        </div>
+                    </fieldset>
+
+                    <fieldset style="border: 2px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.5rem;">
+                        <legend style="color: var(--primary-color); font-weight: 600; padding: 0 1rem;">Contacto de Emergencia</legend>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="emergencyName">
+                                    <i class="fas fa-user-circle" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                    Nombre y Apellidos:
+                                </label>
+                                <input type="text"
+                                       id="emergencyName"
+                                       placeholder="Nombre del contacto de emergencia"
+                                       required>
+                            </div>
+                            <div class="form-group">
+                                <label for="emergencyPhone">
+                                    <i class="fas fa-phone" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                    Teléfono:
+                                </label>
+                                <input type="tel"
+                                       id="emergencyPhone"
+                                       placeholder="3101234567"
+                                       pattern="[0-9]{10}"
+                                       title="Debe tener 10 dígitos"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="emergencyRelation">
+                                <i class="fas fa-users" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                Relación con el Paciente:
+                            </label>
+                            <select id="emergencyRelation" required>
+                                <option value="">Seleccionar relación</option>
+                                <option value="PADRE">Padre</option>
+                                <option value="MADRE">Madre</option>
+                                <option value="HERMANO">Hermano/a</option>
+                                <option value="HIJO">Hijo/a</option>
+                                <option value="CONYUGE">Cónyuge</option>
+                                <option value="AMIGO">Amigo/a</option>
+                                <option value="OTRO">Otro</option>
+                            </select>
+                        </div>
+                    </fieldset>
+
+                    <fieldset style="border: 2px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.5rem;">
+                        <legend style="color: var(--primary-color); font-weight: 600; padding: 0 1rem;">Información de Seguro Médico</legend>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="insuranceCompany">
+                                    <i class="fas fa-building" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                    Compañía de Seguro:
+                                </label>
+                                <input type="text"
+                                       id="insuranceCompany"
+                                       placeholder="Nombre de la aseguradora"
+                                       required>
+                            </div>
+                            <div class="form-group">
+                                <label for="insurancePolicy">
+                                    <i class="fas fa-file-contract" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                    Número de Póliza:
+                                </label>
+                                <input type="text"
+                                       id="insurancePolicy"
+                                       placeholder="Número de la póliza"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="insuranceCoverage">
+                                <i class="fas fa-shield-alt" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                Tipo de Cobertura:
+                            </label>
+                            <select id="insuranceCoverage" required>
+                                <option value="">Seleccionar cobertura</option>
+                                <option value="BASICA">Básica</option>
+                                <option value="AMPLIA">Amplia</option>
+                                <option value="PREMIUM">Premium</option>
+                                <option value="SIN_SEGURO">Sin Seguro</option>
+                            </select>
+                        </div>
+                    </fieldset>
+
+                    <div style="text-align: center;">
+                        <button type="submit" class="btn-primary btn-success">
+                            <i class="fas fa-save"></i>
+                            Crear Paciente
+                        </button>
+                        <button type="button" class="btn-secondary" onclick="this.closest('.panel').querySelector('form').reset()" style="margin-left: 1rem;">
+                            <i class="fas fa-undo"></i>
+                            Limpiar Formulario
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <button class="accordion">
+                <i class="fas fa-list"></i>
+                Lista de Pacientes
+            </button>
+            <div class="panel">
+                <div style="margin-bottom: 1rem;">
+                    <button class="btn-secondary" onclick="loadPatients()">
+                        <i class="fas fa-sync-alt"></i>
+                        Cargar Pacientes
+                    </button>
+                    <input type="text"
+                           id="patientSearch"
+                           placeholder="Buscar paciente por nombre o cédula..."
+                           style="margin-left: 1rem; padding: 0.5rem; border: 2px solid var(--border-color); border-radius: var(--radius-md); width: 300px;">
+                </div>
+                <div id="patientsList" style="max-height: 400px; overflow-y: auto;"></div>
+            </div>
+        </div>
+
+        <div id="appointments" class="tabcontent">
+            <h2><i class="fas fa-calendar-check" style="margin-right: 0.5rem; color: var(--primary-color);"></i>Gestionar Citas</h2>
+            <button class="accordion">
+                <i class="fas fa-plus-circle"></i>
+                Crear Nueva Cita
+            </button>
+            <div class="panel">
+                <form id="createAppointmentForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="patientCedula">
+                                <i class="fas fa-id-card" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                Cédula del Paciente:
+                            </label>
+                            <input type="text"
+                                   id="patientCedula"
+                                   placeholder="Número de cédula del paciente"
+                                   pattern="[0-9]+"
+                                   title="Solo números"
+                                   required>
+                        </div>
+                        <div class="form-group">
+                            <label for="doctorCedula">
+                                <i class="fas fa-user-md" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                Cédula del Médico:
+                            </label>
+                            <input type="text"
+                                   id="doctorCedula"
+                                   placeholder="Número de cédula del médico"
+                                   pattern="[0-9]+"
+                                   title="Solo números"
+                                   required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="appointmentDateTime">
+                            <i class="fas fa-clock" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                            Fecha y Hora:
+                        </label>
+                        <input type="datetime-local"
+                               id="appointmentDateTime"
+                               required>
+                    </div>
+                    <div style="text-align: center;">
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-calendar-plus"></i>
+                            Crear Cita
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <button class="accordion">
+                <i class="fas fa-list-alt"></i>
+                Lista de Citas
+            </button>
+            <div class="panel">
+                <div style="margin-bottom: 1rem;">
+                    <button class="btn-secondary" onclick="loadAppointments()">
+                        <i class="fas fa-sync-alt"></i>
+                        Cargar Citas
+                    </button>
+                    <select id="appointmentFilter" style="margin-left: 1rem; padding: 0.5rem; border: 2px solid var(--border-color); border-radius: var(--radius-md);">
+                        <option value="">Todas las citas</option>
+                        <option value="HOY">Hoy</option>
+                        <option value="SEMANA">Esta semana</option>
+                        <option value="MES">Este mes</option>
+                    </select>
+                </div>
+                <div id="appointmentsList" style="max-height: 400px; overflow-y: auto;"></div>
+            </div>
+        </div>
+
+        <div id="inventory" class="tabcontent">
+            <h2>Gestionar Inventario</h2>
+            <p>Funciones para medicamentos, procedimientos, ayudas diagnósticas.</p>
+            <!-- Add forms here -->
+        </div>
+
+        <div id="billing" class="tabcontent">
+            <h2>Facturación</h2>
+            <p>Funciones para facturación y seguros.</p>
+            <!-- Add forms here -->
+        </div>
+    </div>
+    <script src="api.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
