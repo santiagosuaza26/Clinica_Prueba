@@ -62,7 +62,28 @@
           "name": "Login",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "Tipo de contenido del cuerpo de la solicitud"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "description": "Formato esperado de la respuesta"
+              },
+              {
+                "key": "User-Agent",
+                "value": "PostmanRuntime/7.36.0",
+                "description": "Agente de usuario para la solicitud"
+              },
+              {
+                "key": "Cache-Control",
+                "value": "no-cache",
+                "description": "Control de caché para evitar almacenamiento"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}",
