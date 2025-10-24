@@ -34,10 +34,6 @@ public class CreatePatientUseCase {
             throw new ValidationException("Ya existe un paciente con esa cédula.");
         }
 
-        Optional<Patient> existingByUsername = repository.findByUsername(patient.getUsername());
-        if (existingByUsername.isPresent()) {
-            throw new ValidationException("Ya existe un paciente con ese nombre de usuario.");
-        }
 
         return repository.save(patient);
     }

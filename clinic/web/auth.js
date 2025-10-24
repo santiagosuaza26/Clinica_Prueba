@@ -1,5 +1,4 @@
-const API_BASE = 'http://localhost:8080';
-
+// Importar configuración centralizada
 document.addEventListener('DOMContentLoaded', function() {
     // Inicializar funciones de accesibilidad
     initializeAccessibility();
@@ -9,9 +8,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const loginForm = document.getElementById('loginForm');
 
     // Check if already logged in
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem(CONFIG.TOKEN_KEY);
     if (token) {
-        const role = localStorage.getItem('role');
+        const role = localStorage.getItem(CONFIG.ROLE_KEY);
         redirectToRole(role);
     }
 
@@ -69,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             try {
-                const response = await fetch(`${API_BASE}/users/authenticate`, {
+                const response = await fetch(`${CONFIG.API_BASE}/users/authenticate`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -80,9 +79,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 const data = await response.json();
 
                 if (response.ok) {
-                    localStorage.setItem('token', data.token);
-                    localStorage.setItem('role', data.role);
-                    localStorage.setItem('username', data.username);
+                    localStorage.setItem(CONFIG.TOKEN_KEY, data.token);
+                    localStorage.setItem(CONFIG.ROLE_KEY, data.role);
+                    localStorage.setItem(CONFIG.USERNAME_KEY, data.username);
 
                     // Mostrar mensaje de éxito
                     showMessage('Inicio de sesión exitoso. Redirigiendo...', 'success', 2000);
@@ -132,7 +131,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Función para mostrar mensajes mejorada
-function showMessage(message, type = 'info', duration = 5000) {
+function showMessage(message, type = 'info', duration = CONFIG.NOTIFICATION_DURATION) {
     const messageDiv = document.getElementById('message');
     if (!messageDiv) return;
 
@@ -329,15 +328,17 @@ function validateField(input, fieldType) {
     let isValid = true;
     let message = '';
 
+    const validation = CONFIG.VALIDATION[fieldType.toUpperCase()];
+
     switch (fieldType) {
         case 'username':
             if (!value) {
                 isValid = false;
                 message = 'El nombre de usuario es requerido';
-            } else if (value.length < 4) {
+            } else if (value.length < validation.minLength) {
                 isValid = false;
-                message = 'El nombre de usuario debe tener al menos 4 caracteres';
-            } else if (!/^[a-zA-Z0-9_]+$/.test(value)) {
+                message = `El nombre de usuario debe tener al menos ${validation.minLength} caracteres`;
+            } else if (validation.pattern && !validation.pattern.test(value)) {
                 isValid = false;
                 message = 'El nombre de usuario solo puede contener letras, números y guiones bajos';
             }
@@ -347,9 +348,9 @@ function validateField(input, fieldType) {
             if (!value) {
                 isValid = false;
                 message = 'La contraseña es requerida';
-            } else if (value.length < 8) {
+            } else if (value.length < validation.minLength) {
                 isValid = false;
-                message = 'La contraseña debe tener al menos 8 caracteres';
+                message = `La contraseña debe tener al menos ${validation.minLength} caracteres`;
             }
             break;
 
@@ -357,7 +358,7 @@ function validateField(input, fieldType) {
             if (!value) {
                 isValid = false;
                 message = 'El email es requerido';
-            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+            } else if (validation.pattern && !validation.pattern.test(value)) {
                 isValid = false;
                 message = 'Formato de email inválido';
             }
@@ -367,9 +368,9 @@ function validateField(input, fieldType) {
             if (!value) {
                 isValid = false;
                 message = 'La cédula es requerida';
-            } else if (!/^\d{8,10}$/.test(value)) {
+            } else if (validation.pattern && !validation.pattern.test(value)) {
                 isValid = false;
-                message = 'La cédula debe tener entre 8 y 10 dígitos';
+                message = `La cédula debe tener entre ${validation.minLength} y ${validation.maxLength} dígitos`;
             }
             break;
     }
@@ -394,12 +395,14 @@ function validateLoginForm(username, password) {
     let isValid = true;
 
     // Validar username
-    if (!username || username.length < 4 || !/^[a-zA-Z0-9_]+$/.test(username)) {
+    const usernameValidation = CONFIG.VALIDATION.USERNAME;
+    if (!username || username.length < usernameValidation.minLength || (usernameValidation.pattern && !usernameValidation.pattern.test(username))) {
         isValid = false;
     }
 
     // Validar password
-    if (!password || password.length < 8) {
+    const passwordValidation = CONFIG.VALIDATION.PASSWORD;
+    if (!password || password.length < passwordValidation.minLength) {
         isValid = false;
     }
 
@@ -413,9 +416,10 @@ function formatCedula(input) {
     // Remover caracteres no numéricos
     let value = input.value.replace(/\D/g, '');
 
-    // Limitar a 10 dígitos
-    if (value.length > 10) {
-        value = value.substring(0, 10);
+    // Limitar según configuración
+    const cedulaValidation = CONFIG.VALIDATION.CEDULA;
+    if (value.length > cedulaValidation.maxLength) {
+        value = value.substring(0, cedulaValidation.maxLength);
     }
 
     input.value = value;
@@ -438,15 +442,7 @@ function togglePasswordVisibility(inputId, button) {
 }
 
 function redirectToRole(role) {
-    const rolePages = {
-        'ADMINISTRATIVO': 'admin.html',
-        'MEDICO': 'doctor.html',
-        'ENFERMERA': 'nurse.html',
-        'RECURSOS_HUMANOS': 'hr.html',
-        'SOPORTE': 'support.html'
-    };
-
-    const page = rolePages[role];
+    const page = CONFIG.ROLE_PAGES[role];
     if (page) {
         window.location.href = page;
     } else {

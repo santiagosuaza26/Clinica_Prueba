@@ -14,23 +14,31 @@
             <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
         </header>
         <div class="tab">
-            <button class="tablinks active" onclick="openTab(event, 'appointments')">
-                <i class="fas fa-calendar-check"></i>
-                Mis Citas
-            </button>
-            <button class="tablinks" onclick="openTab(event, 'patients')">
-                <i class="fas fa-users"></i>
-                Pacientes
-            </button>
-            <button class="tablinks" onclick="openTab(event, 'history')">
-                <i class="fas fa-file-medical"></i>
-                Historial Médico
-            </button>
-            <button class="tablinks" onclick="openTab(event, 'orders')">
-                <i class="fas fa-prescription"></i>
-                Órdenes Médicas
-            </button>
-        </div>
+             <button class="tablinks active" onclick="openTab(event, 'patients')">
+                 <i class="fas fa-users"></i>
+                 Buscar Paciente
+             </button>
+             <button class="tablinks" onclick="openTab(event, 'history')">
+                 <i class="fas fa-file-medical"></i>
+                 📋 Historia Clínica
+             </button>
+             <button class="tablinks" onclick="openTab(event, 'medications')">
+                 <i class="fas fa-pills"></i>
+                 💊 Medicamentos
+             </button>
+             <button class="tablinks" onclick="openTab(event, 'procedures')">
+                 <i class="fas fa-user-md"></i>
+                 🧫 Procedimientos
+             </button>
+             <button class="tablinks" onclick="openTab(event, 'diagnostic-aids')">
+                 <i class="fas fa-flask"></i>
+                 🧪 Ayudas Diagnósticas
+             </button>
+             <button class="tablinks" onclick="openTab(event, 'hospitalization')">
+                 <i class="fas fa-bed"></i>
+                 🏥 Hospitalización
+             </button>
+         </div>
 
         <div id="appointments" class="tabcontent" style="display: block;">
             <h2><i class="fas fa-calendar-check" style="margin-right: 0.5rem; color: var(--primary-color);"></i>Mis Citas Médicas</h2>
@@ -53,92 +61,589 @@
             </div>
         </div>
 
-        <div id="patients" class="tabcontent">
-            <h2><i class="fas fa-users" style="margin-right: 0.5rem; color: var(--primary-color);"></i>Mis Pacientes</h2>
-            <button class="accordion">
-                <i class="fas fa-search"></i>
-                Buscar Pacientes
-            </button>
-            <div class="panel">
-                <div style="margin-bottom: 1rem;">
-                    <input type="text"
-                           id="patientSearch"
-                           placeholder="Buscar por nombre o cédula..."
-                           style="padding: 0.75rem; border: 2px solid var(--border-color); border-radius: var(--radius-md); width: 300px;">
-                    <button class="btn-secondary" onclick="loadPatients()" style="margin-left: 0.5rem;">
-                        <i class="fas fa-search"></i>
-                        Buscar
-                    </button>
-                </div>
-                <div id="patientsList" style="max-height: 400px; overflow-y: auto;"></div>
+        <div id="patients" class="tabcontent" style="display: block;">
+            <h2><i class="fas fa-users" style="margin-right: 0.5rem; color: var(--primary-color);"></i>Buscar Paciente</h2>
+            <div class="search-container">
+                <input type="text"
+                       id="patientSearch"
+                       placeholder="Buscar por cédula..."
+                       style="flex: 1; min-width: 250px;">
+                <button class="btn-secondary" onclick="searchPatient()">
+                    <i class="fas fa-search"></i>
+                    Buscar Paciente
+                </button>
             </div>
+            <div id="patientInfo" class="patient-info" style="display: none;"></div>
+            <div id="patientsList" style="max-height: 400px; overflow-y: auto; margin-top: 1rem;"></div>
         </div>
 
         <div id="history" class="tabcontent">
-            <h2><i class="fas fa-file-medical" style="margin-right: 0.5rem; color: var(--primary-color);"></i>Historial Médico</h2>
+            <h2><i class="fas fa-file-medical" style="margin-right: 0.5rem; color: var(--primary-color);"></i>📋 Historia Clínica</h2>
+            <div class="search-container">
+                <input type="text"
+                       id="historyPatientSearch"
+                       placeholder="Buscar paciente por cédula..."
+                       style="flex: 1; min-width: 250px;">
+                <button class="btn-secondary" onclick="searchPatientForHistory()">
+                    <i class="fas fa-search"></i>
+                    Buscar
+                </button>
+            </div>
+            <div id="historyPatientInfo" class="patient-info" style="display: none;"></div>
+
             <button class="accordion">
                 <i class="fas fa-plus"></i>
-                Registrar Consulta
+                Registrar Nueva Consulta
             </button>
             <div class="panel">
                 <form id="createHistoryForm">
-                    <div class="form-group">
-                        <label for="patientCedula">
-                            <i class="fas fa-id-card" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
-                            Cédula del Paciente:
-                        </label>
-                        <input type="text"
-                               id="patientCedula"
-                               placeholder="Número de cédula del paciente"
-                               pattern="[0-9]+"
-                               title="Solo números"
-                               required>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="historyPatientCedula">
+                                <i class="fas fa-id-card" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                Cédula del Paciente:
+                            </label>
+                            <input type="text"
+                                   id="historyPatientCedula"
+                                   placeholder="Número de cédula del paciente"
+                                   pattern="[0-9]+"
+                                   title="Solo números"
+                                   required
+                                   readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="appointmentDate">
+                                <i class="fas fa-calendar" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                Fecha de Consulta:
+                            </label>
+                            <input type="datetime-local"
+                                   id="appointmentDate"
+                                   required>
+                        </div>
                     </div>
+
+                    <div class="form-group">
+                        <label for="reasonForConsultation">
+                            <i class="fas fa-question-circle" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                            Motivo de Consulta:
+                        </label>
+                        <textarea id="reasonForConsultation"
+                                  placeholder="Describa el motivo principal de la consulta..."
+                                  rows="3"
+                                  required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="symptoms">
+                            <i class="fas fa-thermometer-half" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                            Sintomatología:
+                        </label>
+                        <textarea id="symptoms"
+                                  placeholder="Describa los síntomas presentados por el paciente..."
+                                  rows="4"
+                                  required></textarea>
+                    </div>
+
                     <div class="form-group">
                         <label for="diagnosis">
                             <i class="fas fa-stethoscope" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
-                            Diagnóstico y Observaciones:
+                            Diagnóstico:
                         </label>
                         <textarea id="diagnosis"
-                                  placeholder="Describa el motivo de consulta, síntomas, diagnóstico y tratamiento..."
-                                  rows="6"
+                                  placeholder="Registre el diagnóstico médico..."
+                                  rows="4"
                                   required></textarea>
                     </div>
-                    <div style="text-align: center;">
+
+                    <div class="form-group">
+                        <label for="treatment">
+                            <i class="fas fa-prescription-bottle-alt" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                            Tratamiento y Observaciones:
+                        </label>
+                        <textarea id="treatment"
+                                  placeholder="Describa el tratamiento prescrito y observaciones adicionales..."
+                                  rows="4"
+                                  required></textarea>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 2rem;">
                         <button type="submit" class="btn-primary">
                             <i class="fas fa-save"></i>
-                            Guardar Consulta
+                            💾 Guardar Historia Clínica
+                        </button>
+                        <button type="button" class="btn-success" onclick="finishAppointment()" style="margin-left: 1rem;">
+                            <i class="fas fa-check-circle"></i>
+                            ✅ Finalizar Atención
                         </button>
                     </div>
                 </form>
             </div>
+
+            <div class="list-section">
+                <h3><i class="fas fa-history"></i> Historial de Consultas</h3>
+                <div id="historyList"></div>
+            </div>
         </div>
 
-        <div id="orders" class="tabcontent">
-            <button class="accordion">Crear Órdenes</button>
+        <div id="medications" class="tabcontent">
+            <h2><i class="fas fa-pills" style="margin-right: 0.5rem; color: var(--primary-color);"></i>💊 Medicamentos</h2>
+            <div class="search-container">
+                <input type="text"
+                       id="medPatientSearch"
+                       placeholder="Buscar paciente por cédula..."
+                       style="flex: 1; min-width: 250px;">
+                <button class="btn-secondary" onclick="searchPatientForMedications()">
+                    <i class="fas fa-search"></i>
+                    Buscar
+                </button>
+            </div>
+            <div id="medPatientInfo" class="patient-info" style="display: none;"></div>
+
+            <button class="accordion">
+                <i class="fas fa-prescription-bottle-alt"></i>
+                Crear Orden de Medicamentos
+            </button>
             <div class="panel">
-                <form id="createOrderForm">
-                    <div class="form-group">
-                        <label for="orderPatientCedula">Cédula del Paciente:</label>
-                        <input type="text" id="orderPatientCedula" required>
+                <form id="createMedicationOrderForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="medOrderPatientCedula">
+                                <i class="fas fa-id-card" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                Cédula del Paciente:
+                            </label>
+                            <input type="text"
+                                   id="medOrderPatientCedula"
+                                   required
+                                   readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="medicationOrderNumber">
+                                <i class="fas fa-hashtag" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                Número de Orden (6 dígitos):
+                            </label>
+                            <input type="text"
+                                   id="medicationOrderNumber"
+                                   pattern="[0-9]{6}"
+                                   title="Debe ser un número de 6 dígitos"
+                                   required>
+                        </div>
                     </div>
+
                     <div class="form-group">
-                        <label for="orderType">Tipo de Orden:</label>
-                        <select id="orderType">
-                            <option value="MEDICATION">Medicamento</option>
-                            <option value="PROCEDURE">Procedimiento</option>
-                            <option value="DIAGNOSTIC_AID">Ayuda Diagnóstica</option>
+                        <label for="medicationSelect">
+                            <i class="fas fa-pills" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                            Medicamento:
+                        </label>
+                        <select id="medicationSelect" required>
+                            <option value="">Seleccionar medicamento...</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label for="orderItem">Ítem:</label>
-                        <input type="text" id="orderItem" required>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="medicationDose">
+                                <i class="fas fa-syringe" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                Dosis:
+                            </label>
+                            <input type="text"
+                                   id="medicationDose"
+                                   placeholder="ej: 500mg, 1 tableta"
+                                   required>
+                        </div>
+                        <div class="form-group">
+                            <label for="medicationDuration">
+                                <i class="fas fa-clock" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                Duración:
+                            </label>
+                            <input type="text"
+                                   id="medicationDuration"
+                                   placeholder="ej: 7 días, 1 mes"
+                                   required>
+                        </div>
                     </div>
-                    <button type="submit" class="btn-primary">Crear Orden</button>
+
+                    <div class="form-group">
+                        <label for="medicationInstructions">
+                            <i class="fas fa-info-circle" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                            Instrucciones:
+                        </label>
+                        <textarea id="medicationInstructions"
+                                  placeholder="Instrucciones de administración..."
+                                  rows="3"></textarea>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 2rem;">
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-plus"></i>
+                            ➕ Agregar a Orden
+                        </button>
+                        <button type="button" class="btn-success" onclick="createMedicationOrder()" style="margin-left: 1rem;">
+                            <i class="fas fa-save"></i>
+                            💾 Crear Orden Completa
+                        </button>
+                    </div>
                 </form>
+            </div>
+
+            <div class="list-section">
+                <h3><i class="fas fa-list"></i> Órdenes de Medicamentos</h3>
+                <div id="medicationOrdersList"></div>
+            </div>
+        </div>
+
+        <div id="procedures" class="tabcontent">
+            <h2><i class="fas fa-user-md" style="margin-right: 0.5rem; color: var(--primary-color);"></i>🧫 Procedimientos</h2>
+            <div class="search-container">
+                <input type="text"
+                       id="procPatientSearch"
+                       placeholder="Buscar paciente por cédula..."
+                       style="flex: 1; min-width: 250px;">
+                <button class="btn-secondary" onclick="searchPatientForProcedures()">
+                    <i class="fas fa-search"></i>
+                    Buscar
+                </button>
+            </div>
+            <div id="procPatientInfo" class="patient-info" style="display: none;"></div>
+
+            <button class="accordion">
+                <i class="fas fa-stethoscope"></i>
+                Crear Orden de Procedimientos
+            </button>
+            <div class="panel">
+                <form id="createProcedureOrderForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="procOrderPatientCedula">
+                                <i class="fas fa-id-card" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                Cédula del Paciente:
+                            </label>
+                            <input type="text"
+                                   id="procOrderPatientCedula"
+                                   required
+                                   readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="procedureOrderNumber">
+                                <i class="fas fa-hashtag" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                Número de Orden (6 dígitos):
+                            </label>
+                            <input type="text"
+                                   id="procedureOrderNumber"
+                                   pattern="[0-9]{6}"
+                                   title="Debe ser un número de 6 dígitos"
+                                   required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="procedureSelect">
+                            <i class="fas fa-user-md" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                            Procedimiento:
+                        </label>
+                        <select id="procedureSelect" required>
+                            <option value="">Seleccionar procedimiento...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="procedureTimes">
+                                <i class="fas fa-redo" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                Número de Veces:
+                            </label>
+                            <input type="number"
+                                   id="procedureTimes"
+                                   min="1"
+                                   required>
+                        </div>
+                        <div class="form-group">
+                            <label for="procedureFrequency">
+                                <i class="fas fa-clock" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                Frecuencia:
+                            </label>
+                            <input type="text"
+                                   id="procedureFrequency"
+                                   placeholder="ej: diaria, semanal"
+                                   required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="procedureSpecialist">
+                            <i class="fas fa-user-nurse" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                            Requiere Especialista:
+                        </label>
+                        <select id="procedureSpecialist" required>
+                            <option value="false">No</option>
+                            <option value="true">Sí</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="specialtyGroup" style="display: none;">
+                        <label for="procedureSpecialty">
+                            <i class="fas fa-graduation-cap" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                            Tipo de Especialidad:
+                        </label>
+                        <select id="procedureSpecialty">
+                            <option value="">Seleccionar especialidad...</option>
+                        </select>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 2rem;">
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-plus"></i>
+                            ➕ Agregar a Orden
+                        </button>
+                        <button type="button" class="btn-success" onclick="createProcedureOrder()" style="margin-left: 1rem;">
+                            <i class="fas fa-save"></i>
+                            💾 Crear Orden Completa
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="list-section">
+                <h3><i class="fas fa-list"></i> Órdenes de Procedimientos</h3>
+                <div id="procedureOrdersList"></div>
+            </div>
+        </div>
+
+        <div id="diagnostic-aids" class="tabcontent">
+            <h2><i class="fas fa-flask" style="margin-right: 0.5rem; color: var(--primary-color);"></i>🧪 Ayudas Diagnósticas</h2>
+            <div class="search-container">
+                <input type="text"
+                       id="aidPatientSearch"
+                       placeholder="Buscar paciente por cédula..."
+                       style="flex: 1; min-width: 250px;">
+                <button class="btn-secondary" onclick="searchPatientForAids()">
+                    <i class="fas fa-search"></i>
+                    Buscar
+                </button>
+            </div>
+            <div id="aidPatientInfo" class="patient-info" style="display: none;"></div>
+
+            <button class="accordion">
+                <i class="fas fa-vial"></i>
+                Crear Orden de Ayudas Diagnósticas
+            </button>
+            <div class="panel">
+                <form id="createAidOrderForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="aidOrderPatientCedula">
+                                <i class="fas fa-id-card" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                Cédula del Paciente:
+                            </label>
+                            <input type="text"
+                                   id="aidOrderPatientCedula"
+                                   required
+                                   readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="aidOrderNumber">
+                                <i class="fas fa-hashtag" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                Número de Orden (6 dígitos):
+                            </label>
+                            <input type="text"
+                                   id="aidOrderNumber"
+                                   pattern="[0-9]{6}"
+                                   title="Debe ser un número de 6 dígitos"
+                                   required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="aidSelect">
+                            <i class="fas fa-flask" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                            Ayuda Diagnóstica:
+                        </label>
+                        <select id="aidSelect" required>
+                            <option value="">Seleccionar ayuda diagnóstica...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="aidQuantity">
+                            <i class="fas fa-hashtag" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                            Cantidad:
+                        </label>
+                        <input type="number"
+                               id="aidQuantity"
+                               min="1"
+                               required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="aidSpecialist">
+                            <i class="fas fa-user-nurse" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                            Requiere Especialista:
+                        </label>
+                        <select id="aidSpecialist" required>
+                            <option value="false">No</option>
+                            <option value="true">Sí</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="aidSpecialtyGroup" style="display: none;">
+                        <label for="aidSpecialty">
+                            <i class="fas fa-graduation-cap" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                            Tipo de Especialidad:
+                        </label>
+                        <select id="aidSpecialty">
+                            <option value="">Seleccionar especialidad...</option>
+                        </select>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 2rem;">
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-plus"></i>
+                            ➕ Agregar a Orden
+                        </button>
+                        <button type="button" class="btn-success" onclick="createAidOrder()" style="margin-left: 1rem;">
+                            <i class="fas fa-save"></i>
+                            💾 Crear Orden Completa
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="list-section">
+                <h3><i class="fas fa-list"></i> Órdenes de Ayudas Diagnósticas</h3>
+                <div id="aidOrdersList"></div>
+            </div>
+        </div>
+
+        <div id="hospitalization" class="tabcontent">
+            <h2><i class="fas fa-bed" style="margin-right: 0.5rem; color: var(--primary-color);"></i>🏥 Hospitalización</h2>
+            <div class="search-container">
+                <input type="text"
+                       id="hospPatientSearch"
+                       placeholder="Buscar paciente por cédula..."
+                       style="flex: 1; min-width: 250px;">
+                <button class="btn-secondary" onclick="searchPatientForHospitalization()">
+                    <i class="fas fa-search"></i>
+                    Buscar
+                </button>
+            </div>
+            <div id="hospPatientInfo" class="patient-info" style="display: none;"></div>
+
+            <button class="accordion">
+                <i class="fas fa-bed"></i>
+                Registrar Hospitalización
+            </button>
+            <div class="panel">
+                <form id="createHospitalizationForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="hospPatientCedula">
+                                <i class="fas fa-id-card" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                Cédula del Paciente:
+                            </label>
+                            <input type="text"
+                                   id="hospPatientCedula"
+                                   required
+                                   readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="hospOrderNumber">
+                                <i class="fas fa-hashtag" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                Número de Orden (6 dígitos):
+                            </label>
+                            <input type="text"
+                                   id="hospOrderNumber"
+                                   pattern="[0-9]{6}"
+                                   title="Debe ser un número de 6 dígitos"
+                                   required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="admissionDate">
+                                <i class="fas fa-calendar-plus" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                Fecha de Ingreso:
+                            </label>
+                            <input type="datetime-local"
+                                   id="admissionDate"
+                                   required>
+                        </div>
+                        <div class="form-group">
+                            <label for="dischargeDate">
+                                <i class="fas fa-calendar-minus" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                                Fecha de Alta (estimada):
+                            </label>
+                            <input type="datetime-local"
+                                   id="dischargeDate">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="hospitalizationReason">
+                            <i class="fas fa-info-circle" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                            Motivo de Hospitalización:
+                        </label>
+                        <textarea id="hospitalizationReason"
+                                  placeholder="Describa el motivo de la hospitalización..."
+                                  rows="4"
+                                  required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="hospitalizationType">
+                            <i class="fas fa-bed" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                            Tipo de Hospitalización:
+                        </label>
+                        <select id="hospitalizationType" required>
+                            <option value="">Seleccionar tipo...</option>
+                            <option value="observation">Observación</option>
+                            <option value="surgery">Cirugía</option>
+                            <option value="intensive_care">Cuidados Intensivos</option>
+                            <option value="emergency">Emergencia</option>
+                            <option value="maternity">Maternidad</option>
+                            <option value="other">Otro</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="roomNumber">
+                            <i class="fas fa-door-closed" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                            Número de Habitación:
+                        </label>
+                        <input type="text"
+                               id="roomNumber"
+                               placeholder="ej: 201, UCI-1">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="responsibleNurse">
+                            <i class="fas fa-user-nurse" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                            Enfermera Responsable:
+                        </label>
+                        <input type="text"
+                               id="responsibleNurse"
+                               placeholder="Nombre de la enfermera responsable">
+                    </div>
+
+                    <div style="text-align: center; margin-top: 2rem;">
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-bed"></i>
+                            🏥 Registrar Hospitalización
+                        </button>
+                        <button type="button" class="btn-warning" onclick="updateHospitalization()" style="margin-left: 1rem;">
+                            <i class="fas fa-edit"></i>
+                            📝 Actualizar Estado
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="list-section">
+                <h3><i class="fas fa-list"></i> Hospitalizaciones Activas</h3>
+                <div id="hospitalizationList"></div>
             </div>
         </div>
     </div>
+    <script src="config.js"></script>
     <script src="api.js"></script>
     <script src="doctor.js"></script>
 </body>

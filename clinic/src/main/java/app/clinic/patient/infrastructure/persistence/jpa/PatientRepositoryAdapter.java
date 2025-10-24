@@ -36,10 +36,6 @@ public class PatientRepositoryAdapter implements PatientRepository {
         return jpaRepository.findByCedula(cedula).map(this::toDomain);
     }
 
-    @Override
-    public Optional<Patient> findByUsername(String username) {
-        return jpaRepository.findByUsername(username).map(this::toDomain);
-    }
 
     @Override
     public List<Patient> findAll() {
@@ -55,8 +51,6 @@ public class PatientRepositoryAdapter implements PatientRepository {
     private PatientEntity toEntity(Patient patient) {
         PatientEntity e = new PatientEntity();
         e.setId(patient.getId());
-        e.setUsername(patient.getUsername());
-        e.setPassword(patient.getPassword());
         e.setFullName(patient.getFullName());
         e.setCedula(patient.getCedula());
         e.setBirthDate(patient.getBirthDate());
@@ -87,8 +81,6 @@ public class PatientRepositoryAdapter implements PatientRepository {
     private Patient toDomain(PatientEntity e) {
         return new Patient(
                 e.getId(),
-                e.getUsername(),
-                e.getPassword(),
                 e.getFullName(),
                 e.getCedula(),
                 e.getBirthDate(),

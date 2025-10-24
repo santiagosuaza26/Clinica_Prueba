@@ -38,15 +38,6 @@ public class PatientValidatorService {
             GlobalValidator.validateTextLength(patient.getAddress(), 30, "dirección");
         }
 
-        // Validar contraseña
-        if (patient.getPassword() != null) {
-            GlobalValidator.validatePassword(patient.getPassword());
-        }
-
-        // Validar username
-        if (patient.getUsername() != null && !USERNAME_PATTERN.matcher(patient.getUsername()).matches()) {
-            throw new ValidationException("El nombre de usuario debe ser alfanumérico y máximo de 15 caracteres.");
-        }
 
         // Validar contacto de emergencia
         EmergencyContact ec = patient.getEmergencyContact();
@@ -75,9 +66,6 @@ public class PatientValidatorService {
         // Validaciones básicas del dominio
         if (patient.getFullName() == null || patient.getFullName().isBlank()) {
             throw new ValidationException("El nombre completo es obligatorio.");
-        }
-        if (patient.getUsername() != null && patient.getUsername().length() > 15) {
-            throw new ValidationException("El nombre de usuario no puede superar los 15 caracteres.");
         }
     }
 

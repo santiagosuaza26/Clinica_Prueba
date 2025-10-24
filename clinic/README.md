@@ -109,12 +109,25 @@ mvn clean compile
 
 3. **Ejecutar la aplicación:**
 ```bash
-mvn spring-boot:run
+# Para desarrollo (puerto 8081)
+mvn spring-boot:run -Dspring-boot.run.profiles=development -Dspring-boot.run.arguments="--server.port=8081"
+
+# Para producción (puerto 8080)
+mvn spring-boot:run -Dspring-boot.run.profiles=production
 ```
 
-4. **Verificar el estado:**
-    - Aplicación: [http://localhost:8080](http://localhost:8080)
-    - H2 Console: [http://localhost:8080/h2-console](http://localhost:8080/h2-console)
+4. **Ejecutar el frontend:**
+```bash
+# Abrir el archivo web/index.html en un navegador
+# O usar un servidor local como Live Server en VS Code
+# Frontend: http://127.0.0.1:5500
+```
+
+5. **Verificar el estado:**
+    - Backend API: [http://localhost:8081](http://localhost:8081)
+    - Frontend: [http://127.0.0.1:5500](http://127.0.0.1:5500)
+    - H2 Console: [http://localhost:8081/h2-console](http://localhost:8081/h2-console)
+    - Actuator Health: [http://localhost:8081/actuator/health](http://localhost:8081/actuator/health)
 
 ### Configuración de Base de Datos
 
@@ -129,6 +142,101 @@ spring.jpa.hibernate.ddl-auto=create-drop
 spring.datasource-postgresql.url=jdbc:postgresql://localhost:5432/clinic_db
 spring.jpa-postgresql.hibernate.ddl-auto=update
 ```
+
+## 🎨 Frontend Moderno
+
+### Características del Frontend
+
+El proyecto incluye un **frontend moderno y responsive** desarrollado con HTML5, CSS3 y JavaScript vanilla:
+
+#### ✨ **Características Principales**
+- **Responsive Design**: Compatible con móviles, tablets y desktop
+- **Interfaz Intuitiva**: Navegación por pestañas y acordeones
+- **Validación en Tiempo Real**: Feedback inmediato al usuario
+- **Notificaciones Modernas**: Sistema de mensajes elegante
+- **Búsqueda Avanzada**: Filtros y búsqueda en tiempo real
+- **Modales Interactivos**: Formularios en overlays
+- **Accesibilidad**: Cumple con estándares WCAG 2.1
+
+#### 🏗️ **Arquitectura Frontend**
+```
+web/
+├── index.html          # Página principal y navegación
+├── login.html          # Autenticación de usuarios
+├── admin.html          # Panel administrativo
+├── hr.html            # Recursos humanos
+├── doctor.html        # Panel médico
+├── nurse.html         # Panel de enfermería
+├── support.html       # Soporte técnico
+├── styles.css         # Estilos CSS modernos
+├── config.js          # Configuración centralizada
+├── api.js             # Funciones API
+├── auth.js            # Autenticación
+├── admin.js           # Lógica administrativa
+├── hr.js              # Lógica de RRHH
+├── doctor.js          # Lógica médica
+├── nurse.js           # Lógica de enfermería
+└── support.js         # Lógica de soporte
+```
+
+#### ⚙️ **Configuración Centralizada**
+
+El frontend utiliza un sistema de configuración centralizada en `web/config.js`:
+
+```javascript
+// Configuración de API
+API_BASE: 'http://localhost:8081'
+API_TIMEOUT: 30000
+API_RETRIES: 3
+
+// Validaciones
+VALIDATION: {
+  USERNAME: { minLength: 4, pattern: /^[a-zA-Z0-9_]+$/ },
+  PASSWORD: { minLength: 8 },
+  CEDULA: { minLength: 8, maxLength: 10, pattern: /^\d{8,10}$/ }
+}
+
+// Notificaciones
+NOTIFICATION_DURATION: 5000
+THEME: 'light' // o 'dark'
+```
+
+#### 🎯 **Roles y Funcionalidades**
+
+| Rol | Funcionalidades Principales |
+|-----|-----------------------------|
+| **Administrativo** | Gestión de pacientes, citas, inventario, facturación |
+| **Recursos Humanos** | CRUD de usuarios, gestión de personal |
+| **Médico** | Historia clínica, órdenes médicas, hospitalización |
+| **Enfermera** | Signos vitales, medicamentos, procedimientos |
+| **Soporte** | Gestión de inventario, soporte técnico |
+
+#### 🚀 **Ejecución del Frontend**
+
+1. **Desarrollo Local**:
+```bash
+# Opción 1: Abrir directamente en navegador
+# Abrir web/index.html en el navegador
+
+# Opción 2: Usar Live Server (VS Code)
+# Instalar extensión Live Server
+# Click derecho en index.html > "Open with Live Server"
+
+# Opción 3: Servidor Python
+cd web
+python -m http.server 5500
+```
+
+2. **URLs de Acceso**:
+   - Frontend: [http://127.0.0.1:5500](http://127.0.0.1:5500)
+   - Backend API: [http://localhost:8081](http://localhost:8081)
+
+3. **Credenciales de Prueba**:
+   - **Admin**: `admin` / `admin123`
+   - **Médico**: `medico01` / `password123`
+   - **Enfermera**: `enfermera01` / `password123`
+   - **Soporte**: `soporte01` / `password123`
+   - **RRHH**: `rrhh01` / `password123`
 
 ## 🔐 Credenciales de Acceso
 
@@ -148,7 +256,7 @@ Al iniciar la aplicación por primera vez, se crean automáticamente los siguien
 
 **Endpoint de Login:**
 ```
-POST http://localhost:8080/users/authenticate
+POST http://localhost:8081/users/authenticate
 Content-Type: application/json
 
 {
@@ -163,7 +271,7 @@ Content-Type: application/json
 
 1. **Importar colección:** `clinic-ips-postman-collection.json`
 2. **Configurar variables:**
-   - `baseUrl`: `http://localhost:8080`
+   - `baseUrl`: `http://localhost:8081`
    - `userRole`: `ADMIN` (o el rol deseado)
    - `authToken`: (se llena automáticamente)
 
@@ -171,14 +279,14 @@ Content-Type: application/json
 
 #### 1. Inicio de Sesión
 ```bash
-curl -X POST http://localhost:8080/users/authenticate \
+curl -X POST http://localhost:8081/users/authenticate \
   -H "Content-Type: application/json" \
   -d '{"username":"admin","password":"admin123"}'
 ```
 
 #### 2. Crear Paciente
 ```bash
-curl -X POST http://localhost:8080/patients \
+curl -X POST http://localhost:8081/patients \
   -H "Content-Type: application/json" \
   -H "Role: MEDICO" \
   -d '{
@@ -192,7 +300,7 @@ curl -X POST http://localhost:8080/patients \
 
 #### 3. Crear Orden Médica
 ```bash
-curl -X POST http://localhost:8080/orders \
+curl -X POST http://localhost:8081/orders \
   -H "Content-Type: application/json" \
   -H "Role: MEDICO" \
   -d '{
@@ -275,9 +383,9 @@ Hemos creado una **colección Postman enterprise-level** completa para testing d
    ```
 
 2. **Configurar Variables de Entorno**:
-   - `baseUrl`: URL del servidor (ej: `http://localhost:8080`)
-   - `userRole`: Rol del usuario (ADMINISTRATIVO, MEDICO, ENFERMERA, etc.)
-   - `authToken`: Se configura automáticamente después del login
+    - `baseUrl`: URL del servidor (ej: `http://localhost:8081`)
+    - `userRole`: Rol del usuario (ADMINISTRATIVO, MEDICO, ENFERMERA, etc.)
+    - `authToken`: Se configura automáticamente después del login
 
 3. **Ejecutar Tests**:
    ```bash
@@ -324,7 +432,7 @@ Hemos creado una **colección Postman enterprise-level** completa para testing d
 
 ```javascript
 // Variables principales
-baseUrl: "http://localhost:8080"
+baseUrl: "http://localhost:8081"
 authToken: "" // Se auto-configura
 userRole: "ADMINISTRATIVO"
 currentUsername: ""
@@ -437,7 +545,7 @@ Hemos incluido un archivo de configuración completo `.env.example` con todas la
    JWT_SECRET=your_very_long_and_secure_jwt_secret_here_min_256_bits
 
    # CORS para frontend
-   CORS_ALLOWED_ORIGINS=http://localhost:3000,http://localhost:8080
+   CORS_ALLOWED_ORIGINS=http://127.0.0.1:5500,http://localhost:8081
    ```
 
 #### 🔐 Variables de Seguridad Importantes
@@ -520,14 +628,58 @@ Después de configurar el `.env`:
 
 ```bash
 # Para desarrollo
-./mvnw spring-boot:run
+./mvnw spring-boot:run -Dspring-boot.run.profiles=development -Dspring-boot.run.arguments="--server.port=8081"
 
 # Para producción con Docker
 docker-compose up -d
 
 # Verificar configuración
-curl http://localhost:8080/actuator/env
+curl http://localhost:8081/actuator/env
 ```
+
+#### 🎯 Scripts de Inicio Rápido
+
+Hemos incluido scripts para facilitar el inicio del sistema:
+
+**Windows:**
+```bash
+# Iniciar frontend
+start-frontend.bat
+
+# Debug y solución de problemas
+debug-frontend.bat
+```
+
+**Linux/Mac:**
+```bash
+# Hacer ejecutable e iniciar
+chmod +x start-frontend.sh
+./start-frontend.sh
+
+# Debug y solución de problemas
+chmod +x debug-frontend.sh
+./debug-frontend.sh
+```
+
+**URLs de Acceso:**
+- **Frontend**: http://127.0.0.1:5500
+- **Backend API**: http://localhost:8081
+- **H2 Console**: http://localhost:8081/h2-console
+- **Actuator Health**: http://localhost:8081/actuator/health
+
+#### 🔧 Solución de Problemas
+
+Si encuentras errores como "API_CONFIG is not defined":
+
+1. **Recarga la página con Ctrl+F5** (limpia cache)
+2. **Abre las herramientas de desarrollador** (F12)
+3. **Ve a la pestaña Console** y verifica que aparezcan los mensajes de CONFIG
+4. **Usa el script de debug**: `debug-frontend.bat` (Windows) o `./debug-frontend.sh` (Linux/Mac)
+
+**Síntomas comunes y soluciones:**
+- ❌ "API_CONFIG is not defined" → ✅ Recargar con Ctrl+F5
+- ❌ "Error al cargar usuarios" → ✅ Verificar que el backend esté ejecutándose
+- ❌ "CORS error" → ✅ Verificar que el backend esté en puerto 8081
 
 **¡El archivo `.env.example` incluye más de 200 variables de configuración para un despliegue profesional!** 📋
 
@@ -543,9 +695,10 @@ curl http://localhost:8080/actuator/env
 mvn spring-boot:run
 
 # Acceder a la aplicación
-# Aplicación: http://localhost:8080
-# H2 Console: http://localhost:8080/h2-console
-# Actuator: http://localhost:8080/actuator/health
+# Backend API: http://localhost:8081
+# Frontend: http://127.0.0.1:5500
+# H2 Console: http://localhost:8081/h2-console
+# Actuator: http://localhost:8081/actuator/health
 ```
 
 #### Opción 2: Ejecutar con Docker Compose (Desarrollo)
@@ -600,7 +753,7 @@ docker-compose logs -f clinic-app
 5. **Verificar salud de servicios:**
 ```bash
 # Health check de la aplicación
-curl http://localhost:8080/actuator/health
+curl http://localhost:8081/actuator/health
 
 # Health check de PostgreSQL
 docker-compose exec postgres pg_isready -U $POSTGRES_USERNAME -d clinic_db
@@ -681,7 +834,7 @@ docker run -d --name mongodb -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=admin 
 
 3. **Verificar conexión:**
 ```bash
-curl http://localhost:8080/actuator/health
+curl http://localhost:8081/actuator/health
 # Debería mostrar MongoDB como "UP" si está habilitado
 ```
 
@@ -710,7 +863,7 @@ JWT_SECRET=tu_clave_jwt_muy_larga_y_segura_aqui
 SPRING_PROFILES_ACTIVE=production
 
 # CORS (restringir dominios)
-CORS_ALLOWED_ORIGINS=https://tu-dominio.com,https://www.tu-dominio.com
+CORS_ALLOWED_ORIGINS=https://tu-dominio.com,https://www.tu-dominio.com,http://127.0.0.1:5500
 ```
 
 ## 📊 Monitoreo
@@ -744,14 +897,14 @@ HEALTH_MONGO_ENABLED=true
 
 **Estado de salud:**
 ```bash
-curl http://localhost:8080/actuator/health
+curl http://localhost:8081/actuator/health
 ```
 
 **Métricas (requiere autenticación):**
 ```bash
 curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
      -H "Role: ADMINISTRATIVO" \
-     http://localhost:8080/actuator/metrics
+     http://localhost:8081/actuator/metrics
 ```
 
 ### Logs de Aplicación
@@ -823,7 +976,7 @@ JWT_SECRET=your_very_long_and_secure_jwt_secret_key_minimum_256_bits
 JWT_EXPIRATION=86400000
 
 # CORS (Restringir en producción)
-CORS_ALLOWED_ORIGINS=http://localhost:3000,http://localhost:8080
+CORS_ALLOWED_ORIGINS=http://127.0.0.1:5500,http://localhost:8081
 ```
 
 **Aplicación:**
@@ -1001,10 +1154,11 @@ cp .env.example .env
 docker-compose up -d --build
 
 # 3. Verificar estado
-curl http://localhost:8080/actuator/health
+curl http://localhost:8081/actuator/health
 
 # 4. Acceder a la aplicación
-# https://localhost (con HTTPS configurado)
+# Frontend: http://127.0.0.1:5500
+# Backend: http://localhost:8081 (con HTTPS configurado)
 ```
 
 ### 📊 **Métricas de Calidad:**

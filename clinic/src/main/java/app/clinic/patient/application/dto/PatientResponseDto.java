@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 
 public record PatientResponseDto(
         Long id,
-        String username,
         String fullName,
         String cedula,
         LocalDate birthDate,

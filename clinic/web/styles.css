@@ -2,26 +2,26 @@
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
 
 :root {
-    --primary-color: #2563eb;
-    --primary-dark: #1d4ed8;
-    --primary-light: #3b82f6;
-    --secondary-color: #64748b;
+    --primary-color: #0066cc;
+    --primary-dark: #0052a3;
+    --primary-light: #338ae6;
+    --secondary-color: #6b7280;
     --success-color: #059669;
     --warning-color: #d97706;
     --error-color: #dc2626;
-    --background-color: #f8fafc;
+    --background-color: #f9fafb;
     --surface-color: #ffffff;
-    --text-primary: #1e293b;
-    --text-secondary: #64748b;
-    --border-color: #e2e8f0;
+    --text-primary: #111827;
+    --text-secondary: #6b7280;
+    --border-color: #d1d5db;
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-    --radius-sm: 0.375rem;
-    --radius-md: 0.5rem;
-    --radius-lg: 0.75rem;
-    --radius-xl: 1rem;
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -1px rgb(0 0 0 / 0.06);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.05);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04);
+    --radius-sm: 0.25rem;
+    --radius-md: 0.375rem;
+    --radius-lg: 0.5rem;
+    --radius-xl: 0.75rem;
 }
 
 * {
@@ -30,7 +30,7 @@
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-color: #f3f4f6;
     margin: 0;
     padding: 0;
     min-height: 100vh;
@@ -41,31 +41,18 @@ body {
 .container {
     background-color: var(--surface-color);
     padding: 2rem;
-    border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-xl);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
     width: 95%;
     max-width: 1200px;
     margin: 1rem auto;
-    animation: slideIn 0.6s ease-out;
     position: relative;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(30px) scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
+    border: 1px solid var(--border-color);
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 header {
@@ -89,14 +76,10 @@ header::after {
 }
 
 header h1 {
-    color: var(--text-primary);
+    color: var(--primary-color);
     margin: 0 0 0.5rem 0;
     font-size: clamp(1.8rem, 4vw, 2.5rem);
     font-weight: 700;
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
 }
 
 header p {
@@ -129,63 +112,58 @@ main {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    background-color: var(--primary-color);
     color: white;
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-sm);
 }
 
 .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
-    background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+    background-color: var(--primary-dark);
+    box-shadow: var(--shadow-md);
 }
 
 .btn-secondary {
-    background: linear-gradient(135deg, var(--secondary-color), #475569);
+    background-color: var(--secondary-color);
     color: white;
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-sm);
 }
 
 .btn-secondary:hover {
-    background: linear-gradient(135deg, #475569, var(--secondary-color));
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+    background-color: #4b5563;
+    box-shadow: var(--shadow-md);
 }
 
 .btn-success {
-    background: linear-gradient(135deg, var(--success-color), #10b981);
+    background-color: var(--success-color);
     color: white;
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-sm);
 }
 
 .btn-success:hover {
-    background: linear-gradient(135deg, #047857, var(--success-color));
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+    background-color: #047857;
+    box-shadow: var(--shadow-md);
 }
 
 .btn-warning {
-    background: linear-gradient(135deg, var(--warning-color), #f59e0b);
+    background-color: var(--warning-color);
     color: white;
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-sm);
 }
 
 .btn-warning:hover {
-    background: linear-gradient(135deg, #b45309, var(--warning-color));
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
-}
-
-.btn-danger {
-    background: linear-gradient(135deg, var(--error-color), #ef4444);
-    color: white;
+    background-color: #b45309;
     box-shadow: var(--shadow-md);
 }
 
+.btn-danger {
+    background-color: var(--error-color);
+    color: white;
+    box-shadow: var(--shadow-sm);
+}
+
 .btn-danger:hover {
-    background: linear-gradient(135deg, #b91c1c, var(--error-color));
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+    background-color: #b91c1c;
+    box-shadow: var(--shadow-md);
 }
 
 .form-group {
@@ -367,7 +345,7 @@ main {
     transition: all 0.3s ease;
     font-size: 0.9rem;
     font-weight: 500;
-    color: var(--text-secondary);
+    color: var(--text-primary);
     border-radius: var(--radius-md);
     white-space: nowrap;
     position: relative;
@@ -385,7 +363,7 @@ main {
     background-color: var(--surface-color);
     color: var(--primary-color);
     transform: translateY(-1px);
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-md);
 }
 
 .tab button.active {
@@ -535,7 +513,7 @@ table th, table td {
 }
 
 table th {
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    background-color: var(--primary-color);
     color: white;
     font-weight: 600;
     font-size: 0.85rem;
@@ -555,9 +533,7 @@ table tr:nth-child(odd) {
 }
 
 table tr:hover {
-    background-color: #eff6ff;
-    transform: scale(1.01);
-    transition: all 0.2s ease;
+    background-color: #f3f4f6;
 }
 
 table tr:last-child td {
@@ -756,11 +732,71 @@ table tr:last-child td {
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
     :root {
-        --background-color: #0f172a;
-        --surface-color: #1e293b;
-        --text-primary: #f1f5f9;
-        --text-secondary: #cbd5e1;
-        --border-color: #334155;
+        --background-color: #1f2937;
+        --surface-color: #374151;
+        --text-primary: #f9fafb;
+        --text-secondary: #d1d5db;
+        --border-color: #4b5563;
+    }
+
+    body {
+        background-color: #111827;
+        color: var(--text-primary);
+    }
+
+    .container {
+        background-color: var(--surface-color);
+        border: 1px solid var(--border-color);
+    }
+
+    .accordion {
+        background-color: var(--background-color);
+        color: var(--text-primary);
+        border-color: var(--border-color);
+    }
+
+    .panel {
+        background-color: var(--background-color);
+        border-color: var(--border-color);
+    }
+
+    .tabcontent {
+        background-color: var(--background-color);
+        border-color: var(--border-color);
+        color: var(--text-primary);
+    }
+
+    table {
+        background-color: var(--surface-color);
+        color: var(--text-primary);
+    }
+
+    table th {
+        background-color: var(--primary-color);
+        color: #f9fafb;
+    }
+
+    table tr:nth-child(even) {
+        background-color: var(--background-color);
+    }
+
+    table tr:nth-child(odd) {
+        background-color: var(--surface-color);
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        background-color: var(--background-color);
+        color: var(--text-primary);
+        border-color: var(--border-color);
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+        background-color: var(--surface-color);
+        border-color: var(--primary-color);
     }
 }
 
@@ -779,5 +815,351 @@ table tr:last-child td {
         --border-color: #000000;
         --primary-color: #0000ff;
         --text-primary: #000000;
+    }
+}
+
+/* Skip link for accessibility */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    background: var(--primary-color);
+    color: white;
+    padding: 8px;
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+    z-index: 10001;
+    font-weight: 600;
+    transition: top 0.3s;
+}
+
+.skip-link:focus {
+    top: 6px;
+}
+
+/* Enhanced focus styles for better accessibility */
+button:focus,
+input:focus,
+select:focus,
+textarea:focus,
+a:focus {
+    outline: 3px solid var(--primary-color);
+    outline-offset: 2px;
+    border-color: var(--primary-color);
+}
+
+/* Better focus for tab buttons */
+.tab button:focus {
+    outline: 3px solid var(--primary-color);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+/* Enhanced accordion focus */
+.accordion:focus {
+    outline: 3px solid var(--primary-color);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+/* Notification styles */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 1rem 1.5rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    z-index: 10000;
+    max-width: 400px;
+    animation: slideInRight 0.3s ease-out;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.notification-success {
+    background-color: #ecfdf5;
+    color: var(--success-color);
+    border-left: 4px solid var(--success-color);
+}
+
+.notification-error {
+    background-color: #fef2f2;
+    color: var(--error-color);
+    border-left: 4px solid var(--error-color);
+}
+
+.notification-info {
+    background-color: #eff6ff;
+    color: var(--primary-color);
+    border-left: 4px solid var(--primary-color);
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: var(--radius-sm);
+    transition: background-color 0.2s;
+}
+
+.notification-close:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Nurse page specific styles */
+.search-container {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.search-container input {
+    flex: 1;
+    min-width: 250px;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+.search-container input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.patient-info {
+    background-color: #eff6ff;
+    border: 2px solid var(--primary-color);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.patient-info h3 {
+    color: var(--primary-color);
+    margin: 0 0 1rem 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.patient-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.patient-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.patient-info-label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.patient-info-value {
+    font-size: 1rem;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.list-section {
+    margin-top: 2rem;
+    border-top: 2px solid var(--border-color);
+    padding-top: 1.5rem;
+}
+
+.list-section h3 {
+    color: var(--text-primary);
+    margin: 0 0 1rem 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.list-section h3::before {
+    content: '\f0ca';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    color: var(--primary-color);
+}
+
+.action-buttons {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 1000;
+    display: flex;
+    gap: 1rem;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.action-buttons .btn-success {
+    font-size: 1.1rem;
+    padding: 1rem 2rem;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: var(--shadow-lg), 0 0 0 0 rgba(5, 150, 105, 0.7);
+    }
+    70% {
+        box-shadow: var(--shadow-lg), 0 0 0 10px rgba(5, 150, 105, 0);
+    }
+    100% {
+        box-shadow: var(--shadow-lg), 0 0 0 0 rgba(5, 150, 105, 0);
+    }
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+    font-family: inherit;
+}
+
+.form-group input[readonly] {
+    background-color: #f8fafc;
+    color: var(--text-secondary);
+    cursor: not-allowed;
+}
+
+/* Responsive adjustments for nurse page */
+@media (max-width: 768px) {
+    .search-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-container input {
+        min-width: auto;
+    }
+
+    .patient-info-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .action-buttons {
+        position: static;
+        margin: 2rem 0;
+        align-items: stretch;
+    }
+
+    .action-buttons .btn-success {
+        width: 100%;
+        animation: none;
+    }
+}
+
+/* Enhanced responsive for complex forms like doctor.html */
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .tab {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .tab button {
+        flex: 1 1 auto;
+        min-width: 120px;
+        padding: 0.75rem 0.5rem;
+        font-size: 0.8rem;
+        justify-content: center;
+        gap: 0.25rem;
+    }
+
+    .tab button i {
+        font-size: 0.9rem;
+    }
+
+    .search-container {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .search-container input,
+    .search-container select,
+    .search-container button {
+        width: 100%;
+        min-width: auto;
+    }
+
+    .patient-info-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .list-section h3 {
+        font-size: 1.1rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+
+    .list-section h3::before {
+        font-size: 1rem;
+    }
+}
+
+/* Better touch targets for mobile */
+@media (max-width: 768px) {
+    button,
+    .btn-primary,
+    .btn-secondary,
+    .btn-success,
+    .btn-warning,
+    .btn-danger,
+    input[type="submit"],
+    input[type="button"] {
+        min-height: 48px;
+        padding: 1rem 1.5rem;
+        font-size: 1rem;
+    }
+
+    .tab button {
+        min-height: 48px;
+        padding: 1rem 0.75rem;
+    }
+
+    .accordion {
+        min-height: 48px;
+        padding: 1rem 1.25rem;
     }
 }

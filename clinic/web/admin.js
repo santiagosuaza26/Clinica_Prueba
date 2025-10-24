@@ -1,6 +1,13 @@
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('username').textContent = localStorage.getItem('username');
 
+    // Agregar campos faltantes al formulario de pacientes
+    addMissingFieldsToPatientForm();
+
+    // Implementar pestañas de Facturación e Inventario
+    implementBillingTab();
+    implementInventoryTab();
+
     // Inicializar funcionalidades mejoradas
     initializeSearchFunctionality();
     initializeFormValidation();
@@ -15,10 +22,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const formattedBirthDate = `${birthDate.getDate().toString().padStart(2, '0')}/${(birthDate.getMonth() + 1).toString().padStart(2, '0')}/${birthDate.getFullYear()}`;
 
         const data = {
+            cedula: document.getElementById('patientCedula').value,
+            username: document.getElementById('patientUsername').value,
+            password: document.getElementById('patientPassword').value,
             fullName: document.getElementById('patientFullName').value,
             email: document.getElementById('patientEmail').value,
             phone: document.getElementById('patientPhone').value,
             birthDate: formattedBirthDate,
+            gender: document.getElementById('patientGender').value,
             address: document.getElementById('patientAddress').value,
             emergencyContact: {
                 name: document.getElementById('emergencyName').value,
@@ -28,7 +39,9 @@ document.addEventListener('DOMContentLoaded', function() {
             insurance: {
                 companyName: document.getElementById('insuranceCompany').value,
                 policyNumber: document.getElementById('insurancePolicy').value,
-                coverageType: document.getElementById('insuranceCoverage').value
+                coverageType: document.getElementById('insuranceCoverage').value,
+                active: document.getElementById('insuranceActive').value === 'true',
+                expirationDate: document.getElementById('insuranceExpiration').value
             }
         };
         try {
@@ -36,10 +49,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 method: 'POST',
                 body: JSON.stringify(data)
             });
-            alert('Paciente creado exitosamente.');
+            showNotification('Paciente creado exitosamente.', 'success');
             createPatientForm.reset();
         } catch (error) {
-            alert('Error al crear paciente: ' + error.message);
+            showNotification('Error al crear paciente: ' + error.message, 'error');
         }
     });
 
@@ -55,10 +68,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 method: 'POST',
                 body: JSON.stringify(data)
             });
-            alert('Cita creada exitosamente.');
+            showNotification('Cita creada exitosamente.', 'success');
             createAppointmentForm.reset();
         } catch (error) {
-            alert('Error al crear cita: ' + error.message);
+            showNotification('Error al crear cita: ' + error.message, 'error');
         }
     });
 });
@@ -217,6 +230,9 @@ function generatePatientsTable(patients) {
                                 </button>
                                 <button onclick="editPatient(${p.id})" class="btn-primary" style="font-size: 0.8rem; padding: 0.25rem 0.5rem;">
                                     <i class="fas fa-edit"></i>
+                                </button>
+                                <button onclick="viewMedicalHistory(${p.cedula})" class="btn-warning" style="font-size: 0.8rem; padding: 0.25rem 0.5rem;">
+                                    <i class="fas fa-file-medical"></i> Historia
                                 </button>
                             </td>
                         </tr>
@@ -453,4 +469,462 @@ function generateAppointmentDetailsModal(appointment) {
             </div>
         </div>
     `;
+}
+
+function addMissingFieldsToPatientForm() {
+    const form = document.getElementById('createPatientForm');
+    const firstFieldset = form.querySelector('fieldset');
+
+    // Agregar Cédula
+    const cedulaDiv = document.createElement('div');
+    cedulaDiv.className = 'form-group';
+    cedulaDiv.innerHTML = `
+        <label for="patientCedula">
+            <i class="fas fa-id-card" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+            Cédula:
+        </label>
+        <input type="text"
+               id="patientCedula"
+               placeholder="Número de cédula único"
+               pattern="[0-9]+"
+               title="Solo números"
+               required>
+    `;
+    firstFieldset.querySelector('.form-row').appendChild(cedulaDiv);
+
+    // Agregar Género
+    const genderDiv = document.createElement('div');
+    genderDiv.className = 'form-group';
+    genderDiv.innerHTML = `
+        <label for="patientGender">
+            <i class="fas fa-venus-mars" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+            Género:
+        </label>
+        <select id="patientGender" required>
+            <option value="">Seleccionar género</option>
+            <option value="MASCULINO">Masculino</option>
+            <option value="FEMENINO">Femenino</option>
+            <option value="OTRO">Otro</option>
+        </select>
+    `;
+    firstFieldset.appendChild(genderDiv);
+
+    // Agregar Usuario y Contraseña en un nuevo fieldset
+    const credentialsFieldset = document.createElement('fieldset');
+    credentialsFieldset.style.cssText = 'border: 2px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.5rem;';
+    credentialsFieldset.innerHTML = `
+        <legend style="color: var(--primary-color); font-weight: 600; padding: 0 1rem;">Credenciales de Acceso</legend>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="patientUsername">
+                    <i class="fas fa-user-circle" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                    Nombre de Usuario:
+                </label>
+                <input type="text"
+                       id="patientUsername"
+                       placeholder="Usuario único para el sistema"
+                       maxlength="15"
+                       pattern="[a-zA-Z0-9]+"
+                       title="Solo letras y números"
+                       required>
+            </div>
+            <div class="form-group">
+                <label for="patientPassword">
+                    <i class="fas fa-lock" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                    Contraseña:
+                </label>
+                <div style="position: relative;">
+                    <input type="password"
+                           id="patientPassword"
+                           placeholder="Mínimo 8 caracteres"
+                           minlength="8"
+                           required>
+                    <button type="button"
+                            id="generatePassword"
+                            class="btn-secondary"
+                            style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); padding: 0.5rem; font-size: 0.8rem;">
+                        <i class="fas fa-random"></i>
+                        Generar
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    form.insertBefore(credentialsFieldset, firstFieldset.nextSibling);
+
+    // Completar fieldset de seguro
+    const insuranceFieldset = form.querySelector('fieldset:last-of-type');
+    const coverageSelect = insuranceFieldset.querySelector('#insuranceCoverage');
+    coverageSelect.insertAdjacentHTML('afterend', `
+        <div class="form-group">
+            <label for="insuranceActive">
+                <i class="fas fa-toggle-on" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                Estado del Seguro:
+            </label>
+            <select id="insuranceActive" required>
+                <option value="">Seleccionar estado</option>
+                <option value="true">Activo</option>
+                <option value="false">Inactivo</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="insuranceExpiration">
+                <i class="fas fa-calendar-alt" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                Fecha de Vigencia (Fin):
+            </label>
+            <input type="date" id="insuranceExpiration" required>
+        </div>
+    `);
+}
+
+function implementBillingTab() {
+    const billingTab = document.getElementById('billing');
+    billingTab.innerHTML = `
+        <h2><i class="fas fa-file-invoice-dollar" style="margin-right: 0.5rem; color: var(--primary-color);"></i>Facturación</h2>
+        <button class="accordion">
+            <i class="fas fa-plus"></i>
+            Generar Factura
+        </button>
+        <div class="panel">
+            <form id="createBillingForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="billingPatientCedula">Cédula del Paciente:</label>
+                        <input type="text" id="billingPatientCedula" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="billingDoctorCedula">Cédula del Médico:</label>
+                        <input type="text" id="billingDoctorCedula" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="billingServices">Servicios:</label>
+                    <textarea id="billingServices" placeholder="Descripción de servicios" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="billingInsurance">¿Tiene Seguro Activo?</label>
+                    <select id="billingInsurance">
+                        <option value="true">Sí</option>
+                        <option value="false">No</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="billingTotal">Total a Pagar:</label>
+                    <input type="number" id="billingTotal" readonly placeholder="Se calculará automáticamente">
+                </div>
+                <button type="button" class="btn-secondary" onclick="calculateBilling()">Calcular Total</button>
+                <button type="submit" class="btn-primary">Generar Factura</button>
+            </form>
+        </div>
+        <button class="accordion">
+            <i class="fas fa-list"></i>
+            Lista de Facturas
+        </button>
+        <div class="panel">
+            <button class="btn-secondary" onclick="loadBillings()">Cargar Facturas</button>
+            <div id="billingsList"></div>
+        </div>
+    `;
+
+    const createBillingForm = document.getElementById('createBillingForm');
+    createBillingForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const total = parseFloat(document.getElementById('billingTotal').value);
+        if (isNaN(total) || total <= 0) {
+            showNotification('Por favor, calcule el total primero.', 'error');
+            return;
+        }
+        const data = {
+            patientCedula: document.getElementById('billingPatientCedula').value,
+            doctorCedula: document.getElementById('billingDoctorCedula').value,
+            services: document.getElementById('billingServices').value,
+            hasInsurance: document.getElementById('billingInsurance').value === 'true',
+            total: total
+        };
+        try {
+            await apiRequest('/billings', {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
+            showNotification('Factura generada exitosamente.', 'success');
+            createBillingForm.reset();
+        } catch (error) {
+            showNotification('Error al generar factura: ' + error.message, 'error');
+        }
+    });
+}
+
+function implementInventoryTab() {
+    const inventoryTab = document.getElementById('inventory');
+    inventoryTab.innerHTML = `
+        <h2><i class="fas fa-boxes" style="margin-right: 0.5rem; color: var(--primary-color);"></i>Gestionar Inventario</h2>
+        <div class="tab">
+            <button class="tablinks active" onclick="openInventoryTab(event, 'medications')">Medicamentos</button>
+            <button class="tablinks" onclick="openInventoryTab(event, 'procedures')">Procedimientos</button>
+            <button class="tablinks" onclick="openInventoryTab(event, 'diagnosticAids')">Ayudas Diagnósticas</button>
+        </div>
+        <div id="medications" class="tabcontent" style="display: block;">
+            <button class="accordion">Crear Medicamento</button>
+            <div class="panel">
+                <form id="createMedicationForm">
+                    <div class="form-group">
+                        <label for="medName">Nombre:</label>
+                        <input type="text" id="medName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="medCost">Costo:</label>
+                        <input type="number" id="medCost" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="medDosage">Dosis:</label>
+                        <input type="text" id="medDosage" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Crear Medicamento</button>
+                </form>
+            </div>
+            <button class="accordion">Lista de Medicamentos</button>
+            <div class="panel">
+                <button class="btn-secondary" onclick="loadMedications()">Cargar Medicamentos</button>
+                <div id="medicationsList"></div>
+            </div>
+        </div>
+        <div id="procedures" class="tabcontent">
+            <button class="accordion">Crear Procedimiento</button>
+            <div class="panel">
+                <form id="createProcedureForm">
+                    <div class="form-group">
+                        <label for="procName">Nombre:</label>
+                        <input type="text" id="procName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="procCost">Costo:</label>
+                        <input type="number" id="procCost" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="procFrequency">Frecuencia:</label>
+                        <input type="text" id="procFrequency" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="procRequiresSpecialist">Requiere Especialista:</label>
+                        <select id="procRequiresSpecialist">
+                            <option value="false">No</option>
+                            <option value="true">Sí</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-primary">Crear Procedimiento</button>
+                </form>
+            </div>
+            <button class="accordion">Lista de Procedimientos</button>
+            <div class="panel">
+                <button class="btn-secondary" onclick="loadProcedures()">Cargar Procedimientos</button>
+                <div id="proceduresList"></div>
+            </div>
+        </div>
+        <div id="diagnosticAids" class="tabcontent">
+            <button class="accordion">Crear Ayuda Diagnóstica</button>
+            <div class="panel">
+                <form id="createDiagnosticAidForm">
+                    <div class="form-group">
+                        <label for="aidName">Nombre:</label>
+                        <input type="text" id="aidName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="aidCost">Costo:</label>
+                        <input type="number" id="aidCost" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="aidRequiresSpecialist">Requiere Especialista:</label>
+                        <select id="aidRequiresSpecialist">
+                            <option value="false">No</option>
+                            <option value="true">Sí</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-primary">Crear Ayuda Diagnóstica</button>
+                </form>
+            </div>
+            <button class="accordion">Lista de Ayudas Diagnósticas</button>
+            <div class="panel">
+                <button class="btn-secondary" onclick="loadDiagnosticAids()">Cargar Ayudas Diagnósticas</button>
+                <div id="diagnosticAidsList"></div>
+            </div>
+        </div>
+    `;
+
+    // Agregar event listeners para los formularios
+    document.getElementById('createMedicationForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const data = {
+            name: document.getElementById('medName').value,
+            cost: parseFloat(document.getElementById('medCost').value),
+            dosage: document.getElementById('medDosage').value
+        };
+        try {
+            await apiRequest('/inventory/medications', {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
+            showNotification('Medicamento creado exitosamente.', 'success');
+            this.reset();
+        } catch (error) {
+            showNotification('Error al crear medicamento: ' + error.message, 'error');
+        }
+    });
+
+    document.getElementById('createProcedureForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const data = {
+            name: document.getElementById('procName').value,
+            cost: parseFloat(document.getElementById('procCost').value),
+            frequency: document.getElementById('procFrequency').value,
+            requiresSpecialist: document.getElementById('procRequiresSpecialist').value === 'true'
+        };
+        try {
+            await apiRequest('/inventory/procedures', {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
+            showNotification('Procedimiento creado exitosamente.', 'success');
+            this.reset();
+        } catch (error) {
+            showNotification('Error al crear procedimiento: ' + error.message, 'error');
+        }
+    });
+
+    document.getElementById('createDiagnosticAidForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const data = {
+            name: document.getElementById('aidName').value,
+            cost: parseFloat(document.getElementById('aidCost').value),
+            requiresSpecialist: document.getElementById('aidRequiresSpecialist').value === 'true'
+        };
+        try {
+            await apiRequest('/inventory/diagnostic-aids', {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
+            showNotification('Ayuda diagnóstica creada exitosamente.', 'success');
+            this.reset();
+        } catch (error) {
+            showNotification('Error al crear ayuda diagnóstica: ' + error.message, 'error');
+        }
+    });
+}
+
+function openInventoryTab(evt, tabName) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    tablinks = document.querySelectorAll('#inventory .tablinks');
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " active";
+}
+
+async function loadBillings() {
+    try {
+        const billings = await apiRequest('/billings');
+        const list = document.getElementById('billingsList');
+        list.innerHTML = '<table><thead><tr><th>ID</th><th>Cédula Paciente</th><th>Cédula Médico</th><th>Total</th><th>Acciones</th></tr></thead><tbody>' +
+            billings.map(b => `<tr><td>${b.id}</td><td>${b.patientCedula}</td><td>${b.doctorCedula}</td><td>${b.total}</td><td><button onclick="printBilling(${b.id})">Imprimir</button></td></tr>`).join('') +
+            '</tbody></table>';
+    } catch (error) {
+        showNotification('Error al cargar facturas: ' + error.message, 'error');
+    }
+}
+
+async function loadMedications() {
+    try {
+        const medications = await apiRequest('/inventory/medications');
+        const list = document.getElementById('medicationsList');
+        list.innerHTML = '<table><thead><tr><th>ID</th><th>Nombre</th><th>Costo</th><th>Dosis</th></tr></thead><tbody>' +
+            medications.map(m => `<tr><td>${m.id}</td><td>${m.name}</td><td>${m.cost}</td><td>${m.dosage}</td></tr>`).join('') +
+            '</tbody></table>';
+    } catch (error) {
+        showNotification('Error al cargar medicamentos: ' + error.message, 'error');
+    }
+}
+
+async function loadProcedures() {
+    try {
+        const procedures = await apiRequest('/inventory/procedures');
+        const list = document.getElementById('proceduresList');
+        list.innerHTML = '<table><thead><tr><th>ID</th><th>Nombre</th><th>Costo</th><th>Frecuencia</th></tr></thead><tbody>' +
+            procedures.map(p => `<tr><td>${p.id}</td><td>${p.name}</td><td>${p.cost}</td><td>${p.frequency}</td></tr>`).join('') +
+            '</tbody></table>';
+    } catch (error) {
+        showNotification('Error al cargar procedimientos: ' + error.message, 'error');
+    }
+}
+
+async function loadDiagnosticAids() {
+    try {
+        const aids = await apiRequest('/inventory/diagnostic-aids');
+        const list = document.getElementById('diagnosticAidsList');
+        list.innerHTML = '<table><thead><tr><th>ID</th><th>Nombre</th><th>Costo</th></tr></thead><tbody>' +
+            aids.map(a => `<tr><td>${a.id}</td><td>${a.name}</td><td>${a.cost}</td></tr>`).join('') +
+            '</tbody></table>';
+    } catch (error) {
+        showNotification('Error al cargar ayudas diagnósticas: ' + error.message, 'error');
+    }
+}
+
+function printBilling(id) {
+    window.print();
+}
+
+async function viewMedicalHistory(patientCedula) {
+    try {
+        const history = await apiRequest(`/medical-history/patient/${patientCedula}`);
+        showModal('Historia Clínica', generateMedicalHistoryModal(history));
+    } catch (error) {
+        showNotification('Error al cargar historia clínica: ' + error.message, 'error');
+    }
+}
+
+function generateMedicalHistoryModal(history) {
+    return `
+        <div class="medical-history">
+            ${history.visits.map(visit => `
+                <div class="visit">
+                    <h4>Fecha: ${visit.date}</h4>
+                    <p><strong>Diagnóstico:</strong> ${visit.diagnosis}</p>
+                    <p><strong>Tratamiento:</strong> ${visit.treatment}</p>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+async function calculateBilling() {
+    const hasInsurance = document.getElementById('billingInsurance').value === 'true';
+    const patientCedula = document.getElementById('billingPatientCedula').value;
+    const services = document.getElementById('billingServices').value;
+
+    if (!patientCedula || !services) {
+        showNotification('Por favor, complete cédula y servicios.', 'error');
+        return;
+    }
+
+    // Simular cálculo basado en reglas
+    let total = 100000; // Costo base
+    if (hasInsurance) {
+        total = 50000; // Copago
+        // Verificar si copagos > 1.000.000 en el año
+        try {
+            const billings = await apiRequest(`/billings/patient/${patientCedula}`);
+            const yearlyCopays = billings.filter(b => b.hasInsurance).reduce((sum, b) => sum + b.total, 0);
+            if (yearlyCopays > 1000000) {
+                total = 0; // No cobrar más
+            }
+        } catch (error) {
+            // Ignorar error
+        }
+    }
+
+    document.getElementById('billingTotal').value = total;
+    showNotification('Total calculado: $' + total, 'info');
 }

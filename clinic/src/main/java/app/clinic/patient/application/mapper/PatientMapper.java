@@ -15,8 +15,6 @@ public class PatientMapper {
     public static Patient toDomain(PatientRequestDto dto, Long createdByUserId) {
         return new Patient(
                 null,
-                dto.username(),
-                dto.password(),
                 dto.fullName(),
                 dto.cedula(),
                 dto.birthDate(),
@@ -34,7 +32,6 @@ public class PatientMapper {
     public static PatientResponseDto toResponse(Patient patient) {
         return new PatientResponseDto(
                 patient.getId(),
-                patient.getUsername(),
                 patient.getFullName(),
                 patient.getCedula(),
                 patient.getBirthDate(),

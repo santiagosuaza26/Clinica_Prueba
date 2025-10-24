@@ -8,6 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface JpaPatientRepository extends JpaRepository<PatientEntity, Long> {
     Optional<PatientEntity> findByCedula(String cedula);
-    Optional<PatientEntity> findByUsername(String username);
     void deleteByCedula(String cedula);
 }

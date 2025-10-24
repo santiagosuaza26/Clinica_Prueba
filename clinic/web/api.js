@@ -1,20 +1,14 @@
-const API_BASE = 'http://localhost:8080';
-
-// Configuración global
-const API_CONFIG = {
-    timeout: 30000, // 30 segundos
-    retries: 3,
-    retryDelay: 1000, // 1 segundo
-    rateLimitDelay: 100 // 100ms entre requests
-};
+// Importar configuración centralizada
+// Nota: En navegadores modernos, esto se puede hacer con módulos ES6
+// Por simplicidad, usamos la configuración global de config.js
 
 // Estado global para rate limiting
 let lastRequestTime = 0;
 
 // Función mejorada para obtener headers de autenticación
 function getAuthHeaders() {
-    const token = localStorage.getItem('token');
-    const role = localStorage.getItem('role');
+    const token = localStorage.getItem(CONFIG.TOKEN_KEY);
+    const role = localStorage.getItem(CONFIG.ROLE_KEY);
 
     if (!token) {
         throw new Error('No authentication token found');
@@ -46,21 +40,21 @@ function isTokenValid() {
 // Función para renovar token automáticamente
 async function refreshToken() {
     try {
-        const response = await fetch(`${API_BASE}/users/authenticate`, {
+        const response = await fetch(`${CONFIG.API_BASE}/users/authenticate`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                username: localStorage.getItem('username'),
+                username: localStorage.getItem(CONFIG.USERNAME_KEY),
                 password: localStorage.getItem('tempPassword') // Si se implementa remember me
             })
         });
 
         if (response.ok) {
             const data = await response.json();
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('role', data.role);
+            localStorage.setItem(CONFIG.TOKEN_KEY, data.token);
+            localStorage.setItem(CONFIG.ROLE_KEY, data.role);
             return true;
         }
     } catch (error) {
@@ -71,28 +65,34 @@ async function refreshToken() {
 
 // Función principal de requests con mejoras
 async function apiRequest(endpoint, options = {}) {
+    // Debug: Verificar que CONFIG esté disponible
+    console.log('🔧 API Request - CONFIG disponible:', {
+        API_BASE: CONFIG.API_BASE,
+        API_RATE_LIMIT_DELAY: CONFIG.API_RATE_LIMIT_DELAY
+    });
+
     // Rate limiting
     const now = Date.now();
     const timeSinceLastRequest = now - lastRequestTime;
-    if (timeSinceLastRequest < API_CONFIG.rateLimitDelay) {
-        await new Promise(resolve => setTimeout(resolve, API_CONFIG.rateLimitDelay - timeSinceLastRequest));
+    if (timeSinceLastRequest < CONFIG.API_RATE_LIMIT_DELAY) {
+        await new Promise(resolve => setTimeout(resolve, CONFIG.API_RATE_LIMIT_DELAY - timeSinceLastRequest));
     }
     lastRequestTime = Date.now();
 
-    const url = `${API_BASE}${endpoint}`;
+    const url = `${CONFIG.API_BASE}${endpoint}`;
     let lastError;
 
-    for (let attempt = 1; attempt <= API_CONFIG.retries; attempt++) {
+    for (let attempt = 1; attempt <= CONFIG.API_RETRIES; attempt++) {
         try {
             const config = {
                 headers: getAuthHeaders(),
-                timeout: API_CONFIG.timeout,
+                timeout: CONFIG.API_TIMEOUT,
                 ...options
             };
 
             // Configurar timeout
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.timeout);
+            const timeoutId = setTimeout(() => controller.abort(), CONFIG.API_TIMEOUT);
 
             const response = await fetch(url, {
                 ...config,
@@ -134,20 +134,20 @@ async function apiRequest(endpoint, options = {}) {
             lastError = new Error(errorMessage);
 
             // Esperar antes del siguiente intento (solo para errores del servidor)
-            if (attempt < API_CONFIG.retries) {
-                await new Promise(resolve => setTimeout(resolve, API_CONFIG.retryDelay * attempt));
+            if (attempt < CONFIG.API_RETRIES) {
+                await new Promise(resolve => setTimeout(resolve, CONFIG.API_RETRY_DELAY * attempt));
             }
 
         } catch (error) {
             lastError = error;
 
             // No reintentar para errores de red o timeout en el último intento
-            if (attempt === API_CONFIG.retries || error.name === 'AbortError') {
+            if (attempt === CONFIG.API_RETRIES || error.name === 'AbortError') {
                 break;
             }
 
             // Esperar antes del siguiente intento
-            await new Promise(resolve => setTimeout(resolve, API_CONFIG.retryDelay * attempt));
+            await new Promise(resolve => setTimeout(resolve, CONFIG.API_RETRY_DELAY * attempt));
         }
     }
 
@@ -179,6 +179,28 @@ async function apiDelete(endpoint, options = {}) {
     return apiRequest(endpoint, { ...options, method: 'DELETE' });
 }
 
+// Función para mostrar notificaciones (compatible con todos los módulos)
+function showNotification(message, type = 'info') {
+    // Crear notificación en el DOM
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-triangle' : 'info-circle'}"></i>
+        ${message}
+        <button onclick="this.parentElement.remove()" class="notification-close">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+    document.body.appendChild(notification);
+
+    // Auto-remover después de 5 segundos
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notification.remove();
+        }
+    }, 5000);
+}
+
 // Función para manejar errores de forma centralizada
 function handleApiError(error, context = '') {
     console.error(`API Error ${context}:`, error);
@@ -202,16 +224,16 @@ function handleApiError(error, context = '') {
         userMessage = 'Error de conexión. Verifique su conexión a internet.';
     }
 
-    showMessage(userMessage, 'error');
+    showNotification(userMessage, 'error');
     return userMessage;
 }
 
 // Función mejorada de logout
 function logout() {
     // Limpiar datos de sesión
-    localStorage.removeItem('token');
-    localStorage.removeItem('role');
-    localStorage.removeItem('username');
+    localStorage.removeItem(CONFIG.TOKEN_KEY);
+    localStorage.removeItem(CONFIG.ROLE_KEY);
+    localStorage.removeItem(CONFIG.USERNAME_KEY);
     localStorage.removeItem('tempPassword');
 
     // Redirigir a la página principal
@@ -221,7 +243,7 @@ function logout() {
 // Función para verificar conexión con el servidor
 async function checkServerConnection() {
     try {
-        const response = await fetch(`${API_BASE}/actuator/health`, {
+        const response = await fetch(`${CONFIG.API_BASE}/actuator/health`, {
             method: 'GET',
             timeout: 5000
         });
@@ -291,10 +313,65 @@ function validateData(data, rules = {}) {
             errors.push(`${rule.label || field} debe tener al menos ${rule.minLength} caracteres`);
         }
 
+        if (rule && rule.maxLength && value && value.length > rule.maxLength) {
+            errors.push(`${rule.label || field} no puede exceder ${rule.maxLength} caracteres`);
+        }
+
         if (rule && rule.pattern && value && !rule.pattern.test(value)) {
             errors.push(`${rule.label || field} tiene un formato inválido`);
+        }
+
+        if (rule && rule.min && value && parseFloat(value) < rule.min) {
+            errors.push(`${rule.label || field} debe ser al menos ${rule.min}`);
+        }
+
+        if (rule && rule.max && value && parseFloat(value) > rule.max) {
+            errors.push(`${rule.label || field} no puede ser mayor a ${rule.max}`);
+        }
+
+        if (rule && rule.custom && !rule.custom(value)) {
+            errors.push(`${rule.label || field} no es válido`);
         }
     }
 
     return errors;
+}
+
+// Función para generar números de orden únicos
+function generateOrderNumber() {
+    const timestamp = Date.now();
+    const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+    return `${timestamp}${random}`.slice(-6);
+}
+
+// Función para formatear números de teléfono
+function formatPhoneNumber(phone) {
+    if (!phone) return '';
+    const cleaned = phone.replace(/\D/g, '');
+    if (cleaned.length === 10) {
+        return `${cleaned.slice(0, 3)}-${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
+    }
+    return phone;
+}
+
+// Función para validar cédula colombiana
+function validateCedula(cedula) {
+    if (!cedula || cedula.length < 8 || cedula.length > 10) return false;
+    const digits = cedula.split('').map(Number);
+    const province = digits.slice(0, 2).join('');
+    if (province < 1 || province > 24) return false;
+    const checkDigit = digits.pop();
+    const sum = digits.reduce((acc, digit, index) => {
+        let factor = index % 2 === 0 ? 2 : 1;
+        let product = digit * factor;
+        return acc + (product > 9 ? product - 9 : product);
+    }, 0);
+    const calculatedCheck = (10 - (sum % 10)) % 10;
+    return calculatedCheck === checkDigit;
+}
+
+// Función para sanitizar inputs
+function sanitizeInput(input) {
+    if (typeof input !== 'string') return input;
+    return input.replace(/[<>]/g, '').trim();
 }

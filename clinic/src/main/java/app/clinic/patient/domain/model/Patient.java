@@ -6,8 +6,6 @@ import java.time.LocalDateTime;
 public class Patient {
 
     private Long id;
-    private String username;           // único, máximo 15, alfanumérico
-    private String password;           // hashed cuando se persista
     private String fullName;
     private String cedula;             // único, solo dígitos
     private LocalDate birthDate;
@@ -24,14 +22,12 @@ public class Patient {
 
     public Patient() {}
 
-    public Patient(Long id, String username, String password, String fullName, String cedula,
-                   LocalDate birthDate, String gender, String address, String phone, String email,
-                   EmergencyContact emergencyContact, Insurance insurance,
-                   Long createdByUserId, LocalDateTime createdAt) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.fullName = fullName;
+    public Patient(Long id, String fullName, String cedula,
+                    LocalDate birthDate, String gender, String address, String phone, String email,
+                    EmergencyContact emergencyContact, Insurance insurance,
+                    Long createdByUserId, LocalDateTime createdAt) {
+         this.id = id;
+         this.fullName = fullName;
         this.cedula = cedula;
         this.birthDate = birthDate;
         this.gender = gender;
@@ -48,11 +44,6 @@ public class Patient {
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
-
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
 
     public String getFullName() { return fullName; }
     public void setFullName(String fullName) { this.fullName = fullName; }

@@ -3,8 +3,6 @@ package app.clinic.patient.application.dto;
 import java.time.LocalDate;
 
 public record PatientRequestDto(
-        String username,
-        String password,
         String fullName,
         String cedula,
         LocalDate birthDate,

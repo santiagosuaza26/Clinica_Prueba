@@ -14,11 +14,13 @@
             <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
         </header>
         <div class="tab">
-            <button class="tablinks active" onclick="openTab(event, 'appointments')">Citas</button>
-            <button class="tablinks" onclick="openTab(event, 'patients')">Pacientes</button>
-            <button class="tablinks" onclick="openTab(event, 'vitals')">Signos Vitales</button>
-            <button class="tablinks" onclick="openTab(event, 'procedures')">Procedimientos</button>
-        </div>
+             <button class="tablinks active" onclick="openTab(event, 'appointments')">Citas</button>
+             <button class="tablinks" onclick="openTab(event, 'patients')">Pacientes</button>
+             <button class="tablinks" onclick="openTab(event, 'vitals')">🫀 Signos Vitales</button>
+             <button class="tablinks" onclick="openTab(event, 'medications')">💊 Medicamentos Administrados</button>
+             <button class="tablinks" onclick="openTab(event, 'procedures')">🧪 Procedimientos Realizados</button>
+             <button class="tablinks" onclick="openTab(event, 'observations')">📝 Observaciones</button>
+         </div>
 
         <div id="appointments" class="tabcontent" style="display: block;">
             <button class="accordion">Ver Citas</button>
@@ -66,22 +68,139 @@
         </div>
 
         <div id="procedures" class="tabcontent">
-            <button class="accordion">Registrar Procedimientos</button>
+            <button class="accordion">🧪 Procedimientos Realizados</button>
             <div class="panel">
+                <div class="search-container">
+                    <input type="text" id="patientSearch" placeholder="Buscar paciente por cédula..." onkeyup="searchPatient()">
+                    <button class="btn-secondary" onclick="loadPatientInfo()">Buscar</button>
+                </div>
+                <div id="patientInfo"></div>
                 <form id="proceduresForm">
                     <div class="form-group">
                         <label for="procPatientCedula">Cédula del Paciente:</label>
-                        <input type="text" id="procPatientCedula" required>
+                        <input type="text" id="procPatientCedula" required readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="procOrderNumber">Número de Orden Médica:</label>
+                        <input type="text" id="procOrderNumber" required>
                     </div>
                     <div class="form-group">
                         <label for="procedureName">Nombre del Procedimiento:</label>
-                        <input type="text" id="procedureName" required>
+                        <select id="procedureName" required>
+                            <option value="">Seleccionar procedimiento...</option>
+                        </select>
                     </div>
-                    <button type="submit" class="btn-primary">Registrar</button>
+                    <div class="form-group">
+                        <label for="procObservations">Observaciones:</label>
+                        <textarea id="procObservations" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">Registrar Procedimiento</button>
                 </form>
+                <div class="list-section">
+                    <h3>Procedimientos Realizados</h3>
+                    <div id="proceduresList"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="medications" class="tabcontent">
+            <button class="accordion">💊 Medicamentos Administrados</button>
+            <div class="panel">
+                <div class="search-container">
+                    <input type="text" id="medPatientSearch" placeholder="Buscar paciente por cédula..." onkeyup="searchPatientForMeds()">
+                    <button class="btn-secondary" onclick="loadPatientInfoForMeds()">Buscar</button>
+                </div>
+                <div id="medPatientInfo"></div>
+                <form id="medicationsForm">
+                    <div class="form-group">
+                        <label for="medPatientCedula">Cédula del Paciente:</label>
+                        <input type="text" id="medPatientCedula" required readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="medOrderNumber">Número de Orden Médica:</label>
+                        <input type="text" id="medOrderNumber" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="medicationName">Medicamento:</label>
+                        <select id="medicationName" required>
+                            <option value="">Seleccionar medicamento...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="medicationDose">Dosis Administrada:</label>
+                        <input type="text" id="medicationDose" required placeholder="ej: 500mg">
+                    </div>
+                    <div class="form-group">
+                        <label for="medicationTime">Hora de Administración:</label>
+                        <input type="time" id="medicationTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="medObservations">Observaciones:</label>
+                        <textarea id="medObservations" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">Registrar Administración</button>
+                </form>
+                <div class="list-section">
+                    <h3>Medicamentos Administrados</h3>
+                    <div id="medicationsList"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="observations" class="tabcontent">
+            <button class="accordion">📝 Observaciones</button>
+            <div class="panel">
+                <div class="search-container">
+                    <input type="text" id="obsPatientSearch" placeholder="Buscar paciente por cédula..." onkeyup="searchPatientForObs()">
+                    <button class="btn-secondary" onclick="loadPatientInfoForObs()">Buscar</button>
+                </div>
+                <div id="obsPatientInfo"></div>
+                <form id="observationsForm">
+                    <div class="form-group">
+                        <label for="obsPatientCedula">Cédula del Paciente:</label>
+                        <input type="text" id="obsPatientCedula" required readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="obsOrderNumber">Número de Orden Médica:</label>
+                        <input type="text" id="obsOrderNumber" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="observationType">Tipo de Observación:</label>
+                        <select id="observationType" required>
+                            <option value="">Seleccionar tipo...</option>
+                            <option value="general">General</option>
+                            <option value="post-procedure">Post-Procedimiento</option>
+                            <option value="medication-reaction">Reacción a Medicamento</option>
+                            <option value="vital-signs">Signos Vitales</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="obsDescription">Descripción:</label>
+                        <textarea id="obsDescription" rows="4" required placeholder="Describa la observación detalladamente..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="obsSeverity">Severidad:</label>
+                        <select id="obsSeverity" required>
+                            <option value="">Seleccionar severidad...</option>
+                            <option value="low">Baja</option>
+                            <option value="medium">Media</option>
+                            <option value="high">Alta</option>
+                            <option value="critical">Crítica</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-primary">Guardar Observación</button>
+                </form>
+                <div class="list-section">
+                    <h3>Observaciones Registradas</h3>
+                    <div id="observationsList"></div>
+                </div>
             </div>
         </div>
     </div>
+    <div class="action-buttons">
+        <button class="btn-success" onclick="registerVisit()">🏥 Registrar Visita Completa</button>
+    </div>
+    <script src="config.js"></script>
     <script src="api.js"></script>
     <script src="nurse.js"></script>
 </body>
