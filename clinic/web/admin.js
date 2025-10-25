@@ -19,12 +19,15 @@ document.addEventListener('DOMContentLoaded', function() {
     createPatientForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         const birthDate = new Date(document.getElementById('patientBirthDate').value);
-        const formattedBirthDate = `${birthDate.getDate().toString().padStart(2, '0')}/${(birthDate.getMonth() + 1).toString().padStart(2, '0')}/${birthDate.getFullYear()}`;
+        const formattedBirthDate = `${birthDate.getFullYear()}-${(birthDate.getMonth() + 1).toString().padStart(2, '0')}-${birthDate.getDate().toString().padStart(2, '0')}`;
+
+        const expirationDate = document.getElementById('insuranceExpiration').value;
+        const currentDate = new Date();
+        const expDate = new Date(expirationDate);
+        const active = expDate > currentDate;
 
         const data = {
             cedula: document.getElementById('patientCedula').value,
-            username: document.getElementById('patientUsername').value,
-            password: document.getElementById('patientPassword').value,
             fullName: document.getElementById('patientFullName').value,
             email: document.getElementById('patientEmail').value,
             phone: document.getElementById('patientPhone').value,
@@ -39,9 +42,8 @@ document.addEventListener('DOMContentLoaded', function() {
             insurance: {
                 companyName: document.getElementById('insuranceCompany').value,
                 policyNumber: document.getElementById('insurancePolicy').value,
-                coverageType: document.getElementById('insuranceCoverage').value,
-                active: document.getElementById('insuranceActive').value === 'true',
-                expirationDate: document.getElementById('insuranceExpiration').value
+                active: active,
+                expirationDate: expirationDate
             }
         };
         try {
@@ -307,9 +309,20 @@ function initializeFormValidation() {
     const forms = document.querySelectorAll('form');
     forms.forEach(form => {
         form.addEventListener('submit', function(e) {
-            if (!validateForm(this)) {
+            // Validación básica: verificar campos requeridos
+            const requiredFields = form.querySelectorAll('[required]');
+            let isValid = true;
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    isValid = false;
+                    field.style.borderColor = 'red';
+                } else {
+                    field.style.borderColor = '';
+                }
+            });
+            if (!isValid) {
                 e.preventDefault();
-                showMessage('Por favor, complete todos los campos requeridos correctamente.', 'error');
+                showNotification('Por favor, complete todos los campos requeridos.', 'error');
             }
         });
     });
@@ -323,7 +336,12 @@ function initializeLoadingStates() {
         const submitBtn = form.querySelector('button[type="submit"]');
         if (submitBtn) {
             form.addEventListener('submit', function() {
-                showLoading(submitBtn, true);
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Procesando...';
+                setTimeout(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = submitBtn.textContent.replace('Procesando...', 'Enviar');
+                }, 2000);
             });
         }
     });
@@ -509,72 +527,22 @@ function addMissingFieldsToPatientForm() {
     `;
     firstFieldset.appendChild(genderDiv);
 
-    // Agregar Usuario y Contraseña en un nuevo fieldset
-    const credentialsFieldset = document.createElement('fieldset');
-    credentialsFieldset.style.cssText = 'border: 2px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.5rem;';
-    credentialsFieldset.innerHTML = `
-        <legend style="color: var(--primary-color); font-weight: 600; padding: 0 1rem;">Credenciales de Acceso</legend>
-        <div class="form-row">
-            <div class="form-group">
-                <label for="patientUsername">
-                    <i class="fas fa-user-circle" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
-                    Nombre de Usuario:
-                </label>
-                <input type="text"
-                       id="patientUsername"
-                       placeholder="Usuario único para el sistema"
-                       maxlength="15"
-                       pattern="[a-zA-Z0-9]+"
-                       title="Solo letras y números"
-                       required>
-            </div>
-            <div class="form-group">
-                <label for="patientPassword">
-                    <i class="fas fa-lock" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
-                    Contraseña:
-                </label>
-                <div style="position: relative;">
-                    <input type="password"
-                           id="patientPassword"
-                           placeholder="Mínimo 8 caracteres"
-                           minlength="8"
-                           required>
-                    <button type="button"
-                            id="generatePassword"
-                            class="btn-secondary"
-                            style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); padding: 0.5rem; font-size: 0.8rem;">
-                        <i class="fas fa-random"></i>
-                        Generar
-                    </button>
-                </div>
-            </div>
-        </div>
-    `;
-    form.insertBefore(credentialsFieldset, firstFieldset.nextSibling);
 
     // Completar fieldset de seguro
     const insuranceFieldset = form.querySelector('fieldset:last-of-type');
     const coverageSelect = insuranceFieldset.querySelector('#insuranceCoverage');
-    coverageSelect.insertAdjacentHTML('afterend', `
-        <div class="form-group">
-            <label for="insuranceActive">
-                <i class="fas fa-toggle-on" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
-                Estado del Seguro:
-            </label>
-            <select id="insuranceActive" required>
-                <option value="">Seleccionar estado</option>
-                <option value="true">Activo</option>
-                <option value="false">Inactivo</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="insuranceExpiration">
-                <i class="fas fa-calendar-alt" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
-                Fecha de Vigencia (Fin):
-            </label>
-            <input type="date" id="insuranceExpiration" required>
-        </div>
-    `);
+    if (coverageSelect) {
+        coverageSelect.insertAdjacentHTML('afterend', `
+            <div class="form-group">
+                <label for="insuranceExpiration">
+                    <i class="fas fa-calendar-alt" style="margin-right: 0.5rem; color: var(--primary-color);"></i>
+                    Fecha de Vigencia (Fin):
+                </label>
+                <input type="date" id="insuranceExpiration" required>
+            </div>
+        `);
+        coverageSelect.remove();
+    }
 }
 
 function implementBillingTab() {
