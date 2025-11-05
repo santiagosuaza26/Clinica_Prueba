@@ -1,10 +1,10 @@
 package app.clinic.inventory.application.usecase;
 
 import app.clinic.inventory.domain.exception.ItemNotFoundException;
+import app.clinic.inventory.domain.model.DiagnosticAid;
 import app.clinic.inventory.domain.model.InventoryType;
 import app.clinic.inventory.domain.model.Medication;
 import app.clinic.inventory.domain.model.Procedure;
-import app.clinic.inventory.domain.model.DiagnosticAid;
 import app.clinic.inventory.domain.repository.DiagnosticAidRepository;
 import app.clinic.inventory.domain.repository.MedicationRepository;
 import app.clinic.inventory.domain.repository.ProcedureRepository;

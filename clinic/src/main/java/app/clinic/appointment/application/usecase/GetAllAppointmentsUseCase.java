@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import app.clinic.appointment.domain.model.Appointment;
 import app.clinic.appointment.domain.repository.AppointmentRepository;
+import app.clinic.shared.domain.service.AuthorizationService;
 import app.clinic.user.domain.model.Role;
 
 @Service
@@ -18,12 +19,7 @@ public class GetAllAppointmentsUseCase {
     }
 
     public List<Appointment> execute(Role requesterRole) {
-        // Admin, doctors, nurses can view appointments
-        if (requesterRole != Role.ADMINISTRATIVO &&
-            requesterRole != Role.MEDICO &&
-            requesterRole != Role.ENFERMERA) {
-            throw new RuntimeException("No tienes permisos para ver citas.");
-        }
+        AuthorizationService.requireAppointmentAccess(requesterRole);
         return repository.findAll();
     }
 }

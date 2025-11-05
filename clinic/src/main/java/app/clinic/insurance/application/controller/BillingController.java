@@ -21,6 +21,9 @@ import app.clinic.insurance.application.usecase.DeleteBillingUseCase;
 import app.clinic.insurance.application.usecase.GetAllBillingsUseCase;
 import app.clinic.insurance.application.usecase.GetBillingByPatientUseCase;
 import app.clinic.insurance.domain.model.Billing;
+import app.clinic.shared.domain.exception.ValidationException;
+import app.clinic.shared.infrastructure.config.SecurityUtils;
+import app.clinic.user.domain.model.Role;
 
 @RestController
 @RequestMapping("/billings")
@@ -47,6 +50,15 @@ public class BillingController {
 
     @PostMapping
     public ResponseEntity<BillingResponseDto> createBilling(@RequestBody BillingRequestDto dto) {
+        String requesterRoleStr = SecurityUtils.getCurrentRole();
+        if (requesterRoleStr == null) {
+            throw new ValidationException("Rol no encontrado en el token.");
+        }
+        Role requesterRole = Role.valueOf(requesterRoleStr.toUpperCase());
+        if (requesterRole != Role.ADMINISTRATIVO) {
+            throw new ValidationException("Solo el personal administrativo puede generar facturas.");
+        }
+
         Billing billing = BillingMapper.toDomain(dto);
         Billing created = createBillingUseCase.execute(billing);
         return ResponseEntity.ok(BillingMapper.toResponse(created));
@@ -54,6 +66,15 @@ public class BillingController {
 
     @GetMapping
     public ResponseEntity<List<BillingResponseDto>> getAllBillings() {
+        String requesterRoleStr = SecurityUtils.getCurrentRole();
+        if (requesterRoleStr == null) {
+            throw new ValidationException("Rol no encontrado en el token.");
+        }
+        Role requesterRole = Role.valueOf(requesterRoleStr.toUpperCase());
+        if (requesterRole != Role.ADMINISTRATIVO) {
+            throw new ValidationException("Solo el personal administrativo puede consultar todas las facturas.");
+        }
+
         logger.info("Recibiendo solicitud GET /billings");
         try {
             List<Billing> billings = getAllBillingsUseCase.execute();
@@ -67,12 +88,30 @@ public class BillingController {
 
     @GetMapping("/patient/{patientId}")
     public ResponseEntity<List<BillingResponseDto>> getBillingByPatient(@PathVariable Long patientId) {
+        String requesterRoleStr = SecurityUtils.getCurrentRole();
+        if (requesterRoleStr == null) {
+            throw new ValidationException("Rol no encontrado en el token.");
+        }
+        Role requesterRole = Role.valueOf(requesterRoleStr.toUpperCase());
+        if (requesterRole != Role.ADMINISTRATIVO) {
+            throw new ValidationException("Solo el personal administrativo puede consultar facturas por paciente.");
+        }
+
         List<Billing> billings = getBillingByPatientUseCase.execute(patientId);
         return ResponseEntity.ok(billings.stream().map(BillingMapper::toResponse).toList());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBilling(@PathVariable Long id) {
+        String requesterRoleStr = SecurityUtils.getCurrentRole();
+        if (requesterRoleStr == null) {
+            throw new ValidationException("Rol no encontrado en el token.");
+        }
+        Role requesterRole = Role.valueOf(requesterRoleStr.toUpperCase());
+        if (requesterRole != Role.ADMINISTRATIVO) {
+            throw new ValidationException("Solo el personal administrativo puede eliminar facturas.");
+        }
+
         deleteBillingUseCase.execute(id);
         return ResponseEntity.noContent().build();
     }

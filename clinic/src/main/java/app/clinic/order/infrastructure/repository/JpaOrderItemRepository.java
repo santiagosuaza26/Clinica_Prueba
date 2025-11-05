@@ -79,4 +79,28 @@ public interface JpaOrderItemRepository extends JpaRepository<OrderItemEntity, L
      * Busca ítems por rango de costo.
      */
     List<OrderItemEntity> findByCostBetween(java.math.BigDecimal minCost, java.math.BigDecimal maxCost);
+
+    /**
+     * Busca ítems por orden con JOIN FETCH para evitar N+1 queries.
+     */
+    @Query("SELECT oi FROM OrderItemEntity oi JOIN FETCH oi.order WHERE oi.order.orderNumber = :orderNumber")
+    List<OrderItemEntity> findByOrderOrderNumberWithOrder(@Param("orderNumber") String orderNumber);
+
+    /**
+     * Busca ítems por tipo con JOIN FETCH para evitar N+1 queries.
+     */
+    @Query("SELECT oi FROM OrderItemEntity oi JOIN FETCH oi.order WHERE oi.type = :type")
+    List<OrderItemEntity> findByTypeWithOrder(@Param("type") app.clinic.order.domain.model.OrderType type);
+
+    /**
+     * Busca ítems que requieren especialista con JOIN FETCH.
+     */
+    @Query("SELECT oi FROM OrderItemEntity oi JOIN FETCH oi.order WHERE oi.requiresSpecialist = true")
+    List<OrderItemEntity> findByRequiresSpecialistTrueWithOrder();
+
+    /**
+     * Busca ítems por especialista con JOIN FETCH.
+     */
+    @Query("SELECT oi FROM OrderItemEntity oi JOIN FETCH oi.order WHERE oi.specialistType = :specialistType")
+    List<OrderItemEntity> findBySpecialistTypeWithOrder(@Param("specialistType") app.clinic.shared.domain.model.SpecialistType specialistType);
 }

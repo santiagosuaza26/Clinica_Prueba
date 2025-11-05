@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- Definir variables para rutas de archivos -->
+    <property name="LOG_PATH" value="${LOG_FILE_NAME:-logs}"/>
+    <property name="LOG_FILE" value="${LOG_PATH}/clinic-app"/>
+    <property name="AUDIT_LOG_FILE" value="${LOG_PATH}/clinic-audit"/>
+    <property name="ERROR_LOG_FILE" value="${LOG_PATH}/clinic-error"/>
+    <property name="PERFORMANCE_LOG_FILE" value="${LOG_PATH}/clinic-performance"/>
+
+    <!-- Patrón de log para consola -->
+    <property name="CONSOLE_LOG_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"/>
+
+    <!-- Patrón de log para archivos -->
+    <property name="FILE_LOG_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"/>
+
+    <!-- Patrón de log para auditoría -->
+    <property name="AUDIT_LOG_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} | %msg%n"/>
+
+    <!-- Patrón de log para errores -->
+    <property name="ERROR_LOG_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %replace(%msg){'\n','|'}%n"/>
+
+    <!-- Appender para consola -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Appender para archivo principal con rotación -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_FILE}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_FILE}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>${LOG_MAX_SIZE:-10MB}</maxFileSize>
+            <maxHistory>${LOG_MAX_HISTORY:-30}</maxHistory>
+            <totalSizeCap>500MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Appender para auditoría -->
+    <appender name="AUDIT_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${AUDIT_LOG_FILE}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${AUDIT_LOG_FILE}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>50MB</maxFileSize>
+            <maxHistory>90</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${AUDIT_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Appender para errores -->
+    <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${ERROR_LOG_FILE}.log</file>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${ERROR_LOG_FILE}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>20MB</maxFileSize>
+            <maxHistory>60</maxHistory>
+            <totalSizeCap>500MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${ERROR_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Appender para rendimiento -->
+    <appender name="PERFORMANCE_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${PERFORMANCE_LOG_FILE}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${PERFORMANCE_LOG_FILE}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>20MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>200MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} | %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Logger específico para auditoría -->
+    <logger name="AUDIT_LOGGER" level="INFO" additivity="false">
+        <appender-ref ref="AUDIT_FILE"/>
+    </logger>
+
+    <!-- Logger específico para rendimiento -->
+    <logger name="PERFORMANCE_LOGGER" level="INFO" additivity="false">
+        <appender-ref ref="PERFORMANCE_FILE"/>
+    </logger>
+
+    <!-- Configuración de loggers por paquete -->
+    <logger name="app.clinic" level="${LOG_LEVEL:-INFO}" additivity="true">
+        <appender-ref ref="FILE"/>
+    </logger>
+
+    <!-- Logging específico para seguridad -->
+    <logger name="app.clinic.shared.infrastructure.config.JwtAuthenticationFilter"
+             level="${JWT_FILTER_LOG_LEVEL:-DEBUG}" additivity="true">
+        <appender-ref ref="FILE"/>
+    </logger>
+
+    <logger name="app.clinic.shared.infrastructure.config.AuditService"
+             level="${AUDIT_SERVICE_LOG_LEVEL:-INFO}" additivity="true">
+        <appender-ref ref="AUDIT_FILE"/>
+    </logger>
+
+    <logger name="app.clinic.shared.infrastructure.config.RateLimitFilter"
+             level="${RATE_LIMIT_LOG_LEVEL:-INFO}" additivity="true">
+        <appender-ref ref="FILE"/>
+    </logger>
+
+    <!-- Logging de Spring -->
+    <logger name="org.springframework" level="${SPRING_LOG_LEVEL:-INFO}" additivity="true">
+        <appender-ref ref="FILE"/>
+    </logger>
+
+    <logger name="org.springframework.security" level="DEBUG" additivity="true">
+        <appender-ref ref="FILE"/>
+    </logger>
+
+    <!-- Logging de Hibernate -->
+    <logger name="org.hibernate.SQL" level="${HIBERNATE_LOG_LEVEL:-WARN}" additivity="true">
+        <appender-ref ref="FILE"/>
+    </logger>
+
+    <logger name="org.hibernate.type.descriptor.sql.BasicBinder"
+             level="${HIBERNATE_BINDER_LOG:TRACE}" additivity="true">
+        <appender-ref ref="FILE"/>
+    </logger>
+
+    <!-- Logging de MongoDB -->
+    <logger name="org.springframework.data.mongodb"
+             level="${MONGO_LOG_LEVEL:-INFO}" additivity="true">
+        <appender-ref ref="FILE"/>
+    </logger>
+
+    <!-- Root logger -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="ERROR_FILE"/>
+    </root>
+
+    <!-- Configuración específica por perfil -->
+    <springProfile name="development,test">
+        <logger name="app.clinic" level="DEBUG"/>
+        <logger name="org.springframework" level="DEBUG"/>
+        <logger name="org.hibernate.SQL" level="DEBUG"/>
+    </springProfile>
+
+    <springProfile name="production">
+        <logger name="app.clinic" level="INFO"/>
+        <logger name="org.springframework" level="WARN"/>
+        <logger name="org.hibernate.SQL" level="WARN"/>
+        <root level="WARN">
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="ERROR_FILE"/>
+        </root>
+    </springProfile>
+
+</configuration>

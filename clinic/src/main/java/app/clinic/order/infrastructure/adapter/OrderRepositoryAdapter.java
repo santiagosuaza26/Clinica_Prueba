@@ -39,7 +39,7 @@ public class OrderRepositoryAdapter implements OrderRepository {
 
     @Override
     public List<MedicalOrder> findByPatientId(Long patientId) {
-        return jpaOrderRepository.findByPatientId(patientId.toString())
+        return jpaOrderRepository.findByPatientIdWithItems(patientId.toString())
                 .stream()
                 .map(this::toDomain)
                 .collect(Collectors.toList());
@@ -47,7 +47,7 @@ public class OrderRepositoryAdapter implements OrderRepository {
 
     @Override
     public List<MedicalOrder> findByDoctorId(Long doctorId) {
-        return jpaOrderRepository.findByDoctorId(doctorId.toString())
+        return jpaOrderRepository.findByDoctorIdWithItems(doctorId.toString())
                 .stream()
                 .map(this::toDomain)
                 .collect(Collectors.toList());

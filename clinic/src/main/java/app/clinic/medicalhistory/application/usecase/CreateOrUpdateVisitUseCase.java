@@ -1,11 +1,19 @@
 package app.clinic.medicalhistory.application.usecase;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
+
+import app.clinic.medicalhistory.domain.exception.InvalidMedicalRecordException;
+import app.clinic.medicalhistory.domain.exception.MedicalHistoryNotFoundException;
 import app.clinic.medicalhistory.domain.model.MedicalHistory;
 import app.clinic.medicalhistory.domain.model.MedicalVisit;
 import app.clinic.medicalhistory.domain.repository.MedicalHistoryRepository;
 import app.clinic.medicalhistory.domain.service.MedicalHistoryValidator;
 
 public class CreateOrUpdateVisitUseCase {
+
+    private static final Logger logger = LoggerFactory.getLogger(CreateOrUpdateVisitUseCase.class);
 
     private final MedicalHistoryRepository repository;
     private final MedicalHistoryValidator validator;
@@ -15,29 +23,35 @@ public class CreateOrUpdateVisitUseCase {
         this.validator = validator;
     }
 
+    @Transactional
     public void execute(String patientCedula, MedicalVisit visit) {
-        System.out.println("[DEBUG] Iniciando creación/actualización de visita para paciente: " + patientCedula);
-        System.out.println("[DEBUG] Fecha de visita: " + visit.getDate());
+        logger.debug("Iniciando creación/actualización de visita para paciente: {}", patientCedula);
+        logger.debug("Fecha de visita: {}", visit.getDate());
 
         try {
             validator.validate(visit);
-            System.out.println("[DEBUG] Validación de visita exitosa");
+            logger.debug("Validación de visita exitosa");
 
             MedicalHistory history = repository.findByPatientCedula(patientCedula)
                 .orElse(new MedicalHistory(patientCedula));
-            System.out.println("[DEBUG] Historia médica obtenida, número de visitas existentes: " +
-                             (history.getVisits() != null ? history.getVisits().size() : 0));
+            logger.debug("Historia médica obtenida, número de visitas existentes: {}",
+                        (history.getVisits() != null ? history.getVisits().size() : 0));
 
             history.addVisit(visit);
-            System.out.println("[DEBUG] Visita agregada exitosamente");
+            logger.debug("Visita agregada exitosamente");
 
             repository.save(history);
-            System.out.println("[DEBUG] Historia médica guardada exitosamente");
+            logger.debug("Historia médica guardada exitosamente");
 
-        } catch (Exception e) {
-            System.out.println("[ERROR] Error al procesar visita: " + e.getMessage());
-            e.printStackTrace();
+        } catch (InvalidMedicalRecordException e) {
+            logger.error("Error de validación en registro médico: {}", e.getMessage());
             throw e;
+        } catch (MedicalHistoryNotFoundException e) {
+            logger.error("Historia médica no encontrada: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            logger.error("Error inesperado al procesar visita: {}", e.getMessage(), e);
+            throw new RuntimeException("Error interno del servidor al procesar la visita médica", e);
         }
     }
 }

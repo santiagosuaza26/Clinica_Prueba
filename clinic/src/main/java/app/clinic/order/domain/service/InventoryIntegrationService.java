@@ -33,51 +33,64 @@ public class InventoryIntegrationService {
     }
 
     /**
-     * Obtiene medicamento del inventario y valida disponibilidad.
+     * Obtiene medicamento del inventario y valida existencia.
+     * Lanza excepción si no existe.
      */
-    public Optional<Medication> getMedicationWithValidation(Long medicationId) {
-        logger.info("Buscando medicamento con ID: {}", medicationId);
+    public Medication getMedicationWithValidation(Long medicationId) {
+        logger.info("Validando existencia de medicamento con ID: {}", medicationId);
         Optional<Medication> med = medicationRepository.findById(medicationId);
-        if (med.isPresent()) {
-            logger.info("Medicamento encontrado: {}", med.get().getName());
-        } else {
-            logger.warn("Medicamento no encontrado con ID: {}", medicationId);
+        if (med.isEmpty()) {
+            logger.error("Medicamento no encontrado con ID: {}", medicationId);
+            throw new app.clinic.order.domain.exception.InvalidOrderException(
+                String.format("Medicamento con ID %d no existe en el inventario", medicationId)
+            );
         }
-        return med;
+        logger.info("Medicamento validado: {}", med.get().getName());
+        return med.get();
     }
 
     /**
-     * Obtiene procedimiento del inventario.
+     * Obtiene procedimiento del inventario y valida existencia.
+     * Lanza excepción si no existe.
      */
-    public Optional<Procedure> getProcedure(Long procedureId) {
-        logger.info("Buscando procedimiento con ID: {}", procedureId);
+    public Procedure getProcedureWithValidation(Long procedureId) {
+        logger.info("Validando existencia de procedimiento con ID: {}", procedureId);
         Optional<Procedure> proc = procedureRepository.findById(procedureId);
-        if (proc.isPresent()) {
-            logger.info("Procedimiento encontrado: {}", proc.get().getName());
-        } else {
-            logger.warn("Procedimiento no encontrado con ID: {}", procedureId);
+        if (proc.isEmpty()) {
+            logger.error("Procedimiento no encontrado con ID: {}", procedureId);
+            throw new app.clinic.order.domain.exception.InvalidOrderException(
+                String.format("Procedimiento con ID %d no existe en el inventario", procedureId)
+            );
         }
-        return proc;
+        logger.info("Procedimiento validado: {}", proc.get().getName());
+        return proc.get();
     }
 
     /**
-     * Obtiene ayuda diagnóstica del inventario y valida cantidad disponible.
+     * Obtiene ayuda diagnóstica del inventario y valida existencia y cantidad disponible.
+     * Lanza excepción si no existe o no hay suficiente cantidad.
      */
-    public Optional<DiagnosticAid> getDiagnosticAidWithValidation(Long diagnosticAidId, int requiredQuantity) {
-        logger.info("Buscando ayuda diagnóstica con ID: {} y cantidad requerida: {}", diagnosticAidId, requiredQuantity);
-        Optional<DiagnosticAid> aid = diagnosticAidRepository.findById(diagnosticAidId)
-                .filter(a -> {
-                    boolean sufficient = a.getQuantity() >= requiredQuantity;
-                    if (!sufficient) {
-                        logger.warn("Cantidad insuficiente para ayuda diagnóstica ID: {}. Disponible: {}, Requerida: {}", diagnosticAidId, a.getQuantity(), requiredQuantity);
-                    } else {
-                        logger.info("Ayuda diagnóstica disponible: {}", a.getName());
-                    }
-                    return sufficient;
-                });
-        if (aid.isEmpty()) {
-            logger.warn("Ayuda diagnóstica no encontrada o cantidad insuficiente con ID: {}", diagnosticAidId);
+    public DiagnosticAid getDiagnosticAidWithValidation(Long diagnosticAidId, int requiredQuantity) {
+        logger.info("Validando ayuda diagnóstica con ID: {} y cantidad requerida: {}", diagnosticAidId, requiredQuantity);
+        Optional<DiagnosticAid> aidOpt = diagnosticAidRepository.findById(diagnosticAidId);
+        if (aidOpt.isEmpty()) {
+            logger.error("Ayuda diagnóstica no encontrada con ID: {}", diagnosticAidId);
+            throw new app.clinic.order.domain.exception.InvalidOrderException(
+                String.format("Ayuda diagnóstica con ID %d no existe en el inventario", diagnosticAidId)
+            );
         }
+
+        DiagnosticAid aid = aidOpt.get();
+        if (aid.getQuantity() < requiredQuantity) {
+            logger.error("Cantidad insuficiente para ayuda diagnóstica ID: {}. Disponible: {}, Requerida: {}",
+                diagnosticAidId, aid.getQuantity(), requiredQuantity);
+            throw new app.clinic.order.domain.exception.InvalidOrderException(
+                String.format("Cantidad insuficiente para ayuda diagnóstica '%s'. Disponible: %d, Requerida: %d",
+                    aid.getName(), aid.getQuantity(), requiredQuantity)
+            );
+        }
+
+        logger.info("Ayuda diagnóstica validada: {}", aid.getName());
         return aid;
     }
 }

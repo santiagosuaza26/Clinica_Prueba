@@ -1,9 +1,8 @@
 package app.clinic.order.application.usecase;
 
-import java.util.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 import app.clinic.inventory.domain.model.DiagnosticAid;
 import app.clinic.inventory.domain.model.Medication;
@@ -29,13 +28,18 @@ public class AddItemToOrderUseCase {
         this.inventoryService = inventoryService;
     }
 
+    @Transactional
     public MedicalOrder execute(String orderNumber, OrderItemDto itemDto) {
-        logger.info("Iniciando adición de ítem a la orden: {}", orderNumber);
+        logger.info("Iniciando adición de ítem a la orden: {} (tipo: {}, cantidad: {})",
+            orderNumber, itemDto.type(), itemDto.quantity());
+
         MedicalOrder order = orderRepository.findByOrderNumber(orderNumber)
             .orElseThrow(() -> {
                 logger.error("Orden no encontrada: {}", orderNumber);
                 return new OrderNotFoundException("Orden no encontrada: " + orderNumber);
             });
+
+        logger.debug("Orden encontrada con {} ítems existentes", order.getItems().size());
 
         // Validar referencia al inventario según el tipo
         validateInventoryReference(itemDto);
@@ -56,36 +60,24 @@ public class AddItemToOrderUseCase {
                     logger.error("inventoryMedicationId es nulo para medicamento");
                     throw new IllegalArgumentException("Debe especificar inventoryMedicationId para medicamentos");
                 }
-                Optional<Medication> med = inventoryService.getMedicationWithValidation(itemDto.inventoryMedicationId());
-                if (med.isEmpty()) {
-                    logger.error("Medicamento no encontrado en inventario con ID: {}", itemDto.inventoryMedicationId());
-                    throw new IllegalArgumentException("Medicamento no encontrado en inventario");
-                }
-                logger.info("Medicamento validado exitosamente: {}", med.get().getName());
+                Medication med = inventoryService.getMedicationWithValidation(itemDto.inventoryMedicationId());
+                logger.info("Medicamento validado exitosamente: {}", med.getName());
             }
             case PROCEDURE -> {
                 if (itemDto.inventoryProcedureId() == null) {
                     logger.error("inventoryProcedureId es nulo para procedimiento");
                     throw new IllegalArgumentException("Debe especificar inventoryProcedureId para procedimientos");
                 }
-                Optional<Procedure> proc = inventoryService.getProcedure(itemDto.inventoryProcedureId());
-                if (proc.isEmpty()) {
-                    logger.error("Procedimiento no encontrado en inventario con ID: {}", itemDto.inventoryProcedureId());
-                    throw new IllegalArgumentException("Procedimiento no encontrado en inventario");
-                }
-                logger.info("Procedimiento validado exitosamente: {}", proc.get().getName());
+                Procedure proc = inventoryService.getProcedureWithValidation(itemDto.inventoryProcedureId());
+                logger.info("Procedimiento validado exitosamente: {}", proc.getName());
             }
             case DIAGNOSTIC_AID -> {
                 if (itemDto.inventoryDiagnosticAidId() == null) {
                     logger.error("inventoryDiagnosticAidId es nulo para ayuda diagnóstica");
                     throw new IllegalArgumentException("Debe especificar inventoryDiagnosticAidId para ayudas diagnósticas");
                 }
-                Optional<DiagnosticAid> aid = inventoryService.getDiagnosticAidWithValidation(itemDto.inventoryDiagnosticAidId(), itemDto.quantity());
-                if (aid.isEmpty()) {
-                    logger.error("Ayuda diagnóstica no disponible en inventario con ID: {} y cantidad requerida: {}", itemDto.inventoryDiagnosticAidId(), itemDto.quantity());
-                    throw new IllegalArgumentException("Ayuda diagnóstica no disponible en inventario");
-                }
-                logger.info("Ayuda diagnóstica validada exitosamente: {}", aid.get().getName());
+                DiagnosticAid aid = inventoryService.getDiagnosticAidWithValidation(itemDto.inventoryDiagnosticAidId(), itemDto.quantity());
+                logger.info("Ayuda diagnóstica validada exitosamente: {}", aid.getName());
             }
         }
     }

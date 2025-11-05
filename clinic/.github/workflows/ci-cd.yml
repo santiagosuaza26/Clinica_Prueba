@@ -143,7 +143,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build, security-scan]
     if: github.ref == 'refs/heads/develop'
-    environment: staging
 
     steps:
     - name: Deploy to staging
@@ -157,7 +156,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build, security-scan]
     if: github.ref == 'refs/heads/main'
-    environment: production
 
     steps:
     - name: Deploy to production

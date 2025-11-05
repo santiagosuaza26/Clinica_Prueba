@@ -13,29 +13,32 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import app.clinic.inventory.application.dto.CreateDiagnosticAidDto;
 import app.clinic.inventory.application.dto.CreateInventoryRequestDto;
 import app.clinic.inventory.application.dto.CreateMedicationDto;
 import app.clinic.inventory.application.dto.CreateProcedureDto;
-import app.clinic.inventory.application.dto.CreateDiagnosticAidDto;
+import app.clinic.inventory.application.dto.DiagnosticAidResponseDto;
 import app.clinic.inventory.application.dto.MedicationResponseDto;
 import app.clinic.inventory.application.dto.ProcedureResponseDto;
-import app.clinic.inventory.application.dto.DiagnosticAidResponseDto;
+import app.clinic.inventory.application.dto.UpdateDiagnosticAidDto;
 import app.clinic.inventory.application.dto.UpdateMedicationDto;
 import app.clinic.inventory.application.dto.UpdateProcedureDto;
-import app.clinic.inventory.application.dto.UpdateDiagnosticAidDto;
 import app.clinic.inventory.application.mapper.InventoryMapper;
+import app.clinic.inventory.application.usecase.CreateDiagnosticAidUseCase;
 import app.clinic.inventory.application.usecase.CreateInventoryItemUseCase;
 import app.clinic.inventory.application.usecase.CreateMedicationUseCase;
 import app.clinic.inventory.application.usecase.CreateProcedureUseCase;
-import app.clinic.inventory.application.usecase.CreateDiagnosticAidUseCase;
 import app.clinic.inventory.application.usecase.DeleteInventoryItemUseCase;
 import app.clinic.inventory.application.usecase.GetAllInventoryItemsUseCase;
 import app.clinic.inventory.application.usecase.GetInventoryItemByIdUseCase;
+import app.clinic.inventory.application.usecase.UpdateDiagnosticAidUseCase;
 import app.clinic.inventory.application.usecase.UpdateInventoryItemUseCase;
 import app.clinic.inventory.application.usecase.UpdateMedicationUseCase;
 import app.clinic.inventory.application.usecase.UpdateProcedureUseCase;
-import app.clinic.inventory.application.usecase.UpdateDiagnosticAidUseCase;
 import app.clinic.inventory.domain.model.InventoryType;
+import app.clinic.shared.domain.exception.ForbiddenException;
+import app.clinic.shared.infrastructure.config.SecurityUtils;
+import app.clinic.user.domain.model.Role;
 
 @RestController
 @RequestMapping("/inventory")
@@ -82,34 +85,58 @@ public class InventoryController {
         this.updateDiagnosticAidUseCase = updateDiagnosticAidUseCase;
     }
 
+    private void checkInventoryAccess() {
+        String requesterRoleStr = SecurityUtils.getCurrentRole();
+        if (requesterRoleStr == null) {
+            throw new ForbiddenException("Rol no encontrado en el token.");
+        }
+        try {
+            Role requesterRole = Role.valueOf(requesterRoleStr.toUpperCase());
+            if (requesterRole == Role.RECURSOS_HUMANOS) {
+                throw new ForbiddenException("Recursos Humanos no puede acceder al inventario.");
+            }
+        } catch (IllegalArgumentException e) {
+            throw new ForbiddenException("Rol inválido: " + requesterRoleStr);
+        }
+    }
+
     // ========== ENDPOINTS GENÉRICOS ==========
 
     @PostMapping
     public ResponseEntity<Object> create(@RequestBody CreateInventoryRequestDto dto) {
+        checkInventoryAccess();
         Object item = createUseCase.execute(dto);
         return ResponseEntity.ok(InventoryMapper.toResponse(item, dto.type()));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Object> update(@PathVariable Long id, @RequestBody CreateInventoryRequestDto dto) {
+        checkInventoryAccess();
         Object item = updateUseCase.execute(id, dto);
         return ResponseEntity.ok(InventoryMapper.toResponse(item, dto.type()));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id, @RequestParam InventoryType type) {
+        checkInventoryAccess();
         deleteUseCase.execute(id, type);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getById(@PathVariable Long id, @RequestParam InventoryType type) {
+        checkInventoryAccess();
         Object item = getByIdUseCase.execute(id, type);
         return ResponseEntity.ok(InventoryMapper.toResponse(item, type));
     }
 
     @GetMapping
-    public ResponseEntity<List<?>> getAll(@RequestParam InventoryType type) {
+    public ResponseEntity<List<?>> getAll(@RequestParam(required = false) InventoryType type) {
+        checkInventoryAccess();
+        if (type == null) {
+            // Si no se especifica tipo, devolver error indicando que es requerido
+            throw new IllegalArgumentException("El parámetro 'type' es requerido. Valores válidos: MEDICATION, PROCEDURE, DIAGNOSTIC_AID");
+        }
         List<?> items = getAllUseCase.execute(type);
         return ResponseEntity.ok(items);
     }
@@ -120,23 +147,27 @@ public class InventoryController {
 
     @PostMapping("/medications")
     public ResponseEntity<MedicationResponseDto> createMedication(@RequestBody CreateMedicationDto dto) {
+        checkInventoryAccess();
         return ResponseEntity.ok(createMedicationUseCase.execute(dto));
     }
 
     @PutMapping("/medications/{id}")
     public ResponseEntity<MedicationResponseDto> updateMedication(@PathVariable Long id, @RequestBody UpdateMedicationDto dto) {
+        checkInventoryAccess();
         var medication = updateMedicationUseCase.execute(id, dto);
         return ResponseEntity.ok(InventoryMapper.toMedicationResponseDto(medication));
     }
 
     @GetMapping("/medications/{id}")
     public ResponseEntity<MedicationResponseDto> getMedicationById(@PathVariable Long id) {
+        checkInventoryAccess();
         var medication = (app.clinic.inventory.domain.model.Medication) getByIdUseCase.execute(id, InventoryType.MEDICATION);
         return ResponseEntity.ok(InventoryMapper.toMedicationResponseDto(medication));
     }
 
     @GetMapping("/medications")
     public ResponseEntity<List<Object>> getAllMedications() {
+        checkInventoryAccess();
         var medications = getAllUseCase.execute(InventoryType.MEDICATION);
         var medicationDtos = InventoryMapper.toSpecificResponseList(medications, InventoryType.MEDICATION);
         return ResponseEntity.ok(medicationDtos);
@@ -144,6 +175,7 @@ public class InventoryController {
 
     @DeleteMapping("/medications/{id}")
     public ResponseEntity<Void> deleteMedication(@PathVariable Long id) {
+        checkInventoryAccess();
         deleteUseCase.execute(id, InventoryType.MEDICATION);
         return ResponseEntity.noContent().build();
     }
@@ -152,23 +184,27 @@ public class InventoryController {
 
     @PostMapping("/procedures")
     public ResponseEntity<ProcedureResponseDto> createProcedure(@RequestBody CreateProcedureDto dto) {
+        checkInventoryAccess();
         return ResponseEntity.ok(createProcedureUseCase.execute(dto));
     }
 
     @PutMapping("/procedures/{id}")
     public ResponseEntity<ProcedureResponseDto> updateProcedure(@PathVariable Long id, @RequestBody UpdateProcedureDto dto) {
+        checkInventoryAccess();
         var procedure = updateProcedureUseCase.execute(id, dto);
         return ResponseEntity.ok(InventoryMapper.toProcedureResponseDto(procedure));
     }
 
     @GetMapping("/procedures/{id}")
     public ResponseEntity<ProcedureResponseDto> getProcedureById(@PathVariable Long id) {
+        checkInventoryAccess();
         var procedure = getByIdUseCase.execute(id, InventoryType.PROCEDURE);
         return ResponseEntity.ok(InventoryMapper.toProcedureResponseDto((app.clinic.inventory.domain.model.Procedure) procedure));
     }
 
     @GetMapping("/procedures")
     public ResponseEntity<List<Object>> getAllProcedures() {
+        checkInventoryAccess();
         var procedures = getAllUseCase.execute(InventoryType.PROCEDURE);
         var procedureDtos = InventoryMapper.toSpecificResponseList(procedures, InventoryType.PROCEDURE);
         return ResponseEntity.ok(procedureDtos);
@@ -176,6 +212,7 @@ public class InventoryController {
 
     @DeleteMapping("/procedures/{id}")
     public ResponseEntity<Void> deleteProcedure(@PathVariable Long id) {
+        checkInventoryAccess();
         deleteUseCase.execute(id, InventoryType.PROCEDURE);
         return ResponseEntity.noContent().build();
     }
@@ -184,23 +221,27 @@ public class InventoryController {
 
     @PostMapping("/diagnostic-aids")
     public ResponseEntity<DiagnosticAidResponseDto> createDiagnosticAid(@RequestBody CreateDiagnosticAidDto dto) {
+        checkInventoryAccess();
         return ResponseEntity.ok(createDiagnosticAidUseCase.execute(dto));
     }
 
     @PutMapping("/diagnostic-aids/{id}")
     public ResponseEntity<DiagnosticAidResponseDto> updateDiagnosticAid(@PathVariable Long id, @RequestBody UpdateDiagnosticAidDto dto) {
+        checkInventoryAccess();
         var diagnosticAid = updateDiagnosticAidUseCase.execute(id, dto);
         return ResponseEntity.ok(InventoryMapper.toDiagnosticAidResponseDto(diagnosticAid));
     }
 
     @GetMapping("/diagnostic-aids/{id}")
     public ResponseEntity<DiagnosticAidResponseDto> getDiagnosticAidById(@PathVariable Long id) {
+        checkInventoryAccess();
         var diagnosticAid = getByIdUseCase.execute(id, InventoryType.DIAGNOSTIC_AID);
         return ResponseEntity.ok(InventoryMapper.toDiagnosticAidResponseDto((app.clinic.inventory.domain.model.DiagnosticAid) diagnosticAid));
     }
 
     @GetMapping("/diagnostic-aids")
     public ResponseEntity<List<Object>> getAllDiagnosticAids() {
+        checkInventoryAccess();
         var diagnosticAids = getAllUseCase.execute(InventoryType.DIAGNOSTIC_AID);
         var diagnosticAidDtos = InventoryMapper.toSpecificResponseList(diagnosticAids, InventoryType.DIAGNOSTIC_AID);
         return ResponseEntity.ok(diagnosticAidDtos);
@@ -208,6 +249,7 @@ public class InventoryController {
 
     @DeleteMapping("/diagnostic-aids/{id}")
     public ResponseEntity<Void> deleteDiagnosticAid(@PathVariable Long id) {
+        checkInventoryAccess();
         deleteUseCase.execute(id, InventoryType.DIAGNOSTIC_AID);
         return ResponseEntity.noContent().build();
     }

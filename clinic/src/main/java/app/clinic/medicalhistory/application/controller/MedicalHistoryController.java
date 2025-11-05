@@ -19,6 +19,8 @@ import app.clinic.medicalhistory.application.usecase.DeleteVisitUseCase;
 import app.clinic.medicalhistory.application.usecase.GetHistoryByPatientUseCase;
 import app.clinic.medicalhistory.domain.model.MedicalVisit;
 import app.clinic.shared.domain.exception.ValidationException;
+import app.clinic.shared.domain.service.AuthorizationService;
+import app.clinic.shared.domain.validator.GlobalValidator;
 import app.clinic.shared.infrastructure.config.SecurityUtils;
 import app.clinic.user.domain.model.Role;
 
@@ -45,25 +47,48 @@ public class MedicalHistoryController {
 
     @PostMapping("/{cedula}")
     public ResponseEntity<String> createOrUpdateVisit(
-             @PathVariable String cedula,
-             @RequestBody MedicalVisitRequestDto dto
-     ) {
-         String requesterRoleStr = SecurityUtils.getCurrentRole();
-         if (requesterRoleStr == null) {
-             throw new ValidationException("Rol no encontrado en el token.");
-         }
-         Role role = Role.valueOf(requesterRoleStr.toUpperCase());
-         if (role != Role.MEDICO && role != Role.ENFERMERA) {
-             return ResponseEntity.status(403).body("Access denied.");
-         }
+              @PathVariable String cedula,
+              @RequestBody MedicalVisitRequestDto dto
+      ) {
+          // Validar cédula del paciente
+          GlobalValidator.validateCedula(cedula);
 
-         MedicalVisit visit = MedicalHistoryMapper.toDomain(dto);
-         createOrUpdateVisitUseCase.execute(cedula, visit);
-         return ResponseEntity.ok("Medical visit saved successfully.");
-     }
+          String requesterRoleStr = SecurityUtils.getCurrentRole();
+          if (requesterRoleStr == null) {
+              throw new ValidationException("Rol no encontrado en el token.");
+          }
+          Role role = Role.valueOf(requesterRoleStr.toUpperCase());
+          AuthorizationService.requireMedicalHistoryAccess(role);
+
+          MedicalVisit visit = MedicalHistoryMapper.toDomain(dto);
+          createOrUpdateVisitUseCase.execute(cedula, visit);
+          return ResponseEntity.ok("Medical visit saved successfully.");
+      }
+
+    @PostMapping
+    public ResponseEntity<String> createOrUpdateVisit(
+              @RequestBody MedicalVisitRequestDto dto
+      ) {
+          // Validar cédula del paciente desde el DTO
+          GlobalValidator.validateCedula(dto.patientCedula());
+
+          String requesterRoleStr = SecurityUtils.getCurrentRole();
+          if (requesterRoleStr == null) {
+              throw new ValidationException("Rol no encontrado en el token.");
+          }
+          Role role = Role.valueOf(requesterRoleStr.toUpperCase());
+          AuthorizationService.requireMedicalHistoryAccess(role);
+
+          MedicalVisit visit = MedicalHistoryMapper.toDomain(dto);
+          createOrUpdateVisitUseCase.execute(dto.patientCedula(), visit);
+          return ResponseEntity.ok("Medical visit saved successfully.");
+      }
 
     @GetMapping("/{cedula}")
     public ResponseEntity<?> getHistoryByPatient(@PathVariable String cedula) {
+        // Validar cédula del paciente
+        GlobalValidator.validateCedula(cedula);
+
         try {
             return getHistoryByPatientUseCase.execute(cedula)
                     .map(h -> {

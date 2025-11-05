@@ -21,7 +21,7 @@ import app.clinic.patient.application.usecase.GetAllPatientsUseCase;
 import app.clinic.patient.application.usecase.GetPatientByCedulaUseCase;
 import app.clinic.patient.application.usecase.UpdatePatientUseCase;
 import app.clinic.patient.domain.model.Patient;
-import app.clinic.shared.domain.exception.ValidationException;
+import app.clinic.shared.domain.service.AuthorizationService;
 import app.clinic.shared.infrastructure.config.SecurityUtils;
 import app.clinic.user.domain.model.Role;
 
@@ -49,70 +49,61 @@ public class PatientController {
         this.deletePatientUseCase = deletePatientUseCase;
     }
 
+    private Role getCurrentUserRole() {
+        String roleStr = SecurityUtils.getCurrentRole();
+        if (roleStr == null) {
+            throw new app.clinic.shared.domain.exception.ValidationException("Rol no encontrado en el token.");
+        }
+        try {
+            return Role.valueOf(roleStr.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new app.clinic.shared.domain.exception.ValidationException("Rol inválido: " + roleStr);
+        }
+    }
+
     @PostMapping
-    public ResponseEntity<PatientResponseDto> createPatient(
-             @RequestBody PatientRequestDto dto
-     ) {
-         String creatorRoleStr = SecurityUtils.getCurrentRole();
-         if (creatorRoleStr == null) {
-             throw new ValidationException("Rol no encontrado en el token.");
-         }
-         Role creatorRole = Role.valueOf(creatorRoleStr.toUpperCase());
-         // For now, set creatorUserId to null, as JWT provides username, not ID
-         Patient patient = PatientMapper.toDomain(dto, null);
-         Patient created = createPatientUseCase.execute(patient, creatorRole);
-         return ResponseEntity.ok(PatientMapper.toResponse(created));
-     }
+    public ResponseEntity<PatientResponseDto> createPatient(@RequestBody PatientRequestDto dto) {
+        Role creatorRole = getCurrentUserRole();
+        AuthorizationService.requirePatientDataAccess(creatorRole);
+        // For now, set creatorUserId to null, as JWT provides username, not ID
+        Patient patient = PatientMapper.toDomain(dto, null);
+        Patient created = createPatientUseCase.execute(patient, creatorRole);
+        return ResponseEntity.ok(PatientMapper.toResponse(created));
+    }
 
     @GetMapping
     public ResponseEntity<List<PatientResponseDto>> getAllPatients() {
-         String requesterRoleStr = SecurityUtils.getCurrentRole();
-         if (requesterRoleStr == null) {
-             throw new ValidationException("Rol no encontrado en el token.");
-         }
-         Role requesterRole = Role.valueOf(requesterRoleStr.toUpperCase());
-         List<Patient> patients = getAllPatientsUseCase.execute(requesterRole);
-         return ResponseEntity.ok(patients.stream().map(PatientMapper::toResponse).toList());
-     }
+        Role requesterRole = getCurrentUserRole();
+        AuthorizationService.requirePatientDataAccess(requesterRole);
+        List<Patient> patients = getAllPatientsUseCase.execute(requesterRole);
+        return ResponseEntity.ok(patients.stream().map(PatientMapper::toResponse).toList());
+    }
 
     @GetMapping("/{cedula}")
-    public ResponseEntity<PatientResponseDto> getPatientByCedula(
-             @PathVariable String cedula
-     ) {
-         String requesterRoleStr = SecurityUtils.getCurrentRole();
-         if (requesterRoleStr == null) {
-             throw new ValidationException("Rol no encontrado en el token.");
-         }
-         Role requesterRole = Role.valueOf(requesterRoleStr.toUpperCase());
-         Patient patient = getPatientByCedulaUseCase.execute(cedula, requesterRole);
-         return ResponseEntity.ok(PatientMapper.toResponse(patient));
-     }
+    public ResponseEntity<PatientResponseDto> getPatientByCedula(@PathVariable String cedula) {
+        Role requesterRole = getCurrentUserRole();
+        AuthorizationService.requirePatientDataAccess(requesterRole);
+        Patient patient = getPatientByCedulaUseCase.execute(cedula, requesterRole);
+        return ResponseEntity.ok(PatientMapper.toResponse(patient));
+    }
 
     @PutMapping("/{cedula}")
     public ResponseEntity<PatientResponseDto> updatePatient(
-             @PathVariable String cedula,
-             @RequestBody PatientRequestDto dto
-     ) {
-         String updaterRoleStr = SecurityUtils.getCurrentRole();
-         if (updaterRoleStr == null) {
-             throw new ValidationException("Rol no encontrado en el token.");
-         }
-         Role updaterRole = Role.valueOf(updaterRoleStr.toUpperCase());
-         Patient updatedPatient = PatientMapper.toDomain(dto, null);
-         Patient updated = updatePatientUseCase.execute(cedula, updatedPatient, updaterRole);
-         return ResponseEntity.ok(PatientMapper.toResponse(updated));
-     }
+              @PathVariable String cedula,
+              @RequestBody PatientRequestDto dto
+      ) {
+        Role updaterRole = getCurrentUserRole();
+        AuthorizationService.requirePatientDataAccess(updaterRole);
+        Patient updatedPatient = PatientMapper.toDomain(dto, null);
+        Patient updated = updatePatientUseCase.execute(cedula, updatedPatient, updaterRole);
+        return ResponseEntity.ok(PatientMapper.toResponse(updated));
+    }
 
     @DeleteMapping("/{cedula}")
-    public ResponseEntity<Void> deletePatient(
-             @PathVariable String cedula
-     ) {
-         String deleterRoleStr = SecurityUtils.getCurrentRole();
-         if (deleterRoleStr == null) {
-             throw new ValidationException("Rol no encontrado en el token.");
-         }
-         Role deleterRole = Role.valueOf(deleterRoleStr.toUpperCase());
-         deletePatientUseCase.execute(cedula, deleterRole);
-         return ResponseEntity.noContent().build();
-     }
+    public ResponseEntity<Void> deletePatient(@PathVariable String cedula) {
+        Role deleterRole = getCurrentUserRole();
+        AuthorizationService.requirePatientDataAccess(deleterRole);
+        deletePatientUseCase.execute(cedula, deleterRole);
+        return ResponseEntity.noContent().build();
+    }
 }

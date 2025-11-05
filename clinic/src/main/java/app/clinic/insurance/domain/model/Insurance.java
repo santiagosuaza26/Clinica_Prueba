@@ -76,4 +76,8 @@ public class Insurance {
     public void setAnnualCopayTotal(double annualCopayTotal) {
         this.annualCopayTotal = annualCopayTotal;
     }
+
+    public void setCopayLimitReached(boolean copayLimitReached) {
+        this.copayLimitReached = copayLimitReached;
+    }
 }

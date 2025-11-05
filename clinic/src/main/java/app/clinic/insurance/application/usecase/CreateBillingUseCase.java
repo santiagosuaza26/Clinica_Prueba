@@ -2,6 +2,8 @@ package app.clinic.insurance.application.usecase;
 
 import java.util.Optional;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import app.clinic.insurance.domain.model.Billing;
 import app.clinic.insurance.domain.model.Insurance;
 import app.clinic.insurance.domain.repository.BillingRepository;
@@ -22,6 +24,7 @@ public class CreateBillingUseCase {
         this.billingService = billingService;
     }
 
+    @Transactional
     public Billing execute(Billing billing) {
         // Buscar el seguro del paciente para calcular coberturas
         Optional<Insurance> patientInsurance = insuranceRepository.findById(billing.getInsuranceId());

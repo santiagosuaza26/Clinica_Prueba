@@ -3,6 +3,7 @@ package app.clinic.order.application.usecase;
 import java.time.LocalDate;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import app.clinic.order.domain.model.MedicalOrder;
 import app.clinic.order.domain.repository.OrderRepository;
@@ -30,6 +31,7 @@ public class CreateOrderUseCase {
      * @param doctorId ID del doctor
      * @return Orden médica creada
      */
+    @Transactional
     public MedicalOrder execute(Long patientId, Long doctorId) {
         // Crear número de orden único usando el generador centralizado
         String orderNumber = OrderNumberGenerator.generateOrderNumber();

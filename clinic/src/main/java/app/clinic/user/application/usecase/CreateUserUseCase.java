@@ -1,5 +1,7 @@
 package app.clinic.user.application.usecase;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import app.clinic.shared.domain.exception.BusinessException;
 import app.clinic.user.domain.model.Role;
 import app.clinic.user.domain.model.User;
@@ -19,6 +21,7 @@ public class CreateUserUseCase {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Transactional
     public User execute(User user, Role creatorRole) {
         // Solo RRHH puede crear
         if (creatorRole != Role.RECURSOS_HUMANOS) {

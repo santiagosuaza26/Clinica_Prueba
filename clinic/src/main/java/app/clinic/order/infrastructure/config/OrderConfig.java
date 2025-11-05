@@ -1,7 +1,5 @@
 package app.clinic.order.infrastructure.config;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -29,7 +27,6 @@ import app.clinic.order.infrastructure.repository.JpaOrderRepository;
 @Configuration
 public class OrderConfig {
 
-    private static final Logger logger = LoggerFactory.getLogger(OrderConfig.class);
 
     // ==================== ADAPTADORES DE REPOSITORIO ====================
     // Los repositorios JPA son automáticamente creados por Spring Data JPA

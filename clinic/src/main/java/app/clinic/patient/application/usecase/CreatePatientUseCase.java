@@ -2,6 +2,8 @@ package app.clinic.patient.application.usecase;
 
 import java.util.Optional;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import app.clinic.patient.domain.model.Patient;
 import app.clinic.patient.domain.repository.PatientRepository;
 import app.clinic.patient.domain.service.PatientValidatorService;
@@ -19,6 +21,7 @@ public class CreatePatientUseCase {
         this.validator = validator;
     }
 
+    @Transactional
     public Patient execute(Patient patient, Role creatorRole) {
         // Solo el personal administrativo puede crear pacientes
         if (creatorRole != Role.ADMINISTRATIVO) {

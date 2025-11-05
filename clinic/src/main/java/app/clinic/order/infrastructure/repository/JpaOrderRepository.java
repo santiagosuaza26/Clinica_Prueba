@@ -87,6 +87,30 @@ public interface JpaOrderRepository extends JpaRepository<OrderEntity, String> {
     List<OrderEntity> findByPatientIdWithItems(@Param("patientId") String patientId);
 
     /**
+     * Busca órdenes por doctor con ítems incluidos.
+     */
+    @Query("SELECT DISTINCT o FROM OrderEntity o LEFT JOIN FETCH o.items WHERE o.doctorId = :doctorId ORDER BY o.creationDate DESC")
+    List<OrderEntity> findByDoctorIdWithItems(@Param("doctorId") String doctorId);
+
+    /**
+     * Busca órdenes recientes con ítems incluidos (últimos 30 días).
+     */
+    @Query("SELECT DISTINCT o FROM OrderEntity o LEFT JOIN FETCH o.items WHERE o.creationDate >= :sinceDate ORDER BY o.creationDate DESC")
+    List<OrderEntity> findRecentOrdersWithItems(@Param("sinceDate") java.time.LocalDate sinceDate);
+
+    /**
+     * Busca órdenes por rango de fechas con ítems incluidos.
+     */
+    @Query("SELECT DISTINCT o FROM OrderEntity o LEFT JOIN FETCH o.items WHERE o.creationDate BETWEEN :startDate AND :endDate ORDER BY o.creationDate DESC")
+    List<OrderEntity> findByCreationDateBetweenWithItems(@Param("startDate") java.time.LocalDate startDate, @Param("endDate") java.time.LocalDate endDate);
+
+    /**
+     * Busca órdenes por paciente y doctor con ítems incluidos.
+     */
+    @Query("SELECT DISTINCT o FROM OrderEntity o LEFT JOIN FETCH o.items WHERE o.patientId = :patientId AND o.doctorId = :doctorId ORDER BY o.creationDate DESC")
+    List<OrderEntity> findByPatientIdAndDoctorIdWithItems(@Param("patientId") String patientId, @Param("doctorId") String doctorId);
+
+    /**
      * Cuenta órdenes activas por paciente (últimos 30 días).
      */
     @Query("SELECT COUNT(o) FROM OrderEntity o WHERE o.patientId = :patientId AND o.creationDate >= :sinceDate")

@@ -135,6 +135,84 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
+    @ExceptionHandler(org.springframework.web.bind.MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponseDto> handleMethodArgumentNotValid(
+            org.springframework.web.bind.MethodArgumentNotValidException ex, WebRequest request) {
+        logger.warn("MethodArgumentNotValidException capturada: {}", ex.getMessage());
+
+        List<FieldErrorDto> fieldErrors = ex.getBindingResult().getFieldErrors().stream()
+            .map(fieldError -> new FieldErrorDto(
+                fieldError.getField(),
+                fieldError.getDefaultMessage(),
+                fieldError.getRejectedValue()
+            ))
+            .collect(Collectors.toList());
+
+        ErrorResponseDto errorResponse = ErrorResponseDto.builder()
+            .status(HttpStatus.UNPROCESSABLE_ENTITY.value())
+            .error(HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase())
+            .message("Errores de validación en los campos de entrada")
+            .errorCode("VALIDATION_FAILED")
+            .path(getPath(request))
+            .fieldErrors(fieldErrors)
+            .traceId(generateTraceId())
+            .build();
+
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(errorResponse);
+    }
+
+    @ExceptionHandler(org.springframework.web.bind.MissingServletRequestParameterException.class)
+    public ResponseEntity<ErrorResponseDto> handleMissingServletRequestParameter(
+            org.springframework.web.bind.MissingServletRequestParameterException ex, WebRequest request) {
+        logger.warn("MissingServletRequestParameterException capturada: {}", ex.getMessage());
+
+        ErrorResponseDto errorResponse = ErrorResponseDto.builder()
+            .status(HttpStatus.BAD_REQUEST.value())
+            .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+            .message("Parámetro requerido faltante: " + ex.getParameterName())
+            .errorCode("MISSING_PARAMETER")
+            .path(getPath(request))
+            .traceId(generateTraceId())
+            .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponseDto> handleHttpMessageNotReadable(
+            org.springframework.http.converter.HttpMessageNotReadableException ex, WebRequest request) {
+        logger.warn("HttpMessageNotReadableException capturada: {}", ex.getMessage());
+
+        ErrorResponseDto errorResponse = ErrorResponseDto.builder()
+            .status(HttpStatus.BAD_REQUEST.value())
+            .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+            .message("El cuerpo de la solicitud no es válido o está mal formado")
+            .errorCode("INVALID_REQUEST_BODY")
+            .path(getPath(request))
+            .traceId(generateTraceId())
+            .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponseDto> handleMethodArgumentTypeMismatch(
+            org.springframework.web.method.annotation.MethodArgumentTypeMismatchException ex, WebRequest request) {
+        logger.warn("MethodArgumentTypeMismatchException capturada: {}", ex.getMessage());
+
+        ErrorResponseDto errorResponse = ErrorResponseDto.builder()
+            .status(HttpStatus.BAD_REQUEST.value())
+            .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+            .message(String.format("El parámetro '%s' debe ser de tipo %s",
+                ex.getName(), ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "desconocido"))
+            .errorCode("TYPE_MISMATCH")
+            .path(getPath(request))
+            .traceId(generateTraceId())
+            .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<ErrorResponseDto> handleNullPointer(NullPointerException ex, WebRequest request) {
         logger.error("NullPointerException capturada: {}", ex.getMessage(), ex);

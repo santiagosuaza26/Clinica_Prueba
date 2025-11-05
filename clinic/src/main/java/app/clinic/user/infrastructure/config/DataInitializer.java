@@ -35,7 +35,7 @@ public class DataInitializer implements CommandLineRunner {
         if (userRepository.findByUsername("admin").isEmpty()) {
             User admin = new User();
             admin.setUsername("admin");
-            admin.setPassword(passwordEncoder.encode("admin123"));
+            admin.setPassword(passwordEncoder.encode("Admin123!"));
             admin.setFullName("Administrador del Sistema");
             admin.setCedula("0000000000");
             admin.setEmail("admin@clinica.com");
@@ -45,14 +45,14 @@ public class DataInitializer implements CommandLineRunner {
             admin.setRole(Role.ADMINISTRATIVO);
 
             userRepository.save(admin);
-            System.out.println("Usuario administrador creado: admin/admin123");
+            System.out.println("Usuario administrador creado: admin/Admin123!");
         }
 
         // Crear usuario médico si no existe
         if (userRepository.findByUsername("medico01").isEmpty()) {
             User medico = new User();
             medico.setUsername("medico01");
-            medico.setPassword(passwordEncoder.encode("password123"));
+            medico.setPassword(passwordEncoder.encode("Medico123!"));
             medico.setFullName("Dr. Juan Pérez");
             medico.setCedula("12345678");
             medico.setEmail("juan.perez@clinica.com");
@@ -62,14 +62,14 @@ public class DataInitializer implements CommandLineRunner {
             medico.setRole(Role.MEDICO);
 
             userRepository.save(medico);
-            System.out.println("Usuario médico creado: medico01/password123");
+            System.out.println("Usuario médico creado: medico01/Medico123!");
         }
 
         // Crear usuario enfermera si no existe
         if (userRepository.findByUsername("enfermera01").isEmpty()) {
             User enfermera = new User();
             enfermera.setUsername("enfermera01");
-            enfermera.setPassword(passwordEncoder.encode("password123"));
+            enfermera.setPassword(passwordEncoder.encode("Enfermera123!"));
             enfermera.setFullName("Enf. María González");
             enfermera.setCedula("87654321");
             enfermera.setEmail("maria.gonzalez@clinica.com");
@@ -79,14 +79,14 @@ public class DataInitializer implements CommandLineRunner {
             enfermera.setRole(Role.ENFERMERA);
 
             userRepository.save(enfermera);
-            System.out.println("Usuario enfermera creado: enfermera01/password123");
+            System.out.println("Usuario enfermera creado: enfermera01/Enfermera123!");
         }
 
         // Crear usuario soporte si no existe
         if (userRepository.findByUsername("soporte01").isEmpty()) {
             User soporte = new User();
             soporte.setUsername("soporte01");
-            soporte.setPassword(passwordEncoder.encode("password123"));
+            soporte.setPassword(passwordEncoder.encode("Soporte123!"));
             soporte.setFullName("Ing. Carlos Rodríguez");
             soporte.setCedula("11223344");
             soporte.setEmail("carlos.rodriguez@clinica.com");
@@ -96,14 +96,14 @@ public class DataInitializer implements CommandLineRunner {
             soporte.setRole(Role.SOPORTE);
 
             userRepository.save(soporte);
-            System.out.println("Usuario soporte creado: soporte01/password123");
+            System.out.println("Usuario soporte creado: soporte01/Soporte123!");
         }
 
         // Crear usuario recursos humanos si no existe
         if (userRepository.findByUsername("rrhh01").isEmpty()) {
             User rrhh = new User();
             rrhh.setUsername("rrhh01");
-            rrhh.setPassword(passwordEncoder.encode("password123"));
+            rrhh.setPassword(passwordEncoder.encode("Rrhh123!"));
             rrhh.setFullName("Lic. Ana Martínez");
             rrhh.setCedula("55667788");
             rrhh.setEmail("ana.martinez@clinica.com");
@@ -113,7 +113,7 @@ public class DataInitializer implements CommandLineRunner {
             rrhh.setRole(Role.RECURSOS_HUMANOS);
 
             userRepository.save(rrhh);
-            System.out.println("Usuario recursos humanos creado: rrhh01/password123");
+            System.out.println("Usuario recursos humanos creado: rrhh01/Rrhh123!");
         }
 
         System.out.println("Inicialización de usuarios completada.");

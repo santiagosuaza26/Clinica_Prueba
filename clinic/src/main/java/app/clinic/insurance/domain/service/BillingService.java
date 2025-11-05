@@ -8,7 +8,8 @@ public class BillingService {
 
     public Billing generateBilling(Billing billing, Insurance insurance) {
         double total = billing.calculateTotal();
-        double copay = insurance != null ? CopayCalculator.calculateCopay(insurance) : total;
+        int currentYear = java.time.LocalDate.now().getYear();
+        double copay = insurance != null ? CopayCalculator.calculateCopay(insurance, currentYear) : total;
 
         double insuranceCoverage = insurance != null && insurance.isActive()
                 ? Math.max(0, total - copay)

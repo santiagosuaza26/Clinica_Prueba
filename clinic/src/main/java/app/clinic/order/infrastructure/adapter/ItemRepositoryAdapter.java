@@ -39,7 +39,7 @@ public class ItemRepositoryAdapter implements OrderItemRepository {
 
     @Override
     public List<OrderItem> findByOrderNumber(String orderNumber) {
-        return jpaOrderItemRepository.findByOrderOrderNumber(orderNumber)
+        return jpaOrderItemRepository.findByOrderOrderNumberWithOrder(orderNumber)
                 .stream()
                 .map(this::toDomain)
                 .collect(Collectors.toList());

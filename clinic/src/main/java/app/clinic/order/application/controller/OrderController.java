@@ -25,6 +25,8 @@ import app.clinic.order.application.usecase.GetOrderByIdUseCase;
 import app.clinic.order.application.usecase.RemoveItemFromOrderUseCase;
 import app.clinic.order.application.usecase.UpdateOrderUseCase;
 import app.clinic.order.domain.model.MedicalOrder;
+import app.clinic.shared.domain.service.AuthorizationService;
+import app.clinic.shared.infrastructure.config.SecurityUtils;
 import app.clinic.user.domain.model.Role;
 
 @RestController
@@ -60,8 +62,12 @@ public class OrderController {
     // ✅ Crear una nueva orden médica (solo MÉDICO)
     @PostMapping
     public ResponseEntity<OrderResponseDto> createOrder(@RequestBody OrderRequestDto dto) {
-        Role role = OrderSecurityValidator.getCurrentRole();
-        OrderSecurityValidator.requireDoctorRole(role);
+        String roleStr = SecurityUtils.getCurrentRole();
+        if (roleStr == null) {
+            throw new RuntimeException("Rol no encontrado en el token.");
+        }
+        Role role = Role.valueOf(roleStr.toUpperCase());
+        AuthorizationService.requireOrderCreation(role);
 
         if (!OrderDataValidator.isValidOrderRequest(dto)) {
             return ResponseUtils.badRequest();
@@ -75,8 +81,12 @@ public class OrderController {
     // ✅ Consultar una orden médica por número
     @GetMapping("/{orderNumber}")
     public ResponseEntity<OrderResponseDto> getOrderById(@PathVariable String orderNumber) {
-        Role role = OrderSecurityValidator.getCurrentRole();
-        OrderSecurityValidator.validateNotHumanResources(role);
+        String roleStr = SecurityUtils.getCurrentRole();
+        if (roleStr == null) {
+            throw new RuntimeException("Rol no encontrado en el token.");
+        }
+        Role role = Role.valueOf(roleStr.toUpperCase());
+        AuthorizationService.requireNotHumanResources(role);
 
         if (!OrderDataValidator.isValidOrderNumber(orderNumber)) {
             return ResponseUtils.badRequest();
@@ -90,8 +100,12 @@ public class OrderController {
     // ✅ Listar todas las órdenes médicas (solo SOPORTE o MÉDICO)
     @GetMapping
     public ResponseEntity<List<OrderResponseDto>> getAllOrders() {
-        Role role = OrderSecurityValidator.getCurrentRole();
-        OrderSecurityValidator.requireReadPermissions(role);
+        String roleStr = SecurityUtils.getCurrentRole();
+        if (roleStr == null) {
+            throw new RuntimeException("Rol no encontrado en el token.");
+        }
+        Role role = Role.valueOf(roleStr.toUpperCase());
+        AuthorizationService.requireOrderReadAccess(role);
 
         List<MedicalOrder> orders = getAllOrdersUseCase.execute();
         return ResponseUtils.ok(
@@ -102,11 +116,15 @@ public class OrderController {
     // ✅ Actualizar una orden (solo MÉDICO)
     @PutMapping("/{orderNumber}")
     public ResponseEntity<OrderResponseDto> updateOrder(
-         @PathVariable String orderNumber,
-         @RequestBody OrderRequestDto dto
-     ) {
-        Role role = OrderSecurityValidator.getCurrentRole();
-        OrderSecurityValidator.requireDoctorRole(role);
+          @PathVariable String orderNumber,
+          @RequestBody OrderRequestDto dto
+      ) {
+        String roleStr = SecurityUtils.getCurrentRole();
+        if (roleStr == null) {
+            throw new RuntimeException("Rol no encontrado en el token.");
+        }
+        Role role = Role.valueOf(roleStr.toUpperCase());
+        AuthorizationService.requireOrderCreation(role);
 
         return getOrderByIdUseCase.execute(orderNumber)
             .map(existing -> {
@@ -120,8 +138,12 @@ public class OrderController {
     // ✅ Eliminar una orden (solo SOPORTE o MÉDICO)
     @DeleteMapping("/{orderNumber}")
     public ResponseEntity<Void> deleteOrder(@PathVariable String orderNumber) {
-        Role role = OrderSecurityValidator.getCurrentRole();
-        OrderSecurityValidator.requireDeletePermissions(role);
+        String roleStr = SecurityUtils.getCurrentRole();
+        if (roleStr == null) {
+            throw new RuntimeException("Rol no encontrado en el token.");
+        }
+        Role role = Role.valueOf(roleStr.toUpperCase());
+        AuthorizationService.requireOrderDeletion(role);
 
         if (!OrderDataValidator.isValidOrderNumber(orderNumber)) {
             return ResponseUtils.badRequest();
@@ -134,11 +156,15 @@ public class OrderController {
     // ✅ Agregar un ítem a la orden (medicamento, procedimiento o ayuda diagnóstica)
     @PostMapping("/{orderNumber}/items")
     public ResponseEntity<OrderResponseDto> addItemToOrder(
-          @PathVariable String orderNumber,
-          @RequestBody OrderItemDto itemDto
-      ) {
-          Role role = OrderSecurityValidator.getCurrentRole();
-         OrderSecurityValidator.requireItemModificationPermissions(role);
+           @PathVariable String orderNumber,
+           @RequestBody OrderItemDto itemDto
+       ) {
+           String roleStr = SecurityUtils.getCurrentRole();
+           if (roleStr == null) {
+               throw new RuntimeException("Rol no encontrado en el token.");
+           }
+           Role role = Role.valueOf(roleStr.toUpperCase());
+          AuthorizationService.requireOrderItemModification(role);
 
          if (!OrderDataValidator.isValidOrderNumber(orderNumber) || !OrderDataValidator.isValidItemRequest(itemDto)) {
              return ResponseUtils.badRequest();
@@ -151,11 +177,15 @@ public class OrderController {
     // ✅ Eliminar un ítem de una orden
     @DeleteMapping("/{orderNumber}/items/{itemNumber}")
     public ResponseEntity<OrderResponseDto> removeItemFromOrder(
-         @PathVariable String orderNumber,
-         @PathVariable int itemNumber
-     ) {
-         Role role = OrderSecurityValidator.getCurrentRole();
-        OrderSecurityValidator.requireItemModificationPermissions(role);
+          @PathVariable String orderNumber,
+          @PathVariable int itemNumber
+      ) {
+          String roleStr = SecurityUtils.getCurrentRole();
+          if (roleStr == null) {
+              throw new RuntimeException("Rol no encontrado en el token.");
+          }
+          Role role = Role.valueOf(roleStr.toUpperCase());
+         AuthorizationService.requireOrderItemModification(role);
 
         if (!OrderDataValidator.isValidOrderNumber(orderNumber) || !OrderDataValidator.isValidItemNumber(itemNumber)) {
             return ResponseUtils.badRequest();

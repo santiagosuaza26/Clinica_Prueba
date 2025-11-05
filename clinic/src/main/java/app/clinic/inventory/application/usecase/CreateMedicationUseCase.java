@@ -1,5 +1,7 @@
 package app.clinic.inventory.application.usecase;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import app.clinic.inventory.application.dto.CreateMedicationDto;
 import app.clinic.inventory.application.dto.MedicationResponseDto;
 import app.clinic.inventory.application.mapper.InventoryMapper;
@@ -24,6 +26,7 @@ public class CreateMedicationUseCase {
         this.validationService = validationService;
     }
 
+    @Transactional
     public MedicationResponseDto execute(CreateMedicationDto dto) {
         Medication medication = InventoryMapper.toMedication(dto);
         validationService.validateMedication(medication);

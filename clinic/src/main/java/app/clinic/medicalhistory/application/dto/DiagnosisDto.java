@@ -1,3 +1,8 @@
 package app.clinic.medicalhistory.application.dto;
 
-public record DiagnosisDto(String description) {}
+import jakarta.validation.constraints.NotBlank;
+
+public record DiagnosisDto(
+    @NotBlank(message = "La descripción del diagnóstico es obligatoria")
+    String description
+) {}

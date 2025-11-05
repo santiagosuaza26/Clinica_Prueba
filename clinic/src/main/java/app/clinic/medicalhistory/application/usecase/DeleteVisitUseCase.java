@@ -1,8 +1,14 @@
 package app.clinic.medicalhistory.application.usecase;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import app.clinic.medicalhistory.domain.exception.MedicalHistoryNotFoundException;
 import app.clinic.medicalhistory.domain.repository.MedicalHistoryRepository;
 
 public class DeleteVisitUseCase {
+
+    private static final Logger logger = LoggerFactory.getLogger(DeleteVisitUseCase.class);
 
     private final MedicalHistoryRepository repository;
 
@@ -11,30 +17,32 @@ public class DeleteVisitUseCase {
     }
 
     public void execute(String patientCedula, String date) {
-        System.out.println("[DEBUG] Iniciando eliminación de visita para paciente: " + patientCedula + ", fecha: " + date);
+        logger.debug("Iniciando eliminación de visita para paciente: {}, fecha: {}", patientCedula, date);
 
         try {
             var historyOpt = repository.findByPatientCedula(patientCedula);
             if (historyOpt.isPresent()) {
                 var history = historyOpt.get();
-                System.out.println("[DEBUG] Historia médica encontrada, número de visitas: " +
-                                 (history.getVisits() != null ? history.getVisits().size() : 0));
+                logger.debug("Historia médica encontrada, número de visitas: {}",
+                            (history.getVisits() != null ? history.getVisits().size() : 0));
 
                 if (history.getVisits() != null && history.getVisits().containsKey(date)) {
-                    System.out.println("[DEBUG] Visita encontrada, procediendo con eliminación");
+                    logger.debug("Visita encontrada, procediendo con eliminación");
                     history.getVisits().remove(date);
                     repository.save(history);
-                    System.out.println("[DEBUG] Visita eliminada exitosamente");
+                    logger.debug("Visita eliminada exitosamente");
                 } else {
-                    System.out.println("[WARNING] Visita no encontrada para la fecha especificada: " + date);
+                    logger.warn("Visita no encontrada para la fecha especificada: {}", date);
                 }
             } else {
-                System.out.println("[WARNING] No se encontró historia médica para el paciente: " + patientCedula);
+                logger.warn("No se encontró historia médica para el paciente: {}", patientCedula);
             }
-        } catch (Exception e) {
-            System.out.println("[ERROR] Error al eliminar visita: " + e.getMessage());
-            e.printStackTrace();
+        } catch (MedicalHistoryNotFoundException e) {
+            logger.error("Historia médica no encontrada: {}", e.getMessage());
             throw e;
+        } catch (Exception e) {
+            logger.error("Error inesperado al eliminar visita: {}", e.getMessage(), e);
+            throw new RuntimeException("Error interno del servidor al eliminar la visita médica", e);
         }
     }
 }
